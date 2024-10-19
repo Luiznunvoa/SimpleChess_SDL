@@ -1,9 +1,8 @@
 # ninja log v6
-2	467	7510082873248366	build.ninja	18a58ba70f87da60
-39	1021	7510079155346996	CMakeFiles/SimpleChess_SDL.dir/res.c.obj	f5d9790c55d38bbf
-3	330	7510080191060956	CMakeFiles/SimpleChess_SDL.dir/main.c.obj	9c007170d70fdf70
-331	774	7510080194336862	SimpleChess_SDL.exe	ca64c2d31be8d042
-5	747	7510088058789220	CMakeFiles/SimpleChess_SDL.dir/main.c.obj	9c007170d70fdf70
+2	467	7510449043731399	build.ninja	18a58ba70f87da60
 42	749	7510088059165202	CMakeFiles/SimpleChess_SDL.dir/res.c.obj	f5d9790c55d38bbf
-91	846	7510088059655169	CMakeFiles/SimpleChess_SDL.dir/game.c.obj	e984d4bc95f6defd
+5	747	7510088058789220	CMakeFiles/SimpleChess_SDL.dir/main.c.obj	9c007170d70fdf70
 846	1156	7510088067204312	SimpleChess_SDL.exe	d2b3566a567368d3
+91	846	7510088059655169	CMakeFiles/SimpleChess_SDL.dir/game.c.obj	e984d4bc95f6defd
+10	1528	7510469354463898	CMakeFiles/SimpleChess_SDL.dir/ui.c.obj	39ad9a1611955330
+1528	1999	7510469369640120	SimpleChess_SDL.exe	dc060e251dee9a40

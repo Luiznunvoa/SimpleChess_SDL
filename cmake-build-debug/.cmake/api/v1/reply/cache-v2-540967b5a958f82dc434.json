@@ -1219,7 +1219,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2.dll.a"
+			"value" : "mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2.dll.a"
 		},
 		{
 			"name" : "SDL2_TTF_INCLUDE_DIR",

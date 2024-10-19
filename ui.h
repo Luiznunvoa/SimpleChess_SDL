@@ -17,19 +17,39 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#ifndef RES_H
-#define RES_H
+#ifndef UI_H
+#define UI_H
 
 #include <SDL.h>
 #include <stdbool.h>
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 800
+typedef struct Element Element;
 
-bool res_init();
+typedef bool (*ELM_init)(Element* element, SDL_Renderer* renderer);
+typedef bool (*ELM_update)(Element* element);
 
-void res_free();
+typedef struct Element
+{
+    SDL_Texture* texture;
+    SDL_Rect rect;
 
-extern SDL_Renderer* renderer;
+    SDL_Color color1;
+    SDL_Color color2;
 
-#endif //RES_H
+    ELM_init init;
+    ELM_update update;
+}Element;
+
+bool ui_init_elements();
+void ui_update_elements();
+void ui_free_elements();
+bool ui_create_element(
+    int x, int y, int w, int h,
+    SDL_Color color1, SDL_Color color2,
+    ELM_init init,
+    ELM_update update
+    );
+
+extern int element_count;
+
+#endif //UI_H
