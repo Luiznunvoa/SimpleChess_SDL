@@ -43,3 +43,11 @@
 886	1238	7510614232895808	SimpleChess_SDL.exe	caf01b9fadf13c8f
 7	661	7510614582711163	CMakeFiles/SimpleChess_SDL.dir/board.c.obj	bce5d1e85bfaaf42
 662	909	7510614589251150	SimpleChess_SDL.exe	caf01b9fadf13c8f
+4	780	7510729971764011	CMakeFiles/SimpleChess_SDL.dir/main.c.obj	9c007170d70fdf70
+66	823	7510729972384065	CMakeFiles/SimpleChess_SDL.dir/game.c.obj	e984d4bc95f6defd
+39	823	7510729972104074	CMakeFiles/SimpleChess_SDL.dir/res.c.obj	f5d9790c55d38bbf
+125	858	7510729972963993	CMakeFiles/SimpleChess_SDL.dir/ui.c.obj	39ad9a1611955330
+781	1409	7510729979529132	CMakeFiles/SimpleChess_SDL.dir/board.c.obj	bce5d1e85bfaaf42
+1409	1732	7510729985815080	SimpleChess_SDL.exe	caf01b9fadf13c8f
+7	696	7510762636701580	CMakeFiles/SimpleChess_SDL.dir/board.c.obj	bce5d1e85bfaaf42
+696	950	7510762643591769	SimpleChess_SDL.exe	caf01b9fadf13c8f

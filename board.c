@@ -71,30 +71,24 @@ bool board_init(Element* board, SDL_Renderer* renderer)
     const Uint16 gridColor1 = SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b);
     const Uint16 gridColor2 = SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
 
-    for (int y = 0; y < board->rect.h; y++) {
-        for (int x = 0; x < board->rect.w; x++) {
-            if (x < border_size || x >= board->rect.w - border_size || y < border_size || y >= board->rect.h - border_size) {
+    for (int y = 0; y < board->rect.h; y++)
+        for (int x = 0; x < board->rect.w; x++)
+            if (x < border_size || x >= board->rect.w - border_size || y < border_size || y >= board->rect.h - border_size)
                 pixelData[y * (pitch / 2) + x] = borderColor;
-            }
-        }
-    }
 
-    for (int row = 0; row < 8; row++) {
-        for (int col = 0; col < 8; col++) {
+    for (int row = 0; row < 8; row++)
+        for (int col = 0; col < 8; col++)
+        {
             const Uint16 color = (board_map[row][col] == '1') ? gridColor1 : gridColor2;
-
             const int startY = row * grid_size + border_size;
             const int endY = (row + 1) * grid_size + border_size;
             const int startX = col * grid_size + border_size;
             const int endX = (col + 1) * grid_size + border_size;
 
-            for (int y = startY; y < endY; y++) {
-                for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++)
+                for (int x = startX; x < endX; x++)
                     pixelData[y * (pitch / 2) + x] = color;
-                }
-            }
         }
-    }
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);

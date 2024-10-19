@@ -42,29 +42,23 @@ bool ui_init_elements()
 void ui_update_elements()
 {
     for(int i = 0; i < element_count; i++)
-    {
         if(ui_elements[i].update != NULL)
             ui_elements[i].update(&ui_elements[i]);
-    }
 }
 
 void ui_present()
 {
     for (int i = 0; i < element_count; i++)
-    {
         if(ui_elements[i].texture != NULL)
             SDL_RenderCopy(renderer, ui_elements[i].texture, NULL, &ui_elements[i].rect);
-    }
     SDL_RenderPresent(renderer);
 }
 
 void ui_free_elements()
 {
     for(int i = 0; i < element_count; i++)
-    {
         if(ui_elements[i].texture != NULL)
             SDL_DestroyTexture(ui_elements[i].texture);
-    }
     free(ui_elements);
 }
 
