@@ -21,6 +21,9 @@
 #include "res.h"
 #include "board.h"
 
+#define COLOR_BLACK (SDL_Color){0, 0, 0, 255}
+#define COLOR_WHITE (SDL_Color){255, 255, 255, 255}
+
 int element_count;
 
 Element* ui_elements;
@@ -29,21 +32,23 @@ bool ui_init_elements()
 {
     if(!ui_create_element(
         140, 20, 520, 520,
-        (SDL_Color){0, 0, 0, 255},
-        (SDL_Color){255, 255, 255, 255},
+        COLOR_BLACK,
+        COLOR_WHITE,
         board_init,
-        NULL
+        board_update
         ))
         return false;
 
     return true;
 }
 
-void ui_update_elements()
+bool ui_update_elements()
 {
     for(int i = 0; i < element_count; i++)
         if(ui_elements[i].update != NULL)
-            ui_elements[i].update(&ui_elements[i]);
+            if(!ui_elements[i].update(&ui_elements[i]))
+                return false;
+    return true;
 }
 
 void ui_present()

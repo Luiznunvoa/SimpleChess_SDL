@@ -41,7 +41,7 @@ typedef struct Element
 }Element;
 
 bool ui_init_elements();
-void ui_update_elements();
+bool ui_update_elements();
 void ui_present();
 void ui_free_elements();
 bool ui_create_element(

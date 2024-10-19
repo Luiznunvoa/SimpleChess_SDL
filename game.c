@@ -22,6 +22,7 @@
 #include "game.h"
 #include "res.h"
 #include "ui.h"
+#include "board.h"
 
 #define FPS 15
 
@@ -69,7 +70,10 @@ void game()
 
         if(update)
         {
-            ui_present();
+            if(ui_update_elements())
+                ui_present();
+            else
+                quit  = true;
             update = false;
         }
 
@@ -86,8 +90,47 @@ bool event_proc()
 {
     while (SDL_PollEvent(&event))
     {
-        if(event.type == SDL_QUIT)
+        switch (event.type)
+        {
+        case SDL_QUIT:
             return true;
+        case SDL_KEYUP:
+            if(!key_input_proc())
+                return false;
+        }
     }
     return false;
+}
+
+bool key_input_proc()
+{
+    switch (event.key.keysym.sym)
+    {
+    case SDLK_ESCAPE:
+        return false;
+    case SDLK_UP:
+        if(board_data.select_y > 0)
+            board_data.select_y -= 1;
+        update = true;
+        break;
+    case SDLK_DOWN:
+        if(board_data.select_y < 7)
+            board_data.select_y += 1;
+        update = true;
+        break;
+    case SDLK_LEFT:
+        if(board_data.select_x > 0)
+            board_data.select_x -= 1;
+        update = true;
+        break;
+    case SDLK_RIGHT:
+        if(board_data.select_x < 7)
+            board_data.select_x += 1;
+        update = true;
+        break;
+    default:
+
+    }
+
+    return true;
 }

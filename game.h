@@ -26,5 +26,6 @@ bool game_init();
 void game_free();
 void game();
 bool event_proc();
+bool key_input_proc();
 
 #endif //GAME_H
