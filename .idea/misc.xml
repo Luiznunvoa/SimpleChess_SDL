@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BackendCodeEditorMiscSettings">
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+  </component>
+  <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id>C/C++</id>
+          </State>
+          <State>
+            <id>Common Practices and Code ImprovementsC/C++</id>
+          </State>
+          <State>
+            <id>Data Flow AnalysisC/C++</id>
+          </State>
+          <State>
+            <id>GeneralC/C++</id>
+          </State>
+          <State>
+            <id>Potential Code Quality IssuesC/C++</id>
+          </State>
+          <State>
+            <id>Syntax StyleC/C++</id>
+          </State>
+          <State>
+            <id>Use preferred braces styleSyntax StyleC/C++</id>
+          </State>
+          <State>
+            <id>Use preferred declaration styleSyntax StyleC/C++</id>
+          </State>
+          <State>
+            <id>Use preferred include directive styleSyntax StyleC/C++</id>
+          </State>
+          <State>
+            <id>Use preferred initialization styleSyntax StyleC/C++</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Static Analysis ToolsC/C++</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+</project>
