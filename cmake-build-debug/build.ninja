@@ -77,6 +77,13 @@ build CMakeFiles/SimpleChess_SDL.dir/ui.c.obj: C_COMPILER__SimpleChess_SDL_unsca
   OBJECT_DIR = CMakeFiles\SimpleChess_SDL.dir
   OBJECT_FILE_DIR = CMakeFiles\SimpleChess_SDL.dir
 
+build CMakeFiles/SimpleChess_SDL.dir/board.c.obj: C_COMPILER__SimpleChess_SDL_unscanned_Debug C$:/Dev/SimpleChess_SDL/board.c || cmake_object_order_depends_target_SimpleChess_SDL
+  DEP_FILE = CMakeFiles\SimpleChess_SDL.dir\board.c.obj.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -IC:/SDL2-2.30.7/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2_ttf-2.22.0/x86_64-w64-mingw32/include/SDL2
+  OBJECT_DIR = CMakeFiles\SimpleChess_SDL.dir
+  OBJECT_FILE_DIR = CMakeFiles\SimpleChess_SDL.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target SimpleChess_SDL
@@ -85,7 +92,7 @@ build CMakeFiles/SimpleChess_SDL.dir/ui.c.obj: C_COMPILER__SimpleChess_SDL_unsca
 #############################################
 # Link the executable SimpleChess_SDL.exe
 
-build SimpleChess_SDL.exe: C_EXECUTABLE_LINKER__SimpleChess_SDL_Debug CMakeFiles/SimpleChess_SDL.dir/main.c.obj CMakeFiles/SimpleChess_SDL.dir/res.c.obj CMakeFiles/SimpleChess_SDL.dir/game.c.obj CMakeFiles/SimpleChess_SDL.dir/ui.c.obj | C$:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a C$:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2.dll.a C$:/SDL2_ttf-2.22.0/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a
+build SimpleChess_SDL.exe: C_EXECUTABLE_LINKER__SimpleChess_SDL_Debug CMakeFiles/SimpleChess_SDL.dir/main.c.obj CMakeFiles/SimpleChess_SDL.dir/res.c.obj CMakeFiles/SimpleChess_SDL.dir/game.c.obj CMakeFiles/SimpleChess_SDL.dir/ui.c.obj CMakeFiles/SimpleChess_SDL.dir/board.c.obj | C$:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a C$:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2.dll.a C$:/SDL2_ttf-2.22.0/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a
   FLAGS = -g
   LINK_LIBRARIES = -lmingw32  -mwindows  C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a  C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2.dll.a  C:/SDL2_ttf-2.22.0/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\SimpleChess_SDL.dir

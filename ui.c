@@ -19,6 +19,7 @@
 
 #include "ui.h"
 #include "res.h"
+#include "board.h"
 
 int element_count;
 
@@ -26,7 +27,14 @@ Element* ui_elements;
 
 bool ui_init_elements()
 {
-
+    if(!ui_create_element(
+        140, 20, 520, 520,
+        (SDL_Color){0, 0, 0, 255},
+        (SDL_Color){255, 255, 255, 255},
+        board_init,
+        NULL
+        ))
+        return false;
 
     return true;
 }
@@ -40,13 +48,22 @@ void ui_update_elements()
     }
 }
 
+void ui_present()
+{
+    for (int i = 0; i < element_count; i++)
+    {
+        if(ui_elements[i].texture != NULL)
+            SDL_RenderCopy(renderer, ui_elements[i].texture, NULL, &ui_elements[i].rect);
+    }
+    SDL_RenderPresent(renderer);
+}
+
 void ui_free_elements()
 {
     for(int i = 0; i < element_count; i++)
     {
-        if(ui_elements->texture != NULL)
-            SDL_DestroyTexture(ui_elements->texture);
-        free(&ui_elements[i]);
+        if(ui_elements[i].texture != NULL)
+            SDL_DestroyTexture(ui_elements[i].texture);
     }
     free(ui_elements);
 }

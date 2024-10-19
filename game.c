@@ -21,6 +21,7 @@
 
 #include "game.h"
 #include "res.h"
+#include "ui.h"
 
 #define FPS 15
 
@@ -35,18 +36,23 @@ bool update;
 
 bool game_init()
 {
+    if(!ui_init_elements())
+        return false;
+
     SDL_SetRenderDrawColor(renderer, 243, 238, 234, 1);
 
     SDL_RenderClear(renderer);
 
     SDL_RenderPresent(renderer);
 
+    update = true;
+
     return true;
 }
 
 void game_free()
 {
-
+    ui_free_elements();
 }
 
 void game()
@@ -61,11 +67,11 @@ void game()
 
         quit = event_proc();
 
-        /*
         if(update)
-            if(update_elements())
-                ui_present(&elements;);
-         */
+        {
+            ui_present();
+            update = false;
+        }
 
         frame_time = SDL_GetTicks() - start_time;
 
