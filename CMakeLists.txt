@@ -21,6 +21,8 @@ add_executable(SimpleChess_SDL main.c
         ui.h
         board.c
         board.h
+        pieces.c
+        pieces.h
 )
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} ${SDL2_TTF_LIBRARY})

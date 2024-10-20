@@ -43,7 +43,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "Release"
+			"value" : "Debug"
 		},
 		{
 			"name" : "CMAKE_CACHEFILE_DIR",
@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Dev/SimpleChess_SDL/cmake-build-release"
+			"value" : "c:/Dev/SimpleChess_SDL/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -431,7 +431,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Dev/SimpleChess_SDL/cmake-build-release/CMakeFiles/pkgRedirects"
+			"value" : "C:/Dev/SimpleChess_SDL/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -1219,7 +1219,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2.dll.a"
+			"value" : "mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;mingw32;-mwindows;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2main.a;C:/SDL2-2.30.7/x86_64-w64-mingw32/lib/libSDL2.dll.a"
 		},
 		{
 			"name" : "SDL2_TTF_INCLUDE_DIR",
@@ -1270,6 +1270,30 @@
 			"value" : "C:/SDL2_ttf-2.22.0/x86_64-w64-mingw32/lib/cmake/SDL2_ttf"
 		},
 		{
+			"name" : "SimpleChess_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "C:/Dev/SimpleChess_SDL/cmake-build-debug"
+		},
+		{
+			"name" : "SimpleChess_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
 			"name" : "SimpleChess_SDL_BINARY_DIR",
 			"properties" : 
 			[
@@ -1279,7 +1303,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Dev/SimpleChess_SDL/cmake-build-release"
+			"value" : "C:/Dev/SimpleChess_SDL/cmake-build-debug"
 		},
 		{
 			"name" : "SimpleChess_SDL_IS_TOP_LEVEL",
@@ -1295,6 +1319,18 @@
 		},
 		{
 			"name" : "SimpleChess_SDL_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "C:/Dev/SimpleChess_SDL"
+		},
+		{
+			"name" : "SimpleChess_SOURCE_DIR",
 			"properties" : 
 			[
 				{

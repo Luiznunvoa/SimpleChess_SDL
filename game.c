@@ -24,7 +24,7 @@
 #include "ui.h"
 #include "board.h"
 
-#define FPS 15
+#define FPS 10
 
 Uint32 last_frame_time;
 Uint32 start_time;
@@ -94,9 +94,12 @@ bool event_proc()
         {
         case SDL_QUIT:
             return true;
-        case SDL_KEYUP:
+        case SDL_KEYDOWN:
             if(!key_input_proc())
                 return false;
+        case SDL_KEYUP:
+            break;
+        default:
         }
     }
     return false;

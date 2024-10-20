@@ -20,9 +20,12 @@
 #include "ui.h"
 #include "res.h"
 #include "board.h"
+#include "pieces.h"
 
 #define COLOR_BLACK (SDL_Color){0, 0, 0, 255}
 #define COLOR_WHITE (SDL_Color){255, 255, 255, 255}
+#define COLOR_TILE1 (SDL_Color){119, 107, 93,}
+#define COLOR_TILE2 (SDL_Color){255, 245, 234}
 
 int element_count;
 
@@ -32,10 +35,19 @@ bool ui_init_elements()
 {
     if(!ui_create_element(
         140, 20, 520, 520,
-        COLOR_BLACK,
-        COLOR_WHITE,
+        COLOR_TILE1,
+        COLOR_TILE2,
         board_init,
         board_update
+        ))
+        return false;
+
+    if(!ui_create_element(
+        140, 20, 530, 530,
+        COLOR_TILE1,
+        COLOR_TILE2,
+        pieces_init,
+        NULL
         ))
         return false;
 
