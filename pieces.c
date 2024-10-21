@@ -20,6 +20,8 @@
 #include <stdio.h>
 
 #include "pieces.h"
+#include "ui.h"
+#include "board.h"
 
 bool pieces_init(Element* piece, SDL_Renderer* renderer)
 {
@@ -46,4 +48,15 @@ bool pieces_init(Element* piece, SDL_Renderer* renderer)
     return true;
 }
 
-//TODO void pieces_update(Element* piece)
+bool pieces_update(Element* piece)
+{
+    const int x = (piece->rect.x - 45) / 65;
+    const int y = (piece->rect.y - 45) / 65;
+
+
+    if(board_data.select_x == x && board_data.select_y == y)
+    {
+        printf("selecting the piece %s\n", piece->bmp_path);
+    }
+    return true;
+}

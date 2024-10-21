@@ -43,18 +43,18 @@ int board[8][8] = {
 
 const char* piece_bmp[12] =
 {
-    "../../assets/pawn.bmp",
-    "../../assets/pawn2.bmp",
-    "../../assets/horse.bmp",
-    "../../assets/horse2.bmp",
-    "../../assets/bishop.bmp",
-    "../../assets/bishop2.bmp",
-    "../../assets/rook.bmp",
-    "../../assets/rook2.bmp",
-    "../../assets/queen.bmp",
-    "../../assets/queen2.bmp",
-    "../../assets/king.bmp",
-    "../../assets/king2.bmp"
+    "../../assets/black_pawn.bmp",
+    "../../assets/white_pawn.bmp",
+    "../../assets/black_horse.bmp",
+    "../../assets/white_horse.bmp",
+    "../../assets/black_bishop.bmp",
+    "../../assets/white_bishop.bmp",
+    "../../assets/black_rook.bmp",
+    "../../assets/white_rook.bmp",
+    "../../assets/black_queen.bmp",
+    "../../assets/white_queen.bmp",
+    "../../assets/black_king.bmp",
+    "../../assets/white_king.bmp"
 };
 
 int element_count;
@@ -156,7 +156,7 @@ __forceinline bool create_piece(const int x, const int y, const char* bmp_path)
         x, y, 0, 0,
         NO_COLOR, NO_COLOR,
         pieces_init,
-        NULL,
+        pieces_update,
         bmp_path
     );
 }
