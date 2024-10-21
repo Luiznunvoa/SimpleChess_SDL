@@ -1,1 +1,0 @@
-CMakeLists.txt not found in C:\Dev\SimpleChess_SDL Select CMakeLists.txt
