@@ -22,11 +22,13 @@
 #include "board.h"
 #include "pieces.h"
 
-#define COLOR_BLACK (SDL_Color){0, 0, 0, 255}
-#define COLOR_WHITE (SDL_Color){255, 255, 255, 255}
 #define COLOR_TILE1 (SDL_Color){119, 107, 93,}
 #define COLOR_TILE2 (SDL_Color){155, 145, 134}
 #define NO_COLOR  (SDL_Color){0}
+
+#define BOARD_SIZE 520
+#define BOARD_X 40
+#define BOARD_Y 40
 
 int board[8][8] = {
     7, 3, 5, 9, 11, 5, 3, 7,
@@ -62,7 +64,7 @@ Element* ui_elements;
 bool ui_init_elements()
 {
     if(!ui_create_element(
-        140, 20, 520, 520,
+        BOARD_X, BOARD_Y, BOARD_SIZE, BOARD_SIZE,
         COLOR_TILE1, COLOR_TILE2,
         board_init,
         board_update,
@@ -77,8 +79,8 @@ bool ui_init_elements()
 
             if (piece_type != 0)
             {
-                const int x = 145 + (65 * j);
-                const int y = 25 + (65 * i);
+                const int x = (BOARD_X + 5) + (65 * j);
+                const int y = (BOARD_Y + 5) + (65 * i);
 
                 if(!create_piece(x, y, piece_bmp[piece_type - 1]))
                     return false;

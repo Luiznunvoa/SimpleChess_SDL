@@ -21,10 +21,11 @@
 
 #include "res.h"
 
-#define GAME_TITLE "App"
+#define GAME_TITLE "SimpleChess"
 #define WINDOW_X SDL_WINDOWPOS_CENTERED
 #define WINDOW_Y SDL_WINDOWPOS_CENTERED
 #define WINDOW_FLAGS (SDL_WINDOW_SHOWN)
+#define WINDOW_COLOR 143, 138, 134, 1
 #define RENDERER_FLAGS (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)
 
 SDL_Renderer* renderer;
@@ -63,7 +64,7 @@ bool window_init()
         return false;
     }
 
-    SDL_SetRenderDrawColor(renderer, 143, 138, 134, 1);
+    SDL_SetRenderDrawColor(renderer, WINDOW_COLOR);
 
     SDL_RenderClear(renderer);
 

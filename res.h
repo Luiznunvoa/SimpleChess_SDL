@@ -23,8 +23,8 @@
 #include <SDL.h>
 #include <stdbool.h>
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 800
+#define WINDOW_WIDTH 600
+#define WINDOW_HEIGHT 600
 
 bool window_init();
 void window_free();
