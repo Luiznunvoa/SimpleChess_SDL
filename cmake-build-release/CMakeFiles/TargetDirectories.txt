@@ -1,3 +1,0 @@
-C:/Dev/SimpleChess_SDL/cmake-build-release/CMakeFiles/SimpleChess_SDL.dir
-C:/Dev/SimpleChess_SDL/cmake-build-release/CMakeFiles/edit_cache.dir
-C:/Dev/SimpleChess_SDL/cmake-build-release/CMakeFiles/rebuild_cache.dir
