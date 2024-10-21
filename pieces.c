@@ -21,48 +21,25 @@
 
 #include "pieces.h"
 
-bool pieces_init(Element* pieces, SDL_Renderer* renderer) {
-    void* pixels;
-    int pitch;
+bool pieces_init(Element* piece, SDL_Renderer* renderer)
+{
+    SDL_Surface* pieces_surface = SDL_LoadBMP(piece->bmp_path);
 
-    pieces->texture = SDL_CreateTexture(
-        renderer,
-        SDL_PIXELFORMAT_ARGB8888,
-        SDL_TEXTUREACCESS_STREAMING,
-        pieces->rect.w, pieces->rect.h
-    );
-
-    if (!pieces->texture) {
-        printf("Error creating texture: %s\n", SDL_GetError());
+    if (!pieces_surface) {
+        printf("Erro ao carregar piecesm BMP: %s\n", SDL_GetError());
         return false;
     }
 
-    if (SDL_LockTexture(pieces->texture, NULL, &pixels, &pitch) < 0) {
-        printf("Error locking texture: %s\n", SDL_GetError());
-        SDL_DestroyTexture(pieces->texture);
+    piece->texture = SDL_CreateTextureFromSurface(renderer, pieces_surface);
+
+    piece->rect.w = pieces_surface->w;
+    piece->rect.h = pieces_surface->h;
+
+    SDL_FreeSurface(pieces_surface);
+
+    if (!piece->texture) {
+        printf("Erro ao criar textura da piecesm: %s\n", SDL_GetError());
         return false;
     }
-
-    SDL_PixelFormat* format = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
-    if (!format) {
-        printf("Error allocating format: %s\n", SDL_GetError());
-        SDL_UnlockTexture(pieces->texture);
-        SDL_DestroyTexture(pieces->texture);
-        return false;
-    }
-
-    Uint32 color = SDL_MapRGBA(format, 0, 0, 0, 0);
-
-    Uint32* pixel_ptr = (Uint32*)pixels;
-
-    for (int i = 0; i < pieces->rect.h; i++)
-        for (int j = 0; j < pieces->rect.w; j++)
-            pixel_ptr[j + i * (pitch / 4)] = color;
-
-    SDL_FreeFormat(format);
-    SDL_UnlockTexture(pieces->texture);
-
-    SDL_SetTextureBlendMode(pieces->texture, SDL_BLENDMODE_BLEND);
-
     return true;
 }

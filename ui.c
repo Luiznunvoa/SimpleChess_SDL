@@ -25,7 +25,18 @@
 #define COLOR_BLACK (SDL_Color){0, 0, 0, 255}
 #define COLOR_WHITE (SDL_Color){255, 255, 255, 255}
 #define COLOR_TILE1 (SDL_Color){119, 107, 93,}
-#define COLOR_TILE2 (SDL_Color){255, 245, 234}
+#define COLOR_TILE2 (SDL_Color){155, 145, 134}
+
+int board[8][8] = {
+    7, 3, 5, 9, 11, 5, 3, 7,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    2, 2, 2, 2, 2, 2, 2, 2,
+    8, 4, 6, 10, 12, 6, 4, 8,
+};
 
 int element_count;
 
@@ -38,18 +49,42 @@ bool ui_init_elements()
         COLOR_TILE1,
         COLOR_TILE2,
         board_init,
-        board_update
-        ))
-        return false;
-
-    if(!ui_create_element(
-        140, 20, 530, 530,
-        COLOR_TILE1,
-        COLOR_TILE2,
-        pieces_init,
+        board_update,
         NULL
         ))
         return false;
+
+    for(int i = 0; i < 8; i++)
+        for(int j = 0; j < 8; j++)
+            switch (board[i][j])
+            {
+            case 1:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../pawn.bmp"
+                    ))
+                    return false;
+                break;
+
+            case 2:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../pawn2.bmp"
+                    ))
+                    return false;
+                break;
+            // TODO OTHER PIECES CASES
+            default:
+                //return false;
+            }
 
     return true;
 }
@@ -83,7 +118,8 @@ bool ui_create_element(
     int x, int y, int w, int h,
     SDL_Color color1, SDL_Color color2,
     ELM_init init,
-    ELM_update update
+    ELM_update update,
+    char* bmp_path
     )
 {
     if(element_count == 0)
@@ -102,6 +138,7 @@ bool ui_create_element(
     ui_elements[element_count].color2 = color2;
     ui_elements[element_count].init = init;
     ui_elements[element_count].update = update;
+    ui_elements[element_count].bmp_path = bmp_path;
 
 
     if(!ui_elements[element_count].init(&ui_elements[element_count], renderer))
