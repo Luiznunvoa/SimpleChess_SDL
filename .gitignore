@@ -1,5 +1,9 @@
 /cmake-build-debug/
-/cmake-build-release/
-/cmake_modules/
 /.idea/
-CMakeLists.txt
+/cmake/cmake-build-debug/CMakeCache.txt
+/cmake/cmake-build-debug/.cmake/
+/cmake/cmake-build-debug/CMakeFiles/
+/cmake/cmake-build-debug/Testing/
+/cmake/cmake-build-debug/.ninja_deps
+/cmake/cmake-build-debug/.ninja_log
+/cmake/cmake-build-debug/
