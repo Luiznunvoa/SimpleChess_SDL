@@ -22,11 +22,11 @@
 
 int main(int argc, char *argv[])
 {
-    if(res_init())
+    if(window_init())
         if(game_init())
             game();
     game_free();
-    res_free();
+    window_free();
     return 0;
 }
 

@@ -26,6 +26,7 @@
 #define COLOR_WHITE (SDL_Color){255, 255, 255, 255}
 #define COLOR_TILE1 (SDL_Color){119, 107, 93,}
 #define COLOR_TILE2 (SDL_Color){155, 145, 134}
+#define NO_COLOR  (SDL_Color){0}
 
 int board[8][8] = {
     7, 3, 5, 9, 11, 5, 3, 7,
@@ -38,6 +39,22 @@ int board[8][8] = {
     8, 4, 6, 10, 12, 6, 4, 8,
 };
 
+const char* piece_bmp[12] =
+{
+    "../../assets/pawn.bmp",
+    "../../assets/pawn2.bmp",
+    "../../assets/horse.bmp",
+    "../../assets/horse2.bmp",
+    "../../assets/bishop.bmp",
+    "../../assets/bishop2.bmp",
+    "../../assets/rook.bmp",
+    "../../assets/rook2.bmp",
+    "../../assets/queen.bmp",
+    "../../assets/queen2.bmp",
+    "../../assets/king.bmp",
+    "../../assets/king2.bmp"
+};
+
 int element_count;
 
 Element* ui_elements;
@@ -46,8 +63,7 @@ bool ui_init_elements()
 {
     if(!ui_create_element(
         140, 20, 520, 520,
-        COLOR_TILE1,
-        COLOR_TILE2,
+        COLOR_TILE1, COLOR_TILE2,
         board_init,
         board_update,
         NULL
@@ -55,149 +71,19 @@ bool ui_init_elements()
         return false;
 
     for(int i = 0; i < 8; i++)
-        for(int j = 0; j < 8; j++)
-            switch (board[i][j])
+        for (int j = 0; j < 8; j++)
+        {
+            const int piece_type = board[i][j];
+
+            if (piece_type != 0)
             {
-            case 1:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/pawn.bmp"
-                    ))
-                    return false;
-                break;
+                const int x = 145 + (65 * j);
+                const int y = 25 + (65 * i);
 
-            case 2:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/pawn2.bmp"
-                    ))
+                if(!create_piece(x, y, piece_bmp[piece_type - 1]))
                     return false;
-                break;
-            case 3:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/horse.bmp"
-                    ))
-                    return false;
-                    break;
-
-            case 4:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/horse2.bmp"
-                    ))
-                    return false;
-                    break;
-            case 7:
-                if(!ui_create_element(
-                    (145 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/rook.bmp"
-                    ))
-                    return false;
-                break;
-            case 8:
-                if(!ui_create_element(
-                    (145 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/rook2.bmp"
-                    ))
-                    return false;
-                    break;
-            case 5:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/bishop.bmp"
-                    ))
-                    return false;
-                    break;
-            case 6:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/bishop2.bmp"
-                    ))
-                    return false;
-                    break;
-
-            case 9:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/queen.bmp"
-                    ))
-                    return false;
-                    break;
-            case 10:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/queen2.bmp"
-                    ))
-                    return false;
-                    break;
-            case 11:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/king.bmp"
-                    ))
-                    return false;
-                    break;
-            case 12:
-                if(!ui_create_element(
-                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
-                    COLOR_TILE1,
-                    COLOR_TILE2,
-                    pieces_init,
-                    NULL,
-                    "../../assets/king2.bmp"
-                    ))
-                    return false;
-                    break;
-
-            // TODO OTHER PIECES CASES
-            default:
-                //return false;
             }
+        }
 
     return true;
 }
@@ -228,11 +114,11 @@ void ui_free_elements()
 }
 
 bool ui_create_element(
-    int x, int y, int w, int h,
-    SDL_Color color1, SDL_Color color2,
-    ELM_init init,
-    ELM_update update,
-    char* bmp_path
+    const int x, const int y, const int w, const int h,
+    const SDL_Color color1, const SDL_Color color2,
+    const ELM_init init,
+    const ELM_update update,
+    const char* bmp_path
     )
 {
     if(element_count == 0)
@@ -259,4 +145,15 @@ bool ui_create_element(
 
     element_count++;
     return true;
+}
+
+__forceinline bool create_piece(const int x, const int y, const char* bmp_path)
+{
+    return ui_create_element(
+        x, y, 0, 0,
+        NO_COLOR, NO_COLOR,
+        pieces_init,
+        NULL,
+        bmp_path
+    );
 }

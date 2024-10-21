@@ -30,7 +30,7 @@
 SDL_Renderer* renderer;
 SDL_Window* window;
 
-bool res_init()
+bool window_init()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -65,7 +65,7 @@ bool res_init()
     return true;
 }
 
-void res_free()
+void window_free()
 {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

@@ -40,7 +40,7 @@ bool game_init()
     if(!ui_init_elements())
         return false;
 
-    SDL_SetRenderDrawColor(renderer, 243, 238, 234, 1);
+    SDL_SetRenderDrawColor(renderer, 143, 138, 134, 1);
 
     SDL_RenderClear(renderer);
 

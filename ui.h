@@ -39,7 +39,7 @@ typedef struct Element
     ELM_init init;
     ELM_update update;
 
-    char* bmp_path;
+    const char* bmp_path;
 }Element;
 
 bool ui_init_elements();
@@ -47,12 +47,13 @@ bool ui_update_elements();
 void ui_present();
 void ui_free_elements();
 bool ui_create_element(
-    int x, int y, int w, int h,
-    SDL_Color color1, SDL_Color color2,
-    ELM_init init,
-    ELM_update update,
-    char* bmp_path
+    const int x, const int y, const int w, const int h,
+    const SDL_Color color1, const SDL_Color color2,
+    const ELM_init init,
+    const ELM_update update,
+    const char* bmp_path
     );
+bool create_piece(const int x, const int y, const char* bmp_path);
 
 extern int element_count;
 

@@ -26,9 +26,8 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
 
-bool res_init();
-
-void res_free();
+bool window_init();
+void window_free();
 
 extern SDL_Renderer* renderer;
 
