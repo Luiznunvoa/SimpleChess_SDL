@@ -81,6 +81,119 @@ bool ui_init_elements()
                     ))
                     return false;
                 break;
+            case 3:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../horse.bmp"
+                    ))
+                    return false;
+                    break;
+
+            case 4:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../horse2.bmp"
+                    ))
+                    return false;
+                    break;
+            case 7:
+                if(!ui_create_element(
+                    (145 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../rook.bmp"
+                    ))
+                    return false;
+                break;
+            case 8:
+                if(!ui_create_element(
+                    (145 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../rook2.bmp"
+                    ))
+                    return false;
+                    break;
+            case 5:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../bishop.bmp"
+                    ))
+                    return false;
+                    break;
+            case 6:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../bishop2.bmp"
+                    ))
+                    return false;
+                    break;
+
+            case 9:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../queen.bmp"
+                    ))
+                    return false;
+                    break;
+            case 10:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../queen2.bmp"
+                    ))
+                    return false;
+                    break;
+            case 11:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../king.bmp"
+                    ))
+                    return false;
+                    break;
+            case 12:
+                if(!ui_create_element(
+                    (143 + (65 * j)), (25 + (65 * i)), 0, 0,
+                    COLOR_TILE1,
+                    COLOR_TILE2,
+                    pieces_init,
+                    NULL,
+                    "../king2.bmp"
+                    ))
+                    return false;
+                    break;
+
             // TODO OTHER PIECES CASES
             default:
                 //return false;
