@@ -29,8 +29,8 @@ typedef struct
 {
     int select_x;
     int select_y;
-    int previous_select_y ;
-    int previous_select_x ;
+    int previous_select_y;
+    int previous_select_x;
 }BoardData;
 
 bool board_init(Element* board, SDL_Renderer* renderer);

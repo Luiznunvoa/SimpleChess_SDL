@@ -43,7 +43,7 @@ bool window_init()
         WINDOW_X, WINDOW_Y,
         WINDOW_WIDTH, WINDOW_HEIGHT,
         WINDOW_FLAGS
-    );
+        );
 
     if (window == NULL)
     {
@@ -54,13 +54,18 @@ bool window_init()
     renderer = SDL_CreateRenderer(
         window,
         -1,
-        RENDERER_FLAGS);
+        RENDERER_FLAGS
+        );
 
     if (renderer == NULL)
     {
         printf("Renderer initialization error: %s\n", SDL_GetError());
         return false;
     }
+
+    SDL_SetRenderDrawColor(renderer, 143, 138, 134, 1);
+
+    SDL_RenderClear(renderer);
 
     return true;
 }

@@ -40,14 +40,7 @@ bool game_init()
     if(!ui_init_elements())
         return false;
 
-    SDL_SetRenderDrawColor(renderer, 143, 138, 134, 1);
-
-    SDL_RenderClear(renderer);
-
-    SDL_RenderPresent(renderer);
-
     update = true;
-
     return true;
 }
 
@@ -74,6 +67,7 @@ void game()
                 ui_present();
             else
                 quit  = true;
+
             update = false;
         }
 
@@ -132,8 +126,6 @@ bool key_input_proc()
         update = true;
         break;
     default:
-
     }
-
     return true;
 }

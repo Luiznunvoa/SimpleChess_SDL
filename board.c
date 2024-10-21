@@ -36,33 +36,6 @@ const char board_map[8][8] = {
 
 BoardData board_data;
 
-void draw_border(
-    Uint16* pixelData,
-    const int pitch,
-    const int startX, const int startY,
-    const int size,
-    const Uint16 color
-    )
-{
-    for (int y = startY; y < startY + size; y++)
-    {
-        Uint16* row = pixelData + y * (pitch / 2) + startX;
-        for (int x = 0; x < size; x++)
-            row[x] = color;
-    }
-}
-
-__forceinline Uint16 get_cell_color(
-    const SDL_PixelFormat* format,
-    int row, int col,
-    const SDL_Color color1, const SDL_Color color2
-    )
-{
-    return (board_map[row][col] == '1') ?
-            SDL_MapRGB(format, color1.r, color1.g, color1.b) :
-            SDL_MapRGB(format, color2.r, color2.g, color2.b);
-}
-
 bool board_init(Element* board, SDL_Renderer* renderer)
 {
     void* pixels;
@@ -187,4 +160,31 @@ bool board_update(Element* board)
     SDL_UnlockTexture(board->texture);
 
     return true;
+}
+
+void draw_border(
+    Uint16* pixelData,
+    const int pitch,
+    const int startX, const int startY,
+    const int size,
+    const Uint16 color
+    )
+{
+    for (int y = startY; y < startY + size; y++)
+    {
+        Uint16* row = pixelData + y * (pitch / 2) + startX;
+        for (int x = 0; x < size; x++)
+            row[x] = color;
+    }
+}
+
+__forceinline Uint16 get_cell_color(
+    const SDL_PixelFormat* format,
+    int row, int col,
+    const SDL_Color color1, const SDL_Color color2
+    )
+{
+    return (board_map[row][col] == '1') ?
+            SDL_MapRGB(format, color1.r, color1.g, color1.b) :
+            SDL_MapRGB(format, color2.r, color2.g, color2.b);
 }

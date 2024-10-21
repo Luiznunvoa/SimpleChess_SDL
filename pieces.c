@@ -25,7 +25,8 @@ bool pieces_init(Element* piece, SDL_Renderer* renderer)
 {
     SDL_Surface* pieces_surface = SDL_LoadBMP(piece->bmp_path);
 
-    if (!pieces_surface) {
+    if (!pieces_surface)
+    {
         printf("Erro ao carregar piecesm BMP: %s\n", SDL_GetError());
         return false;
     }
@@ -37,9 +38,12 @@ bool pieces_init(Element* piece, SDL_Renderer* renderer)
 
     SDL_FreeSurface(pieces_surface);
 
-    if (!piece->texture) {
+    if (!piece->texture)
+    {
         printf("Erro ao criar textura da piecesm: %s\n", SDL_GetError());
         return false;
     }
     return true;
 }
+
+//TODO void pieces_update(Element* piece)
