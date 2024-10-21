@@ -65,7 +65,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../../pawn.bmp"
+                    "../../assets/pawn.bmp"
                     ))
                     return false;
                 break;
@@ -77,7 +77,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../../pawn2.bmp"
+                    "../../assets/pawn2.bmp"
                     ))
                     return false;
                 break;
@@ -88,7 +88,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../../horse.bmp"
+                    "../../assets/horse.bmp"
                     ))
                     return false;
                     break;
@@ -100,7 +100,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../../horse2.bmp"
+                    "../../assets/horse2.bmp"
                     ))
                     return false;
                     break;
@@ -111,7 +111,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../../rook.bmp"
+                    "../../assets/rook.bmp"
                     ))
                     return false;
                 break;
@@ -122,7 +122,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../../rook2.bmp"
+                    "../../assets/rook2.bmp"
                     ))
                     return false;
                     break;
@@ -133,7 +133,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../../bishop.bmp"
+                    "../../assets/bishop.bmp"
                     ))
                     return false;
                     break;
@@ -144,7 +144,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../../bishop2.bmp"
+                    "../../assets/bishop2.bmp"
                     ))
                     return false;
                     break;
@@ -156,7 +156,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../..//queen.bmp"
+                    "../../assets/queen.bmp"
                     ))
                     return false;
                     break;
@@ -167,7 +167,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../..//queen2.bmp"
+                    "../../assets/queen2.bmp"
                     ))
                     return false;
                     break;
@@ -178,7 +178,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../..//king.bmp"
+                    "../../assets/king.bmp"
                     ))
                     return false;
                     break;
@@ -189,7 +189,7 @@ bool ui_init_elements()
                     COLOR_TILE2,
                     pieces_init,
                     NULL,
-                    "../../king2.bmp"
+                    "../../assets/king2.bmp"
                     ))
                     return false;
                     break;
