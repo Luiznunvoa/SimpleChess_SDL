@@ -29,7 +29,7 @@ bool pieces_init(Element* piece, SDL_Renderer* renderer)
 
     if (!pieces_surface)
     {
-        printf("Erro ao carregar piecesm BMP: %s\n", SDL_GetError());
+        printf("Error loading the BMP file to the surface: %s\n", SDL_GetError());
         return false;
     }
 
@@ -42,13 +42,13 @@ bool pieces_init(Element* piece, SDL_Renderer* renderer)
 
     if (!piece->texture)
     {
-        printf("Erro ao criar textura da piecesm: %s\n", SDL_GetError());
+        printf("Error creating the texture: %s\n", SDL_GetError());
         return false;
     }
     return true;
 }
 
-bool pieces_update(Element* piece)
+bool pieces_update(const Element* piece)
 {
     const int x = (piece->rect.x - 45) / 65;
     const int y = (piece->rect.y - 45) / 65;
@@ -56,7 +56,7 @@ bool pieces_update(Element* piece)
 
     if(board_data.select_x == x && board_data.select_y == y)
     {
-        printf("selecting the piece %s\n", piece->bmp_path);
+        printf("Selecting the piece %s\n", piece->bmp_path);
     }
     return true;
 }

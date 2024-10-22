@@ -23,6 +23,6 @@
 #include "ui.h"
 
 bool pieces_init(Element* piece, SDL_Renderer* renderer);
-bool pieces_update(Element* pieces);
+bool pieces_update(const Element* piece);
 
 #endif //PIECES_H
