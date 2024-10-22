@@ -17,6 +17,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
+#include <stdio.h>
+
 #include "ui.h"
 #include "res.h"
 #include "board.h"
@@ -59,7 +61,7 @@ const char* piece_bmp[12] =
 
 int element_count;
 
-Element* ui_elements;
+Element** ui_elements;
 
 bool ui_init_elements()
 {
@@ -86,14 +88,16 @@ bool ui_init_elements()
                     return false;
             }
         }
+
+    printf("ui_elements created\n");
     return true;
 }
 
 bool ui_update_elements()
 {
     for(int i = 0; i < element_count; i++)
-        if(ui_elements[i].update != NULL)
-            if(!ui_elements[i].update(&ui_elements[i]))
+        if(ui_elements[i]->update != NULL)
+            if(!ui_elements[i]->update(ui_elements[i]))
                 return false;
     return true;
 }
@@ -101,8 +105,8 @@ bool ui_update_elements()
 void ui_present()
 {
     for (int i = 0; i < element_count; i++)
-        if(ui_elements[i].texture != NULL)
-            SDL_RenderCopy(renderer, ui_elements[i].texture, NULL, &ui_elements[i].rect);
+        if(ui_elements[i]->texture != NULL)
+            SDL_RenderCopy(renderer, ui_elements[i]->texture, NULL, &ui_elements[i]->rect);
 
     SDL_RenderPresent(renderer);
 }
@@ -110,10 +114,15 @@ void ui_present()
 void ui_free_elements()
 {
     for(int i = 0; i < element_count; i++)
-        if(ui_elements[i].texture != NULL)
-            SDL_DestroyTexture(ui_elements[i].texture);
-
+        if(ui_elements[i]->texture != NULL)
+        {
+            SDL_DestroyTexture(ui_elements[i]->texture);
+            free(ui_elements[i]);
+            ui_elements[i] = NULL;
+        }
     free(ui_elements);
+    ui_elements = NULL;
+    printf("ui_elements freed\n");
 }
 
 bool ui_create_element(
@@ -125,25 +134,27 @@ bool ui_create_element(
     )
 {
     if(element_count == 0)
-        ui_elements = (Element*)malloc(sizeof(Element));
+        ui_elements = (Element**)malloc(sizeof(Element*));
     else
-        ui_elements = (Element*)realloc(ui_elements, (element_count + 1) * sizeof(Element));
+        ui_elements = (Element**)realloc(ui_elements, (element_count + 1) * sizeof(Element*));
 
     if(ui_elements == NULL)
         return false;
 
-    ui_elements[element_count].rect.x = x;
-    ui_elements[element_count].rect.y = y;
-    ui_elements[element_count].rect.w = w;
-    ui_elements[element_count].rect.h = h;
-    ui_elements[element_count].color1 = color1;
-    ui_elements[element_count].color2 = color2;
-    ui_elements[element_count].init = init;
-    ui_elements[element_count].update = update;
-    ui_elements[element_count].bmp_path = bmp_path;
+    ui_elements[element_count] = (Element*)malloc(sizeof(Element));
+
+    ui_elements[element_count]->rect.x = x;
+    ui_elements[element_count]->rect.y = y;
+    ui_elements[element_count]->rect.w = w;
+    ui_elements[element_count]->rect.h = h;
+    ui_elements[element_count]->color1 = color1;
+    ui_elements[element_count]->color2 = color2;
+    ui_elements[element_count]->init = init;
+    ui_elements[element_count]->update = update;
+    ui_elements[element_count]->bmp_path = bmp_path;
 
 
-    if(!ui_elements[element_count].init(&ui_elements[element_count], renderer))
+    if(!ui_elements[element_count]->init(ui_elements[element_count], renderer))
         return false;
 
     element_count++;

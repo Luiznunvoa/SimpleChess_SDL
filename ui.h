@@ -56,6 +56,7 @@ bool ui_create_element(
 bool create_piece(const int x, const int y, const char* bmp_path);
 
 extern int element_count;
+extern int board[8][8];
 extern const char* piece_bmp[12];
 
 #endif //UI_H

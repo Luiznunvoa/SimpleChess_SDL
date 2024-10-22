@@ -101,8 +101,6 @@ bool board_init(Element* board, SDL_Renderer* renderer)
     SDL_UnlockTexture(board->texture);
 
     board_data = (BoardData){0};
-
-    printf("Board Loaded\n");
     return true;
 }
 

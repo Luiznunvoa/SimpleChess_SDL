@@ -52,6 +52,20 @@ bool window_init()
         return false;
     }
 
+    SDL_Surface* iconSurface = SDL_LoadBMP("../../assets/black_pawn.bmp");
+
+    if (iconSurface != NULL)
+    {
+        SDL_SetWindowIcon(window, iconSurface);
+        SDL_FreeSurface(iconSurface);
+        iconSurface = NULL;
+    }
+    else
+    {
+        printf("Error loading icon: %s\n", SDL_GetError());
+        return false;
+    }
+
     renderer = SDL_CreateRenderer(
         window,
         -1,
@@ -68,6 +82,7 @@ bool window_init()
 
     SDL_RenderClear(renderer);
 
+    printf("window initialized\n");
     return true;
 }
 
@@ -76,4 +91,5 @@ void window_free()
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    printf("window freed\n");
 }
