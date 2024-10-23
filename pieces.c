@@ -84,7 +84,9 @@ bool pieces_update(Element* piece)
 
     if(board_data.select_x == x && board_data.select_y == y)
     {
-        printf("Selecting the piece %s\n", piece->bmp_path);
+        selected_piece.type = piece->type;
+        selected_piece.x = x;
+        selected_piece.y = y;
     }
     return true;
 }

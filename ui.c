@@ -46,6 +46,7 @@ int board[8][8] = {
 int element_count;
 
 Element** ui_elements;
+SelectedPiece selected_piece;
 
 bool ui_init_elements()
 {
@@ -55,7 +56,7 @@ bool ui_init_elements()
     for(int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
             if (board[i][j] != 0)
-                if(!create_piece((BOARD_X + 5) + (65 * j),(BOARD_Y + 5) + (65 * i), board[i][j]))
+                if(!create_piece(j,i, board[i][j]))
                     return false;
 
     printf("ui_elements created\n");
@@ -94,6 +95,28 @@ void ui_free_elements()
     printf("ui_elements freed\n");
 }
 
+__forceinline bool create_board()
+{
+    return ui_create_element(
+        BOARD_X, BOARD_Y, BOARD_SIZE, BOARD_SIZE,
+        COLOR_TILE1, COLOR_TILE2,
+        board_init,
+        board_update,
+        0
+    );
+}
+
+__forceinline bool create_piece(const int x, const int y, const piece_types type)
+{
+    return ui_create_element(
+        (BOARD_X + 5) + (65 * x), (BOARD_Y + 5) + (65 * y), 0, 0,
+        NO_COLOR, NO_COLOR,
+        pieces_init,
+        pieces_update,
+        type
+    );
+}
+
 bool ui_create_element(
     const int x, const int y, const int w, const int h,
     const SDL_Color color1, const SDL_Color color2,
@@ -129,26 +152,4 @@ bool ui_create_element(
 
     element_count++;
     return true;
-}
-
-__forceinline bool create_piece(const int x, const int y, const piece_types type)
-{
-    return ui_create_element(
-        x, y, 0, 0,
-        NO_COLOR, NO_COLOR,
-        pieces_init,
-        pieces_update,
-        type
-    );
-}
-
-__forceinline bool create_board()
-{
-    return ui_create_element(
-        BOARD_X, BOARD_Y, BOARD_SIZE, BOARD_SIZE,
-        COLOR_TILE1, COLOR_TILE2,
-        board_init,
-        board_update,
-        0
-        );
 }

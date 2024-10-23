@@ -22,20 +22,14 @@
 #include "board.h"
 
 #define SELECTION_COLOR 2783
+#define PIECE_COLOR 903
 #define BORDER_COLOR 0
-#define PIXEL_DATA
 
-//probably not a good idea to have so many macros
 #define BORDER_SIZE (board->rect.w / 100)
 #define CELL_SIZE ((board->rect.w / 8) -1)
-#define GRID_START_X (col * CELL_SIZE + BORDER_SIZE)
-#define GRID_START_Y (row * CELL_SIZE + BORDER_SIZE)
-#define SELECT_START_X (BORDER_SIZE + board_data.select_x * CELL_SIZE)
-#define SELECT_START_Y (BORDER_SIZE + board_data.select_y * CELL_SIZE)
-#define PREV_START_X (BORDER_SIZE + board_data.previous_select_x * CELL_SIZE)
-#define PREV_START_Y (BORDER_SIZE + board_data.previous_select_y * CELL_SIZE)
 
-const char board_map[8][8] = {
+const char board_map[8][8] =
+{
     {'0', '1', '0', '1', '0', '1', '0', '1'},
     {'1', '0', '1', '0', '1', '0', '1', '0'},
     {'0', '1', '0', '1', '0', '1', '0', '1'},
@@ -87,7 +81,10 @@ bool board_init(Element* board, SDL_Renderer* renderer)
             SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b) :
             SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
 
-            draw_border(pixelData, pitch, GRID_START_X, GRID_START_Y, CELL_SIZE, color);
+            const int start_x = (col * CELL_SIZE + BORDER_SIZE);
+            const int start_y = (row * CELL_SIZE + BORDER_SIZE);
+
+            draw_border(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
         }
 
     SDL_FreeFormat(format);
@@ -157,10 +154,16 @@ void draw_selected_cell(
             SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b) :
             SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
 
-        draw_border(pixelData, pitch, PREV_START_X, PREV_START_Y, CELL_SIZE, originalColor);
+            const int start_x = (BORDER_SIZE + board_data.previous_select_x * CELL_SIZE);
+            const int  start_y =  (BORDER_SIZE + board_data.previous_select_y * CELL_SIZE);
+
+        draw_border(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
 
-    draw_border(pixelData, pitch, SELECT_START_X, SELECT_START_Y, CELL_SIZE, SELECTION_COLOR);
+    const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
+    const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);
+
+    draw_border(pixelData, pitch, start_x, start_y, CELL_SIZE, SELECTION_COLOR);
 
     board_data.previous_select_x = board_data.select_x;
     board_data.previous_select_y = board_data.select_y;
