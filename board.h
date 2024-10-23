@@ -34,15 +34,19 @@ typedef struct
 }BoardData;
 
 bool board_init(Element* board, SDL_Renderer* renderer);
-bool board_update(const Element* board);
+bool board_update(Element* board);
+bool lock_texture_and_alloc_format(
+    SDL_Texture* texture,
+    void** pixels,
+    int* pitch,
+    SDL_PixelFormat** format,
+    SDL_PixelFormatEnum enum_format
+    );
 void draw_selected_cell(
     const Element* board,
-    const int border_size,
-    const int board_size,
     const SDL_PixelFormat* format,
     Uint16* pixelData,
-    const int pitch,
-    const Uint16 selection_color
+    const int pitch
     );
 void draw_border(
     Uint16* pixelData,

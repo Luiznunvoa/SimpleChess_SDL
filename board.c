@@ -21,13 +21,19 @@
 
 #include "board.h"
 
-#define BORDER_SIZE (board->rect.w / 100)
-#define BOARD_SIZE ((board->rect.w / 8) -1)
 #define SELECTION_COLOR 2783
 #define BORDER_COLOR 0
 #define PIXEL_DATA
-#define START_X (col * BOARD_SIZE + BORDER_SIZE)
-#define START_Y (row * BOARD_SIZE + BORDER_SIZE)
+
+//probably not a good idea to have so many macros
+#define BORDER_SIZE (board->rect.w / 100)
+#define CELL_SIZE ((board->rect.w / 8) -1)
+#define GRID_START_X (col * CELL_SIZE + BORDER_SIZE)
+#define GRID_START_Y (row * CELL_SIZE + BORDER_SIZE)
+#define SELECT_START_X (BORDER_SIZE + board_data.select_x * CELL_SIZE)
+#define SELECT_START_Y (BORDER_SIZE + board_data.select_y * CELL_SIZE)
+#define PREV_START_X (BORDER_SIZE + board_data.previous_select_x * CELL_SIZE)
+#define PREV_START_Y (BORDER_SIZE + board_data.previous_select_y * CELL_SIZE)
 
 const char board_map[8][8] = {
     {'0', '1', '0', '1', '0', '1', '0', '1'},
@@ -44,8 +50,9 @@ BoardData board_data;
 
 bool board_init(Element* board, SDL_Renderer* renderer)
 {
-    void* pixels;
     int pitch;
+    void* pixels;
+    SDL_PixelFormat* format;
 
     board->rect.w += 2 * BORDER_SIZE;
     board->rect.h += 2 * BORDER_SIZE;
@@ -63,19 +70,8 @@ bool board_init(Element* board, SDL_Renderer* renderer)
         return false;
     }
 
-    if (SDL_LockTexture(board->texture, NULL, &pixels, &pitch) < 0)
+    if (!lock_texture_and_alloc_format(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565))
     {
-        printf("Error locking texture: %s\n", SDL_GetError());
-        SDL_DestroyTexture(board->texture);
-        return false;
-    }
-
-    SDL_PixelFormat* format = SDL_AllocFormat(SDL_PIXELFORMAT_RGB565);
-
-    if (!format)
-    {
-        printf("Error allocating format: %s\n", SDL_GetError());
-        SDL_UnlockTexture(board->texture);
         SDL_DestroyTexture(board->texture);
         return false;
     }
@@ -91,7 +87,7 @@ bool board_init(Element* board, SDL_Renderer* renderer)
             SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b) :
             SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
 
-            draw_border(pixelData, pitch, START_X, START_Y, BOARD_SIZE, color);
+            draw_border(pixelData, pitch, GRID_START_X, GRID_START_Y, CELL_SIZE, color);
         }
 
     SDL_FreeFormat(format);
@@ -101,30 +97,21 @@ bool board_init(Element* board, SDL_Renderer* renderer)
     return true;
 }
 
-bool board_update(const Element* board)
+bool board_update(Element* board)
 {
-    void* pixels;
     int pitch;
+    void* pixels;
+    SDL_PixelFormat* format;
 
-    if (SDL_LockTexture(board->texture, NULL, &pixels, &pitch) < 0)
+    if (!lock_texture_and_alloc_format(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565))
     {
-        printf("Error locking texture:: %s\n", SDL_GetError());
         SDL_DestroyTexture(board->texture);
-        return false;
-    }
-
-    SDL_PixelFormat* format = SDL_AllocFormat(SDL_PIXELFORMAT_RGB565);
-
-    if (!format)
-    {
-        printf("Error allocating format: %s\n", SDL_GetError());
-        SDL_UnlockTexture(board->texture);
         return false;
     }
 
     Uint16* pixelData = (Uint16*)pixels;
 
-    draw_selected_cell(board, BORDER_SIZE, BOARD_SIZE, format, pixelData, pitch, SELECTION_COLOR);
+    draw_selected_cell(board, format, pixelData, pitch);
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -132,37 +119,53 @@ bool board_update(const Element* board)
     return true;
 }
 
+bool lock_texture_and_alloc_format(
+    SDL_Texture* texture,
+    void** pixels,
+    int* pitch,
+    SDL_PixelFormat** format,
+    SDL_PixelFormatEnum enum_format
+    )
+{
+    if (SDL_LockTexture(texture, NULL, pixels, pitch) < 0)
+    {
+        printf("Error locking texture: %s\n", SDL_GetError());
+        return false;
+    }
+
+    *format = SDL_AllocFormat(enum_format);
+    if (!*format)
+    {
+        printf("Error allocating pixel format: %s\n", SDL_GetError());
+        SDL_UnlockTexture(texture);
+        return false;
+    }
+
+    return true;
+}
+
 void draw_selected_cell(
     const Element* board,
-    const int border_size,
-    const int board_size,
     const SDL_PixelFormat* format,
     Uint16* pixelData,
-    const int pitch,
-    const Uint16 selection_color
+    const int pitch
     )
 {
     if (board_data.previous_select_x != -1 && board_data.previous_select_y != -1)
     {
-        const int prev_start_x = border_size + board_data.previous_select_x * board_size;
-        const int prev_start_y = border_size + board_data.previous_select_y * board_size;
-
         const Uint16 originalColor = (board_map[board_data.previous_select_y][board_data.previous_select_x] == '1') ?
             SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b) :
             SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
 
-        draw_border(pixelData, pitch, prev_start_x, prev_start_y, board_size, originalColor);
+        draw_border(pixelData, pitch, PREV_START_X, PREV_START_Y, CELL_SIZE, originalColor);
     }
 
-    const int start_x = border_size + board_data.select_x * board_size;
-    const int start_y = border_size + board_data.select_y * board_size;
-
-    draw_border(pixelData, pitch, start_x, start_y, board_size, selection_color);
+    draw_border(pixelData, pitch, SELECT_START_X, SELECT_START_Y, CELL_SIZE, SELECTION_COLOR);
 
     board_data.previous_select_x = board_data.select_x;
     board_data.previous_select_y = board_data.select_y;
-
 }
+
 void draw_border(
     Uint16* pixelData,
     const int pitch,

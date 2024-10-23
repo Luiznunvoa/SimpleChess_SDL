@@ -50,7 +50,7 @@ bool ui_create_element(
     const int x, const int y, const int w, const int h,
     const SDL_Color color1, const SDL_Color color2,
     const ELM_init init,
-    const ELM_update update,
+    ELM_update update,
     const char* bmp_path
     );
 bool create_piece(const int x, const int y, const char* bmp_path);

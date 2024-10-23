@@ -48,7 +48,7 @@ bool pieces_init(Element* piece, SDL_Renderer* renderer)
     return true;
 }
 
-bool pieces_update(const Element* piece)
+bool pieces_update(Element* piece)
 {
     const int x = (piece->rect.x - 45) / 65;
     const int y = (piece->rect.y - 45) / 65;
