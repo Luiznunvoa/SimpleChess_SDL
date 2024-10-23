@@ -28,6 +28,23 @@ typedef struct Element Element;
 typedef bool (*ELM_init)(Element* element, SDL_Renderer* renderer);
 typedef bool (*ELM_update)(Element* element);
 
+typedef enum
+{
+    NONE,
+    BLACK_PAWN,
+    WHITE_PAWN,
+    BLACK_HORSE,
+    WHITE_HORSE,
+    BLACK_BISHOP,
+    WHITE_BISHOP,
+    BLACK_ROOK,
+    WHITE_ROOK,
+    BLACK_QUEEN,
+    WHITE_QUEEN,
+    BLACK_KING,
+    WHITE_KING
+}piece_types;
+
 typedef struct Element
 {
     SDL_Texture* texture;
@@ -39,6 +56,7 @@ typedef struct Element
     ELM_init init;
     ELM_update update;
 
+    piece_types type;
     const char* bmp_path;
 }Element;
 
@@ -51,9 +69,10 @@ bool ui_create_element(
     const SDL_Color color1, const SDL_Color color2,
     const ELM_init init,
     ELM_update update,
-    const char* bmp_path
+    const piece_types type
     );
-bool create_piece(const int x, const int y, const char* bmp_path);
+bool create_piece(const int x, const int y, piece_types type);
+bool create_board();
 
 extern int element_count;
 extern int board[8][8];

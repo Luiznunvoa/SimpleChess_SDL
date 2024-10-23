@@ -43,51 +43,20 @@ int board[8][8] = {
     8, 4, 6, 10, 12, 6, 4, 8,
 };
 
-const char* piece_bmp[12] =
-{
-    "../../assets/black_pawn.bmp",
-    "../../assets/white_pawn.bmp",
-    "../../assets/black_horse.bmp",
-    "../../assets/white_horse.bmp",
-    "../../assets/black_bishop.bmp",
-    "../../assets/white_bishop.bmp",
-    "../../assets/black_rook.bmp",
-    "../../assets/white_rook.bmp",
-    "../../assets/black_queen.bmp",
-    "../../assets/white_queen.bmp",
-    "../../assets/black_king.bmp",
-    "../../assets/white_king.bmp"
-};
-
 int element_count;
 
 Element** ui_elements;
 
 bool ui_init_elements()
 {
-    if(!ui_create_element(
-        BOARD_X, BOARD_Y, BOARD_SIZE, BOARD_SIZE,
-        COLOR_TILE1, COLOR_TILE2,
-        board_init,
-        board_update,
-        NULL
-        ))
+    if(!create_board())
         return false;
 
     for(int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
-        {
-            const int piece_type = board[i][j];
-
-            if (piece_type != 0)
-            {
-                const int x = (BOARD_X + 5) + (65 * j);
-                const int y = (BOARD_Y + 5) + (65 * i);
-
-                if(!create_piece(x, y, piece_bmp[piece_type - 1]))
+            if (board[i][j] != 0)
+                if(!create_piece((BOARD_X + 5) + (65 * j),(BOARD_Y + 5) + (65 * i), board[i][j]))
                     return false;
-            }
-        }
 
     printf("ui_elements created\n");
     return true;
@@ -130,7 +99,7 @@ bool ui_create_element(
     const SDL_Color color1, const SDL_Color color2,
     const ELM_init init,
     ELM_update update,
-    const char* bmp_path
+    piece_types type
     )
 {
     if(element_count == 0)
@@ -151,7 +120,8 @@ bool ui_create_element(
     ui_elements[element_count]->color2 = color2;
     ui_elements[element_count]->init = init;
     ui_elements[element_count]->update = update;
-    ui_elements[element_count]->bmp_path = bmp_path;
+    ui_elements[element_count]->type = type;
+    ui_elements[element_count]->bmp_path = NULL;
 
 
     if(!ui_elements[element_count]->init(ui_elements[element_count], renderer))
@@ -161,13 +131,24 @@ bool ui_create_element(
     return true;
 }
 
-__forceinline bool create_piece(const int x, const int y, const char* bmp_path)
+__forceinline bool create_piece(const int x, const int y, const piece_types type)
 {
     return ui_create_element(
         x, y, 0, 0,
         NO_COLOR, NO_COLOR,
         pieces_init,
         pieces_update,
-        bmp_path
+        type
     );
+}
+
+__forceinline bool create_board()
+{
+    return ui_create_element(
+        BOARD_X, BOARD_Y, BOARD_SIZE, BOARD_SIZE,
+        COLOR_TILE1, COLOR_TILE2,
+        board_init,
+        board_update,
+        0
+        );
 }

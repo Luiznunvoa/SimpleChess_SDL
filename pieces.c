@@ -23,8 +23,36 @@
 #include "ui.h"
 #include "board.h"
 
+typedef struct {
+    const char* bmp_path;
+    int piece;
+} PieceMap;
+
+PieceMap piece_map[] = {
+    {"../../assets/black_pawn.bmp", BLACK_PAWN},
+    {"../../assets/white_pawn.bmp", WHITE_PAWN},
+    {"../../assets/black_horse.bmp", BLACK_HORSE},
+    {"../../assets/white_horse.bmp", WHITE_HORSE},
+    {"../../assets/black_bishop.bmp", BLACK_BISHOP},
+    {"../../assets/white_bishop.bmp", WHITE_BISHOP},
+    {"../../assets/black_rook.bmp", BLACK_ROOK},
+    {"../../assets/white_rook.bmp", WHITE_ROOK},
+    {"../../assets/black_queen.bmp", BLACK_QUEEN},
+    {"../../assets/white_queen.bmp", WHITE_QUEEN},
+    {"../../assets/black_king.bmp", BLACK_KING},
+    {"../../assets/white_king.bmp", WHITE_KING}
+};
+
 bool pieces_init(Element* piece, SDL_Renderer* renderer)
 {
+
+    for(int i = 0; i < 12; i++)
+        if(piece_map[i].piece == piece->type)
+        {
+            piece->bmp_path = piece_map[i].bmp_path;
+            break;
+        }
+
     SDL_Surface* pieces_surface = SDL_LoadBMP(piece->bmp_path);
 
     if (!pieces_surface)
