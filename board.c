@@ -21,6 +21,8 @@
 
 #include "board.h"
 
+#include "game.h"
+
 #define SELECTION_COLOR 2783
 #define PIECE_COLOR 903
 #define BORDER_COLOR 0
@@ -41,6 +43,7 @@ const char board_map[8][8] =
 };
 
 BoardData board_data;
+bool update_state;
 
 bool board_init(Element* board, SDL_Renderer* renderer)
 {
@@ -112,6 +115,7 @@ bool board_update(Element* board)
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
+    update = update_state;
 
     return true;
 }
@@ -163,7 +167,19 @@ void draw_selected_cell(
     const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
     const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);
 
-    draw_border(pixelData, pitch, start_x, start_y, CELL_SIZE, SELECTION_COLOR);
+    Uint16 color;
+
+    if(board_data.previous_select_x == selected_piece.x && board_data.previous_select_y == selected_piece.y)
+        color = PIECE_COLOR;
+    else
+        color = SELECTION_COLOR;
+
+    draw_border(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+
+    if(board_data.previous_select_x == board_data.select_x && board_data.previous_select_y == board_data.select_y)
+        update_state = false;
+    else
+        update_state = true;
 
     board_data.previous_select_x = board_data.select_x;
     board_data.previous_select_y = board_data.select_y;

@@ -24,7 +24,7 @@
 #include "ui.h"
 #include "board.h"
 
-#define FPS 10
+#define FPS 30
 
 Uint32 last_frame_time;
 Uint32 start_time;
@@ -62,14 +62,10 @@ void game()
         quit = event_proc();
 
         if(update)
-        {
             if(ui_update_elements())
                 ui_present();
             else
                 quit  = true;
-
-            update = false;
-        }
 
         frame_time = SDL_GetTicks() - start_time;
 

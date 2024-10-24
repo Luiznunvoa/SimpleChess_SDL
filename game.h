@@ -28,4 +28,6 @@ void game();
 bool event_proc();
 bool key_input_proc();
 
+extern bool update;
+
 #endif //GAME_H
