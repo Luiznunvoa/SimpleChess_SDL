@@ -43,6 +43,17 @@ PieceMap piece_map[] = {
     {"../../assets/white_king.bmp", WHITE_KING}
 };
 
+int board[8][8] = {
+    7, 3, 5, 9, 11, 5, 3, 7,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    2, 2, 2, 2, 2, 2, 2, 2,
+    8, 4, 6, 10, 12, 6, 4, 8,
+};
+
 bool pieces_init(Element* piece, SDL_Renderer* renderer)
 {
 
@@ -82,7 +93,7 @@ bool pieces_update(Element* piece)
     const int y = (piece->rect.y - 45) / 65;
 
 
-    if(board_data.select_x == x && board_data.select_y == y)
+    if(board_data.select_x == x && board_data.select_y == y && !selected_piece.locked)
     {
         selected_piece.type = piece->type;
         selected_piece.x = x;

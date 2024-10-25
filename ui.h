@@ -49,6 +49,11 @@ typedef struct
 {
     int x;
     int y;
+    int previous_x;
+    int previous_y;
+
+    bool locked;
+
     piece_types type;
 }SelectedPiece;
 

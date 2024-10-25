@@ -48,7 +48,7 @@ void draw_selected_cell(
     Uint16* pixelData,
     const int pitch
     );
-void draw_border(
+void draw_cell(
     Uint16* pixelData,
     const int pitch,
     const int startX, const int startY,

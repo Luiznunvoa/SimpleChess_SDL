@@ -75,7 +75,7 @@ bool board_init(Element* board, SDL_Renderer* renderer)
 
     Uint16* pixelData = (Uint16*)pixels;
 
-    draw_border(pixelData, pitch, 0, 0, board->rect.w, BORDER_COLOR);
+    draw_cell(pixelData, pitch, 0, 0, board->rect.w, BORDER_COLOR);
 
     for (int row = 0; row < 8; row++)
         for (int col = 0; col < 8; col++)
@@ -87,7 +87,7 @@ bool board_init(Element* board, SDL_Renderer* renderer)
             const int start_x = (col * CELL_SIZE + BORDER_SIZE);
             const int start_y = (row * CELL_SIZE + BORDER_SIZE);
 
-            draw_border(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+            draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
         }
 
     SDL_FreeFormat(format);
@@ -158,23 +158,25 @@ void draw_selected_cell(
             SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b) :
             SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
 
-            const int start_x = (BORDER_SIZE + board_data.previous_select_x * CELL_SIZE);
-            const int  start_y =  (BORDER_SIZE + board_data.previous_select_y * CELL_SIZE);
+        const int start_x = (BORDER_SIZE + board_data.previous_select_x * CELL_SIZE);
+        const int  start_y =  (BORDER_SIZE + board_data.previous_select_y * CELL_SIZE);
 
-        draw_border(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
+        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
 
-    const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
-    const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);
+    {
+        const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
+        const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);
 
-    Uint16 color;
+        Uint16 color;
 
-    if(board_data.previous_select_x == selected_piece.x && board_data.previous_select_y == selected_piece.y)
-        color = PIECE_COLOR;
-    else
-        color = SELECTION_COLOR;
+        if(board_data.previous_select_x == selected_piece.x && board_data.previous_select_y == selected_piece.y)
+            color = PIECE_COLOR;
+        else
+            color = SELECTION_COLOR;
 
-    draw_border(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+    }
 
     if(board_data.previous_select_x == board_data.select_x && board_data.previous_select_y == board_data.select_y)
         update_state = false;
@@ -183,9 +185,34 @@ void draw_selected_cell(
 
     board_data.previous_select_x = board_data.select_x;
     board_data.previous_select_y = board_data.select_y;
+
+    if(selected_piece.locked && (selected_piece.x != board_data.select_x || selected_piece.y != board_data.select_y))
+    {
+        const int start_x = (BORDER_SIZE + selected_piece.x * CELL_SIZE);
+        const int start_y = (BORDER_SIZE + selected_piece.y * CELL_SIZE);
+
+        selected_piece.previous_x = selected_piece.x;
+        selected_piece.previous_y = selected_piece.y;
+
+        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, PIECE_COLOR);
+    }
+    else if(!selected_piece.locked)
+    {
+        const Uint16 color = (board_map[selected_piece.previous_x][selected_piece.previous_y] == '1') ?
+            SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b) :
+            SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
+
+        const int start_x = (BORDER_SIZE + selected_piece.previous_x * CELL_SIZE);
+        const int start_y = (BORDER_SIZE + selected_piece.previous_y * CELL_SIZE);
+
+        selected_piece.previous_x = selected_piece.x;
+        selected_piece.previous_y = selected_piece.y;
+
+        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+    }
 }
 
-void draw_border(
+void draw_cell(
     Uint16* pixelData,
     const int pitch,
     const int startX, const int startY,

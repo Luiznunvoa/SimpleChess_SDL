@@ -84,10 +84,9 @@ bool event_proc()
         {
         case SDL_QUIT:
             return true;
-        case SDL_KEYDOWN:
+        case SDL_KEYUP:
             if(!key_input_proc())
                 return false;
-        case SDL_KEYUP:
             break;
         default:
         }
@@ -119,6 +118,10 @@ bool key_input_proc()
     case SDLK_RIGHT:
         if(board_data.select_x < 7)
             board_data.select_x += 1;
+        update = true;
+        break;
+    case SDLK_i:
+        selected_piece.locked = !selected_piece.locked;
         update = true;
         break;
     default:

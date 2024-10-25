@@ -32,17 +32,6 @@
 #define BOARD_X 40
 #define BOARD_Y 40
 
-int board[8][8] = {
-    7, 3, 5, 9, 11, 5, 3, 7,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    2, 2, 2, 2, 2, 2, 2, 2,
-    8, 4, 6, 10, 12, 6, 4, 8,
-};
-
 int element_count;
 
 Element** ui_elements;
@@ -58,6 +47,8 @@ bool ui_init_elements()
             if (board[i][j] != 0)
                 if(!create_piece(j,i, board[i][j]))
                     return false;
+
+    selected_piece = (SelectedPiece){0};
 
     printf("ui_elements created\n");
     return true;
