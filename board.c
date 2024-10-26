@@ -23,8 +23,11 @@
 #include "game.h"
 #include "pieces.h"
 
-#define SELECTION_COLOR 2783
-#define PIECE_COLOR 903
+#define SELECTION_COLOR 0x2ce5
+#define PIECE_COLOR 0x32f1
+#define LOCKED_PIECE 0x79b2
+#define DARK_CELL 0x734B
+#define BRIGHT_CELL 0x9C90
 #define BORDER_COLOR 0
 
 #define BORDER_SIZE (board->rect.w / 100)
@@ -44,7 +47,6 @@ const char board_map[8][8] =
 };
 
 BoardData board_data; // Structure with the board selection cursor information
-bool update_state; // Variable defining if there is a need to update the screen
 
 // Initializes the board with a texture and fills it with colors based on a board map.
 bool board_init(Element* board, SDL_Renderer* renderer)
@@ -85,8 +87,8 @@ bool board_init(Element* board, SDL_Renderer* renderer)
         for (int col = 0; col < 8; col++)
         {
             const Uint16 color = (board_map[row][col] == '1') ?
-            SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b) :
-            SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
+            DARK_CELL :
+            BRIGHT_CELL;
 
             const int start_x = (col * CELL_SIZE + BORDER_SIZE);
             const int start_y = (row * CELL_SIZE + BORDER_SIZE);
@@ -121,7 +123,6 @@ bool board_update(Element* board)
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
-    update = update_state;
 
     return true;
 }
@@ -147,11 +148,14 @@ void draw_selected_cell(
         draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
 
-    Uint16 color = SELECTION_COLOR;
+    Uint16 color;
 
     // Updates color if selected cell matches locked piece position.
     if(board_data.previous_select_x == selected_piece.x && board_data.previous_select_y == selected_piece.y)
         color = PIECE_COLOR;
+    else
+        color = SELECTION_COLOR;
+
 
     const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
     const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);
@@ -160,9 +164,9 @@ void draw_selected_cell(
 
     // Updates board state the select cursor changed position
     if(board_data.previous_select_x == board_data.select_x && board_data.previous_select_y == board_data.select_y)
-        update_state = false;
+        update = false;
     else
-        update_state = true;
+        update = true;
 
     board_data.previous_select_x = board_data.select_x;
     board_data.previous_select_y = board_data.select_y;
@@ -189,7 +193,7 @@ void draw_locked_piece(
         selected_piece.previous_x = selected_piece.x;
         selected_piece.previous_y = selected_piece.y;
 
-        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, PIECE_COLOR);
+        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, LOCKED_PIECE);
     }
     // Removes locked piece.
     else if (!selected_piece.locked &&
