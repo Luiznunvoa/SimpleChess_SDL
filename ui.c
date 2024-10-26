@@ -35,9 +35,8 @@
 int element_count;
 
 Element** ui_elements; // array of pointers to structs containing the data from each ui_element
-SelectedPiece selected_piece; // piece
 
-// Initializes the ui elements int "ui_elements" array
+// Initializes the ui elements into the "ui_elements" array
 bool ui_init_elements()
 {
     if(!create_board())
@@ -55,7 +54,7 @@ bool ui_init_elements()
     return true;
 }
 
-// Calls every update function different than NULL
+// Calls every update function pointer different than NULL
 bool ui_update_elements()
 {
     for(int i = 0; i < element_count; i++)
@@ -65,7 +64,7 @@ bool ui_update_elements()
     return true;
 }
 
-// Update the render state of the ui
+// Update the render state of the ui for elements with valid textures
 void ui_present()
 {
     for (int i = 0; i < element_count; i++)
@@ -103,7 +102,7 @@ __forceinline bool create_board()
 }
 
 // helper function to create the ui_element for each piece in the board
-__forceinline bool create_piece(const int x, const int y, const piece_types type)
+__forceinline bool create_piece(const int x, const int y, const Uint8 type)
 {
     return ui_create_element(
         (BOARD_X + 5) + (65 * x), (BOARD_Y + 5) + (65 * y), 0, 0,
@@ -120,7 +119,7 @@ bool ui_create_element(
     const SDL_Color color1, const SDL_Color color2,
     const ELM_init init,
     ELM_update update,
-    piece_types type
+    Uint8 type
     )
 {
     if(element_count == 0)

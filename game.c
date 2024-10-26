@@ -21,12 +21,13 @@
 #include "res.h"
 #include "ui.h"
 #include "board.h"
+#include "pieces.h"
 
-#define FPS 10
+#define FPS 60
 
 bool update; // Defines if the ui state should be updated next frame
 
-// Initializes the game assets and sets update = true for the initial ui presentation
+// Initializes game assets
 bool game_init()
 {
     if(!ui_init_elements())
@@ -36,13 +37,13 @@ bool game_init()
     return true;
 }
 
-// Frees the game(just the ui logic for now)
+// Frees the game(just calls for the destruction of the ui_elements for now)
 void game_free()
 {
     ui_free_elements();
 }
 
-// Main game loop, function does event processing, update of the ui logic and render the ui
+// Main game loop, event processing, ui update and frame rate control
 void game()
 {
     Uint32 start_time = 0; // The tick that the frame started

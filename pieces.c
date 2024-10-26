@@ -23,11 +23,13 @@
 #include "ui.h"
 #include "board.h"
 
+// Defines a mapping between bitmap paths and piece types.
 typedef struct {
-    const char* bmp_path;
-    int piece;
+    const char* bmp_path; // Path to the bitmap file for a piece.
+    int piece;            // Integer identifier for the piece type.
 } PieceMap;
 
+// Maps each chess piece type to its corresponding bitmap file.
 PieceMap piece_map[] = {
     {"../../assets/black_pawn.bmp", BLACK_PAWN},
     {"../../assets/white_pawn.bmp", WHITE_PAWN},
@@ -43,20 +45,25 @@ PieceMap piece_map[] = {
     {"../../assets/white_king.bmp", WHITE_KING}
 };
 
+// Initializes the chessboard with piece positions.
 int board[8][8] = {
-    7, 3, 5, 9, 11, 5, 3, 7,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    2, 2, 2, 2, 2, 2, 2, 2,
-    8, 4, 6, 10, 12, 6, 4, 8,
+    7, 3, 5, 9, 11, 5, 3, 7,   // Row with black pieces.
+    1, 1, 1, 1, 1, 1, 1, 1,     // Row with black pawns.
+    0, 0, 0, 0, 0, 0, 0, 0,     // Empty row.
+    0, 0, 0, 0, 0, 0, 0, 0,     // Empty row.
+    0, 0, 0, 0, 0, 0, 0, 0,     // Empty row.
+    0, 0, 0, 0, 0, 0, 0, 0,     // Empty row.
+    2, 2, 2, 2, 2, 2, 2, 2,     // Row with white pawns.
+    8, 4, 6, 10, 12, 6, 4, 8    // Row with white pieces.
 };
 
+
+SelectedPiece selected_piece;// Struct for storing selected piece information.
+
+// Initializes a piece, setting its texture and bitmap path.
 bool pieces_init(Element* piece, SDL_Renderer* renderer)
 {
-
+    // Finds the bitmap path for the piece type.
     for(int i = 0; i < 12; i++)
         if(piece_map[i].piece == piece->type)
         {
@@ -64,16 +71,18 @@ bool pieces_init(Element* piece, SDL_Renderer* renderer)
             break;
         }
 
+    // Loads the bitmap image file into an SDL surface.
     SDL_Surface* pieces_surface = SDL_LoadBMP(piece->bmp_path);
-
     if (!pieces_surface)
     {
         printf("Error loading the BMP file to the surface: %s\n", SDL_GetError());
         return false;
     }
 
+    // Creates a texture from the loaded surface.
     piece->texture = SDL_CreateTextureFromSurface(renderer, pieces_surface);
 
+    // Sets the width and height of the piece's rectangle to match the surface.
     piece->rect.w = pieces_surface->w;
     piece->rect.h = pieces_surface->h;
 
@@ -87,12 +96,14 @@ bool pieces_init(Element* piece, SDL_Renderer* renderer)
     return true;
 }
 
+// Updates the piece's position and sets it as selected if it matches the selection coordinates(TODO:actually implement this)
 bool pieces_update(Element* piece)
 {
+    // Calculates the piece's position on the board based on screen coordinates.
     const int x = (piece->rect.x - 45) / 65;
     const int y = (piece->rect.y - 45) / 65;
 
-
+    // Checks if the current piece matches the selected board position and isn't locked.
     if(board_data.select_x == x && board_data.select_y == y && !selected_piece.locked)
     {
         selected_piece.type = piece->type;

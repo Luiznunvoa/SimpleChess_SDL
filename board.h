@@ -35,25 +35,31 @@ typedef struct
 
 bool board_init(Element* board, SDL_Renderer* renderer);
 bool board_update(Element* board);
+void draw_selected_cell(
+    const Element* board,
+    const SDL_PixelFormat* format,
+    Uint16* pixelData,
+    int pitch
+    );
+void draw_locked_piece(
+    const Element* board,
+    const SDL_PixelFormat* format,
+    Uint16* pixelData,
+    int pitch
+    );
 bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,
     int* pitch,
     SDL_PixelFormat** format,
     SDL_PixelFormatEnum enum_format
-    );
-void draw_selected_cell(
-    const Element* board,
-    const SDL_PixelFormat* format,
-    Uint16* pixelData,
-    const int pitch
-    );
+);
 void draw_cell(
     Uint16* pixelData,
-    const int pitch,
-    const int startX, const int startY,
-    const int size,
-    const Uint16 color
+    int pitch,
+    int startX, int startY,
+    int size,
+     Uint16 color
     );
 
 extern BoardData board_data;
