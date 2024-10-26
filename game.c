@@ -17,24 +17,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#include <SDL.h>
-
 #include "game.h"
 #include "res.h"
 #include "ui.h"
 #include "board.h"
 
-#define FPS 30
+#define FPS 10
 
-Uint32 last_frame_time;
-Uint32 start_time;
-Uint32 frame_time;
-float delta_time;
+bool update; // Defines if the ui state should be updated next frame
 
-SDL_Event event;
-
-bool update;
-
+// Initializes the game assets and sets update = true for the initial ui presentation
 bool game_init()
 {
     if(!ui_init_elements())
@@ -44,22 +36,23 @@ bool game_init()
     return true;
 }
 
+// Frees the game(just the ui logic for now)
 void game_free()
 {
     ui_free_elements();
 }
 
+// Main game loop, function does event processing, update of the ui logic and render the ui
 void game()
 {
+    Uint32 start_time = 0; // The tick that the frame started
+    Uint32 frame_time = 0; // The time that the frame took to be rendered
+
     for (bool quit = 0; !quit;)
     {
-        start_time = SDL_GetTicks();
-        delta_time = (float)(start_time - last_frame_time) / (1000.0f / FPS);
-
-        if (delta_time > 1)
-            delta_time = 1;
-
         quit = event_proc();
+
+        start_time = SDL_GetTicks();
 
         if(update)
             if(ui_update_elements())
@@ -70,14 +63,15 @@ void game()
         frame_time = SDL_GetTicks() - start_time;
 
         if (frame_time < (1000 / FPS))
-            SDL_Delay((1000 / FPS) - frame_time);
-
-        last_frame_time = SDL_GetTicks();
+            SDL_Delay((1000 / FPS) - frame_time); // sleeps through the time remaining to keep the fps stable
     }
 }
 
+// Main event processing function, window quit input and keyboard inputs
 bool event_proc()
 {
+    SDL_Event event;
+
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
@@ -85,21 +79,20 @@ bool event_proc()
         case SDL_QUIT:
             return true;
         case SDL_KEYUP:
-            if(!key_input_proc())
-                return false;
-            break;
+            return key_input_proc(event.key.keysym.sym);
         default:
         }
     }
     return false;
 }
 
-bool key_input_proc()
+// Keyboard input processing, treating the logic of the arrow keys to move the cursor and the ESC key to close the app
+bool key_input_proc(const SDL_Keycode keycode)
 {
-    switch (event.key.keysym.sym)
+    switch (keycode)
     {
     case SDLK_ESCAPE:
-        return false;
+        return true;
     case SDLK_UP:
         if(board_data.select_y > 0)
             board_data.select_y -= 1;
@@ -126,5 +119,5 @@ bool key_input_proc()
         break;
     default:
     }
-    return true;
+    return false;
 }

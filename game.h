@@ -20,13 +20,14 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <SDL.h>
 #include <stdbool.h>
 
 bool game_init();
 void game_free();
 void game();
 bool event_proc();
-bool key_input_proc();
+bool key_input_proc(SDL_Keycode keycode);
 
 extern bool update;
 

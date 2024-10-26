@@ -34,9 +34,10 @@
 
 int element_count;
 
-Element** ui_elements;
-SelectedPiece selected_piece;
+Element** ui_elements; // array of pointers to structs containing the data from each ui_element
+SelectedPiece selected_piece; // piece
 
+// Initializes the ui elements int "ui_elements" array
 bool ui_init_elements()
 {
     if(!create_board())
@@ -54,6 +55,7 @@ bool ui_init_elements()
     return true;
 }
 
+// Calls every update function different than NULL
 bool ui_update_elements()
 {
     for(int i = 0; i < element_count; i++)
@@ -63,6 +65,7 @@ bool ui_update_elements()
     return true;
 }
 
+// Update the render state of the ui
 void ui_present()
 {
     for (int i = 0; i < element_count; i++)
@@ -72,6 +75,7 @@ void ui_present()
     SDL_RenderPresent(renderer);
 }
 
+// Frees the ui elements in the "ui_elements" array
 void ui_free_elements()
 {
     for(int i = 0; i < element_count; i++)
@@ -86,6 +90,7 @@ void ui_free_elements()
     printf("ui_elements freed\n");
 }
 
+// helper function to create ui_element of the game board
 __forceinline bool create_board()
 {
     return ui_create_element(
@@ -97,6 +102,7 @@ __forceinline bool create_board()
     );
 }
 
+// helper function to create the ui_element for each piece in the board
 __forceinline bool create_piece(const int x, const int y, const piece_types type)
 {
     return ui_create_element(
@@ -108,6 +114,7 @@ __forceinline bool create_piece(const int x, const int y, const piece_types type
     );
 }
 
+// sets up the initial data of the ui_element
 bool ui_create_element(
     const int x, const int y, const int w, const int h,
     const SDL_Color color1, const SDL_Color color2,

@@ -31,6 +31,7 @@
 SDL_Renderer* renderer;
 SDL_Window* window;
 
+// SDL, Window and renderer initializations
 bool window_init()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -86,6 +87,7 @@ bool window_init()
     return true;
 }
 
+// Window and renderer Destruction
 void window_free()
 {
     SDL_DestroyRenderer(renderer);
