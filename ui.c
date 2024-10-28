@@ -24,10 +24,6 @@
 #include "board.h"
 #include "pieces.h"
 
-#define COLOR_TILE1 (SDL_Color){119, 107, 93,}
-#define COLOR_TILE2 (SDL_Color){155, 145, 134}
-#define NO_COLOR  (SDL_Color){0}
-
 #define BOARD_SIZE 520
 #define BOARD_X 40
 #define BOARD_Y 40
@@ -42,10 +38,10 @@ bool ui_init_elements()
     if(!create_board())
         return false;
 
-    for(int i = 0; i < 8; i++)
-        for (int j = 0; j < 8; j++)
-            if (board[i][j] != 0)
-                if(!create_piece(j,i, board[i][j]))
+    for(int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
+            if (board[y][x] != 0)
+                if(!create_piece(x,y, board[y][x]))
                     return false;
 
     selected_piece = (SelectedPiece){0};
@@ -93,10 +89,8 @@ void ui_free_elements()
 __forceinline bool create_board()
 {
     return ui_create_element(
-        BOARD_X, BOARD_Y, BOARD_SIZE, BOARD_SIZE,
-        COLOR_TILE1, COLOR_TILE2,
+        (SDL_Rect){BOARD_X, BOARD_Y, BOARD_SIZE, BOARD_SIZE,},
         board_init,
-        board_update,
         0
     );
 }
@@ -105,22 +99,14 @@ __forceinline bool create_board()
 __forceinline bool create_piece(const int x, const int y, const Uint8 type)
 {
     return ui_create_element(
-        (BOARD_X + 5) + (65 * x), (BOARD_Y + 5) + (65 * y), 0, 0,
-        NO_COLOR, NO_COLOR,
+        (SDL_Rect){(BOARD_X + 5) + (65 * x), (BOARD_Y + 5) + (65 * y), 0, 0},
         pieces_init,
-        pieces_update,
         type
     );
 }
 
 // sets up the initial data of the ui_element
-bool ui_create_element(
-    const int x, const int y, const int w, const int h,
-    const SDL_Color color1, const SDL_Color color2,
-    const ELM_init init,
-    ELM_update update,
-    Uint8 type
-    )
+bool ui_create_element( const SDL_Rect rect, const ELM_init init, const Uint8 type)
 {
     if(element_count == 0)
         ui_elements = (Element**)malloc(sizeof(Element*));
@@ -131,18 +117,11 @@ bool ui_create_element(
         return false;
 
     ui_elements[element_count] = (Element*)malloc(sizeof(Element));
+    *ui_elements[element_count] = (Element){0};
 
-    ui_elements[element_count]->rect.x = x;
-    ui_elements[element_count]->rect.y = y;
-    ui_elements[element_count]->rect.w = w;
-    ui_elements[element_count]->rect.h = h;
-    ui_elements[element_count]->color1 = color1;
-    ui_elements[element_count]->color2 = color2;
+    ui_elements[element_count]->rect = rect;
     ui_elements[element_count]->init = init;
-    ui_elements[element_count]->update = update;
     ui_elements[element_count]->type = type;
-    ui_elements[element_count]->bmp_path = NULL;
-
 
     if(!ui_elements[element_count]->init(ui_elements[element_count], renderer))
         return false;

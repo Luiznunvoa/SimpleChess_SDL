@@ -26,7 +26,7 @@
 
 typedef enum
 {
-    NONE,
+    NOT_A_PIECE,
     BLACK_PAWN,
     WHITE_PAWN,
     BLACK_HORSE,
@@ -56,7 +56,7 @@ typedef struct
 bool pieces_init(Element* piece, SDL_Renderer* renderer);
 bool pieces_update(Element* piece);
 
-extern int board[8][8];
+extern Uint8 board[8][8];
 extern SelectedPiece selected_piece;
 
 #endif //PIECES_H

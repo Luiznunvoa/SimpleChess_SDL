@@ -27,47 +27,48 @@
 typedef struct {
     const char* bmp_path; // Path to the bitmap file for a piece.
     int piece;            // Integer identifier for the piece type.
+    ELM_update update;
 } PieceMap;
 
 // Maps each chess piece type to its corresponding bitmap file.
 PieceMap piece_map[] = {
-    {"../../assets/black_pawn.bmp", BLACK_PAWN},
-    {"../../assets/white_pawn.bmp", WHITE_PAWN},
-    {"../../assets/black_horse.bmp", BLACK_HORSE},
-    {"../../assets/white_horse.bmp", WHITE_HORSE},
-    {"../../assets/black_bishop.bmp", BLACK_BISHOP},
-    {"../../assets/white_bishop.bmp", WHITE_BISHOP},
-    {"../../assets/black_rook.bmp", BLACK_ROOK},
-    {"../../assets/white_rook.bmp", WHITE_ROOK},
-    {"../../assets/black_queen.bmp", BLACK_QUEEN},
-    {"../../assets/white_queen.bmp", WHITE_QUEEN},
-    {"../../assets/black_king.bmp", BLACK_KING},
-    {"../../assets/white_king.bmp", WHITE_KING}
+    {"../../assets/black_pawn.bmp", BLACK_PAWN, pieces_update},
+    {"../../assets/white_pawn.bmp", WHITE_PAWN, pieces_update},
+    {"../../assets/black_horse.bmp", BLACK_HORSE, pieces_update},
+    {"../../assets/white_horse.bmp", WHITE_HORSE, pieces_update},
+    {"../../assets/black_bishop.bmp", BLACK_BISHOP, pieces_update},
+    {"../../assets/white_bishop.bmp", WHITE_BISHOP, pieces_update},
+    {"../../assets/black_rook.bmp", BLACK_ROOK, pieces_update},
+    {"../../assets/white_rook.bmp", WHITE_ROOK, pieces_update},
+    {"../../assets/black_queen.bmp", BLACK_QUEEN, pieces_update},
+    {"../../assets/white_queen.bmp", WHITE_QUEEN, pieces_update},
+    {"../../assets/black_king.bmp", BLACK_KING, pieces_update},
+    {"../../assets/white_king.bmp", WHITE_KING, pieces_update}
 };
 
 // Initializes the chessboard with piece positions.
-int board[8][8] = {
-    7, 3, 5, 9, 11, 5, 3, 7,   // Row with black pieces.
-    1, 1, 1, 1, 1, 1, 1, 1,     // Row with black pawns.
-    0, 0, 0, 0, 0, 0, 0, 0,     // Empty row.
-    0, 0, 0, 0, 0, 0, 0, 0,     // Empty row.
-    0, 0, 0, 0, 0, 0, 0, 0,     // Empty row.
-    0, 0, 0, 0, 0, 0, 0, 0,     // Empty row.
-    2, 2, 2, 2, 2, 2, 2, 2,     // Row with white pawns.
-    8, 4, 6, 10, 12, 6, 4, 8    // Row with white pieces.
+Uint8 board[8][8] = {
+    {7, 3, 5, 9, 11, 5, 3, 7},   // Row with black pieces.
+    {1, 1, 1, 1, 1, 1, 1, 1},     // Row with black pawns.
+    {0, 0, 0, 0, 0, 0, 0, 0},     // Empty row.
+    {0, 0, 0, 0, 0, 0, 0, 0},     // Empty row.
+    {0, 0, 0, 0, 0, 0, 0, 0},     // Empty row.
+    {0, 0, 0, 0, 0, 0, 0, 0},     // Empty row.
+    {2, 2, 2, 2, 2, 2, 2, 2},     // Row with white pawns.
+    {8, 4, 6, 10, 12, 6, 4, 8}    // Row with white pieces.
 };
-
 
 SelectedPiece selected_piece;// Struct for storing selected piece information.
 
 // Initializes a piece, setting its texture and bitmap path.
 bool pieces_init(Element* piece, SDL_Renderer* renderer)
 {
-    // Finds the bitmap path for the piece type.
+    // Finds the bitmap path for the piece type and the update function.
     for(int i = 0; i < 12; i++)
         if(piece_map[i].piece == piece->type)
         {
             piece->bmp_path = piece_map[i].bmp_path;
+            piece->update = piece_map[i].update;
             break;
         }
 

@@ -33,9 +33,6 @@ typedef struct Element
     SDL_Texture* texture;
     SDL_Rect rect;
 
-    SDL_Color color1;
-    SDL_Color color2;
-
     ELM_init init;
     ELM_update update;
 
@@ -49,12 +46,6 @@ void ui_present();
 void ui_free_elements();
 bool create_board();
 bool create_piece(int x, int y, Uint8 type);
-bool ui_create_element(
-    int x, int y, int w, int h,
-    SDL_Color color1, SDL_Color color2,
-    ELM_init init,
-    ELM_update update,
-    Uint8 type
-    );
+bool ui_create_element(SDL_Rect rect, ELM_init init, Uint8 type);
 
 #endif //UI_H

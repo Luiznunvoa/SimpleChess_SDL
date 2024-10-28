@@ -25,9 +25,9 @@
 
 #define SELECTION_COLOR 0x2ce5
 #define PIECE_COLOR 0x32f1
-#define LOCKED_PIECE 0x79b2
-#define DARK_CELL 0x734B
-#define BRIGHT_CELL 0x9C90
+#define LOCKED_PIECE_COLOR 0x79b2
+#define DARK_CELL_COLOR 0x734B
+#define BRIGHT_CELL_COLOR 0x9C90
 #define BORDER_COLOR 0
 
 #define BORDER_SIZE (board->rect.w / 100)
@@ -87,8 +87,8 @@ bool board_init(Element* board, SDL_Renderer* renderer)
         for (int col = 0; col < 8; col++)
         {
             const Uint16 color = (board_map[row][col] == '1') ?
-            DARK_CELL :
-            BRIGHT_CELL;
+            DARK_CELL_COLOR :
+            BRIGHT_CELL_COLOR;
 
             const int start_x = (col * CELL_SIZE + BORDER_SIZE);
             const int start_y = (row * CELL_SIZE + BORDER_SIZE);
@@ -100,6 +100,7 @@ bool board_init(Element* board, SDL_Renderer* renderer)
     SDL_UnlockTexture(board->texture);
 
     board_data = (BoardData){0}; // Initializes board selection data structure.
+    board->update = board_update;
     return true;
 }
 
@@ -139,8 +140,8 @@ void draw_selected_cell(
     if (board_data.previous_select_x != -1 && board_data.previous_select_y != -1)
     {
         const Uint16 originalColor = (board_map[board_data.previous_select_y][board_data.previous_select_x] == '1') ?
-            SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b) :
-            SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
+            DARK_CELL_COLOR :
+            BRIGHT_CELL_COLOR;
 
         const int start_x = (BORDER_SIZE + board_data.previous_select_x * CELL_SIZE);
         const int start_y =  (BORDER_SIZE + board_data.previous_select_y * CELL_SIZE);
@@ -193,15 +194,15 @@ void draw_locked_piece(
         selected_piece.previous_x = selected_piece.x;
         selected_piece.previous_y = selected_piece.y;
 
-        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, LOCKED_PIECE);
+        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, LOCKED_PIECE_COLOR);
     }
     // Removes locked piece.
     else if (!selected_piece.locked &&
              (board_data.select_x != selected_piece.x || board_data.select_y != selected_piece.y))
     {
-        Uint16 color = (board_map[selected_piece.previous_x][selected_piece.previous_y] == '1') ?
-            SDL_MapRGB(format, board->color1.r, board->color1.g, board->color1.b) :
-            SDL_MapRGB(format, board->color2.r, board->color2.g, board->color2.b);
+        const Uint16 color = (board_map[selected_piece.previous_x][selected_piece.previous_y] == '1') ?
+            DARK_CELL_COLOR :
+            BRIGHT_CELL_COLOR;
 
         const int prev_x = BORDER_SIZE + selected_piece.previous_x * CELL_SIZE;
         const int prev_y = BORDER_SIZE + selected_piece.previous_y * CELL_SIZE;
