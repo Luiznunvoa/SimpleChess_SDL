@@ -21,8 +21,9 @@
 #define PIECES_H
 
 #include <stdbool.h>
-
 #include "ui.h"
+
+#define MAX_MOVES 1
 
 typedef enum
 {
@@ -39,24 +40,28 @@ typedef enum
     WHITE_QUEEN,
     BLACK_KING,
     WHITE_KING
-}piece_types;
+} piece_types;
 
 typedef struct
 {
     int x;
     int y;
-    int previous_x;
-    int previous_y;
+} Move;
 
+typedef struct
+{
+    int x;
+    int y;
+    bool lock;
     bool locked;
-
-    piece_types type;
-}SelectedPiece;
+    Move possible_moves[MAX_MOVES];
+} SelectedPiece;
 
 bool pieces_init(Element* piece, SDL_Renderer* renderer);
 bool pieces_update(Element* piece);
+bool pawn_update(Element* piece);
 
-extern Uint8 board[8][8];
+extern Uint8 piece_board[8][8];
 extern SelectedPiece selected_piece;
 
-#endif //PIECES_H
+#endif // PIECES_H

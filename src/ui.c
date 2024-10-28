@@ -40,8 +40,8 @@ bool ui_init_elements()
 
     for(int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
-            if (board[y][x] != 0)
-                if(!create_piece(x,y, board[y][x]))
+            if (piece_board[y][x] != 0)
+                if(!create_piece(x,y, piece_board[y][x]))
                     return false;
 
     selected_piece = (SelectedPiece){0};

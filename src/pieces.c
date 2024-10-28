@@ -22,6 +22,7 @@
 #include "pieces.h"
 #include "ui.h"
 #include "board.h"
+#include "game.h"
 
 // Defines a mapping between bitmap paths and piece types.
 typedef struct {
@@ -32,8 +33,8 @@ typedef struct {
 
 // Maps each chess piece type to its corresponding bitmap file.
 PieceMap piece_map[] = {
-    {"../../assets/black_pawn.bmp", BLACK_PAWN, pieces_update},
-    {"../../assets/white_pawn.bmp", WHITE_PAWN, pieces_update},
+    {"../../assets/black_pawn.bmp", BLACK_PAWN, pawn_update},
+    {"../../assets/white_pawn.bmp", WHITE_PAWN, pawn_update},
     {"../../assets/black_horse.bmp", BLACK_HORSE, pieces_update},
     {"../../assets/white_horse.bmp", WHITE_HORSE, pieces_update},
     {"../../assets/black_bishop.bmp", BLACK_BISHOP, pieces_update},
@@ -47,7 +48,7 @@ PieceMap piece_map[] = {
 };
 
 // Initializes the chessboard with piece positions.
-Uint8 board[8][8] = {
+Uint8 piece_board[8][8] = {
     {7, 3, 5, 9, 11, 5, 3, 7},   // Row with black pieces.
     {1, 1, 1, 1, 1, 1, 1, 1},     // Row with black pawns.
     {0, 0, 0, 0, 0, 0, 0, 0},     // Empty row.
@@ -94,22 +95,57 @@ bool pieces_init(Element* piece, SDL_Renderer* renderer)
         printf("Error creating the texture: %s\n", SDL_GetError());
         return false;
     }
+
+    selected_piece.locked = false;
+    selected_piece.lock = false;
     return true;
 }
 
-// Updates the piece's position and sets it as selected if it matches the selection coordinates(TODO:actually implement this)
+// Generic piece update function for debug purposes
 bool pieces_update(Element* piece)
 {
+    selected_piece.locked = selected_piece.lock;
     // Calculates the piece's position on the board based on screen coordinates.
     const int x = (piece->rect.x - 45) / 65;
     const int y = (piece->rect.y - 45) / 65;
 
     // Checks if the current piece matches the selected board position and isn't locked.
-    if(board_data.select_x == x && board_data.select_y == y && !selected_piece.locked)
+    if(board_data.select_x == x && board_data.select_y == y && !selected_piece.lock)
     {
-        selected_piece.type = piece->type;
         selected_piece.x = x;
         selected_piece.y = y;
+    }
+    return true;
+}
+
+// Updates the pawns verifying if it's possible moves and saving in selected_piece.possible_moves(still buggy)
+bool pawn_update(Element* piece)
+{
+    const int x = (piece->rect.x - 45) / 65;
+    const int y = (piece->rect.y - 45) / 65;
+
+    selected_piece.locked = selected_piece.lock;
+
+    if(x < 0 || y < 0)
+        return false;
+
+    if (board_data.select_x == x && board_data.select_y == y && !selected_piece.lock)
+    {
+        selected_piece.x = x;
+        selected_piece.y = y;
+        return true;
+    }
+    if (board_data.select_x == x && board_data.select_y == y && selected_piece.lock && selected_piece.x == x && selected_piece.y == y)
+    {
+        memset(selected_piece.possible_moves, -1, sizeof(selected_piece.possible_moves));
+
+        const int direction = (piece->type == WHITE_PAWN) ? -1 : 1;
+
+        selected_piece.possible_moves[0] = (Move){.x = x, .y = y + direction};
+
+        update = true;
+
+        return true;
     }
     return true;
 }

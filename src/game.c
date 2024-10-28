@@ -115,7 +115,7 @@ bool key_input_proc(const SDL_Keycode keycode)
         update = true;
         break;
     case SDLK_i:
-        selected_piece.locked = !selected_piece.locked;
+        selected_piece.lock = !selected_piece.lock;
         update = true;
         break;
     default:

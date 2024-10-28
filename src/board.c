@@ -28,6 +28,7 @@
 #define LOCKED_PIECE_COLOR 0x79b2
 #define DARK_CELL_COLOR 0x734B
 #define BRIGHT_CELL_COLOR 0x9C90
+#define MOVE_SELECTION_COLOR 0x16e2
 #define BORDER_COLOR 0
 
 #define BORDER_SIZE (board->rect.w / 100)
@@ -47,6 +48,12 @@ const char board_map[8][8] =
 };
 
 BoardData board_data; // Structure with the board selection cursor information
+
+int last_selected_x; // x value of the last piece selected
+int last_selected_y; // y value of the last piece selected
+
+int last_locked_x; // x value of the last piece locked
+int last_locked_y; // y value of the last piece locked
 
 // Initializes the board with a texture and fills it with colors based on a board map.
 bool board_init(Element* board, SDL_Renderer* renderer)
@@ -121,6 +128,7 @@ bool board_update(Element* board)
 
     draw_selected_cell(board, format, pixelData, pitch);
     draw_locked_piece(board, format, pixelData, pitch);
+    highlight_possible_moves(board, pixelData, pitch, format);
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -136,23 +144,44 @@ void draw_selected_cell(
     const int pitch
     )
 {
+
     // Reverts color of previously selected cell, if any.
-    if (board_data.previous_select_x != -1 && board_data.previous_select_y != -1)
+    if (last_selected_x != -1 &&last_selected_y != -1)
     {
-        const Uint16 originalColor = (board_map[board_data.previous_select_y][board_data.previous_select_x] == '1') ?
+        const Uint16 originalColor = (board_map[last_selected_y][last_selected_x] == '1') ?
             DARK_CELL_COLOR :
             BRIGHT_CELL_COLOR;
 
-        const int start_x = (BORDER_SIZE + board_data.previous_select_x * CELL_SIZE);
-        const int start_y =  (BORDER_SIZE + board_data.previous_select_y * CELL_SIZE);
+        const int start_x = (BORDER_SIZE +last_selected_x * CELL_SIZE);
+        const int start_y =  (BORDER_SIZE +last_selected_y * CELL_SIZE);
 
         draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
+    }
+
+    // If the last color was a move highlight it gets restored
+    if(selected_piece.locked)
+    {
+        for (int i = 0; i < MAX_MOVES; i++)
+        {
+            const int move_x = selected_piece.possible_moves[i].x;
+            const int move_y = selected_piece.possible_moves[i].y;
+
+            if (move_x == last_selected_x && move_y == last_selected_y)
+            {
+                const int start_x = (move_x * CELL_SIZE) + BORDER_SIZE;
+                const int start_y = (move_y * CELL_SIZE) + BORDER_SIZE;
+
+                Uint16 color = SDL_MapRGB(format, 0, 255, 0);
+
+                draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+            }
+        }
     }
 
     Uint16 color;
 
     // Updates color if selected cell matches locked piece position.
-    if(board_data.previous_select_x == selected_piece.x && board_data.previous_select_y == selected_piece.y)
+    if(last_selected_x == selected_piece.x &&last_selected_y == selected_piece.y)
         color = PIECE_COLOR;
     else
         color = SELECTION_COLOR;
@@ -164,13 +193,13 @@ void draw_selected_cell(
     draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
     // Updates board state the select cursor changed position
-    if(board_data.previous_select_x == board_data.select_x && board_data.previous_select_y == board_data.select_y)
+    if(last_selected_x == board_data.select_x &&last_selected_y == board_data.select_y)
         update = false;
     else
         update = true;
 
-    board_data.previous_select_x = board_data.select_x;
-    board_data.previous_select_y = board_data.select_y;
+   last_selected_x = board_data.select_x;
+   last_selected_y = board_data.select_y;
 }
 
 // Draws the locked piece on the board.
@@ -191,8 +220,8 @@ void draw_locked_piece(
     // probably there is a smarter way of doing it though.
     if (selected_piece.locked && is_adjacent)
     {
-        selected_piece.previous_x = selected_piece.x;
-        selected_piece.previous_y = selected_piece.y;
+        last_locked_x = selected_piece.x;
+        last_locked_y = selected_piece.y;
 
         draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, LOCKED_PIECE_COLOR);
     }
@@ -200,15 +229,15 @@ void draw_locked_piece(
     else if (!selected_piece.locked &&
              (board_data.select_x != selected_piece.x || board_data.select_y != selected_piece.y))
     {
-        const Uint16 color = (board_map[selected_piece.previous_x][selected_piece.previous_y] == '1') ?
+        const Uint16 color = (board_map[last_locked_x][last_locked_y] == '1') ?
             DARK_CELL_COLOR :
             BRIGHT_CELL_COLOR;
 
-        const int prev_x = BORDER_SIZE + selected_piece.previous_x * CELL_SIZE;
-        const int prev_y = BORDER_SIZE + selected_piece.previous_y * CELL_SIZE;
+        const int prev_x = BORDER_SIZE + last_locked_x * CELL_SIZE;
+        const int prev_y = BORDER_SIZE + last_locked_y * CELL_SIZE;
 
-        selected_piece.previous_x = selected_piece.x;
-        selected_piece.previous_y = selected_piece.y;
+        last_locked_x = selected_piece.x;
+        last_locked_y = selected_piece.y;
 
         draw_cell(pixelData, pitch, prev_x, prev_y, CELL_SIZE, color);
     }
@@ -254,5 +283,42 @@ void draw_cell(
         Uint16* row = pixelData + y * (pitch / 2) + startX;
         for (int x = 0; x < size; x++)
             row[x] = color;
+    }
+}
+
+// Highlights the possible moves of a piece based on selected_piece.possible_moves(TODO: fix this)
+void highlight_possible_moves(const Element* board, Uint16* pixelData, const int pitch, const SDL_PixelFormat* format)
+{
+    // Verify if the piece selected is a pawn
+    if (piece_board[board_data.select_y][board_data.select_x] != BLACK_PAWN && piece_board[board_data.select_y][board_data.select_x] != WHITE_PAWN)
+        return;
+
+    for (int i = 0; i < MAX_MOVES; i++)
+    {
+        const int move_x = selected_piece.possible_moves[i].x;
+        const int move_y = selected_piece.possible_moves[i].y;
+
+        // Secures if the movement coordinates are valid(useless yet)
+        if (move_x >= 0 && move_x < 8 && move_y >= 0 && move_y < 8)
+        {
+            const int start_x = (move_x * CELL_SIZE) + BORDER_SIZE;
+            const int start_y = (move_y * CELL_SIZE) + BORDER_SIZE;
+
+            Uint16 color;
+
+            // Verifies if the piece is locked, drawing or erasing the move highlights.
+            if (selected_piece.locked)
+            {
+                color = MOVE_SELECTION_COLOR;
+            }
+            else
+            {
+                color = (board_map[move_y][move_x] == '1') ?
+                    DARK_CELL_COLOR :
+                    BRIGHT_CELL_COLOR;
+            }
+
+            draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+        }
     }
 }
