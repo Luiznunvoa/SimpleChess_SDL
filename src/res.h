@@ -20,13 +20,12 @@
 #ifndef RES_H
 #define RES_H
 
-#include <SDL.h>
-#include <stdbool.h>
+#include "common.h"
 
 #define WINDOW_WIDTH 600
 #define WINDOW_HEIGHT 600
 
-bool window_init();
+int window_init();
 void window_free();
 
 extern SDL_Renderer* renderer;

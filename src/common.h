@@ -17,13 +17,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#ifndef GAME_H
-#define GAME_H
+#ifndef COMMON_H
+#define COMMON_H
 
-#include "common.h"
+#include <SDL.h>
+#include <stdio.h>
 
-void game();
-int event_proc();
-int key_input_proc(SDL_Keycode keycode);
+#define true    1
+#define false   0
+#define error   -1
 
-#endif //GAME_H
+#endif //COMMON_H

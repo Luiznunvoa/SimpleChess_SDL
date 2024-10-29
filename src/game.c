@@ -18,30 +18,11 @@
 //
 
 #include "game.h"
-#include "res.h"
 #include "ui.h"
 #include "board.h"
 #include "pieces.h"
 
 #define FPS 60
-
-bool update; // Defines if the ui state should be updated next frame
-
-// Initializes game assets
-bool game_init()
-{
-    if(!ui_init_elements())
-        return false;
-
-    update = true;
-    return true;
-}
-
-// Frees the game(just calls for the destruction of the ui_elements for now)
-void game_free()
-{
-    ui_free_elements();
-}
 
 // Main game loop, event processing, ui update and frame rate control
 void game()
@@ -69,7 +50,7 @@ void game()
 }
 
 // Main event processing function, window quit input and keyboard inputs
-bool event_proc()
+int event_proc()
 {
     SDL_Event event;
 
@@ -88,7 +69,7 @@ bool event_proc()
 }
 
 // Keyboard input processing, treating the logic of the arrow keys to move the cursor and the ESC key to close the app
-bool key_input_proc(const SDL_Keycode keycode)
+int key_input_proc(const SDL_Keycode keycode)
 {
     switch (keycode)
     {

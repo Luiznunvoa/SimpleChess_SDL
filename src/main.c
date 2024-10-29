@@ -19,13 +19,14 @@
 
 #include "game.h"
 #include "res.h"
+#include "ui.h"
 
 int main(int argc, char *argv[])
 {
     if(window_init())
-        if(game_init())
+        if(ui_init())
             game();
-    game_free();
+    ui_free();
     window_free();
     return 0;
 }

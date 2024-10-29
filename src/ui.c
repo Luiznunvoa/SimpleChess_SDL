@@ -17,8 +17,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#include <stdio.h>
-
 #include "ui.h"
 #include "res.h"
 #include "board.h"
@@ -30,33 +28,36 @@
 
 int element_count; // total number of elements
 
-Element** ui_elements; // array of pointers to structs containing the data from each ui_element
+Element* ui_elements = NULL; // array of pointers to structs containing the data from each ui_element
+
+_Bool update; // Defines if the ui state should be updated next frame
 
 // Initializes the ui elements into the "ui_elements" array
-bool ui_init_elements()
+int ui_init()
 {
-    if(!create_board())
-        return false;
+    if(create_board() < 0)
+        return error;
 
-    for(int y = 0; y < 8; y++)
-        for (int x = 0; x < 8; x++)
-            if (piece_board[y][x] != 0)
-                if(!create_piece(x,y, piece_board[y][x]))
-                    return false;
 
     selected_piece = (SelectedPiece){0};
 
     printf("ui_elements created\n");
+
+    update = true;
     return true;
 }
 
 // Calls every update function pointer different than NULL
-bool ui_update_elements()
+int ui_update_elements()
 {
     for(int i = 0; i < element_count; i++)
-        if(ui_elements[i]->update != NULL)
-            if(!ui_elements[i]->update(ui_elements[i]))
+        if(ui_elements[i].update != NULL)
+        {
+            if(ui_elements[i].update(&ui_elements[i]) < 0)
                 return false;
+            if(!ui_elements[i].update(&ui_elements[i]))
+                update = false;
+        }
     return true;
 }
 
@@ -64,29 +65,29 @@ bool ui_update_elements()
 void ui_present()
 {
     for (int i = 0; i < element_count; i++)
-        if(ui_elements[i]->texture != NULL)
-            SDL_RenderCopy(renderer, ui_elements[i]->texture, NULL, &ui_elements[i]->rect);
+        if(ui_elements[i].texture != NULL)
+            SDL_RenderCopy(renderer, ui_elements[i].texture, NULL, &ui_elements[i].rect);
 
     SDL_RenderPresent(renderer);
 }
 
 // Frees the ui elements in the "ui_elements" array
-void ui_free_elements()
+void ui_free()
 {
-    for(int i = 0; i < element_count; i++)
-        if(ui_elements[i]->texture != NULL)
+    for (int i = 0; i < element_count; i++)
+        if (ui_elements[i].texture != NULL)
         {
-            SDL_DestroyTexture(ui_elements[i]->texture);
-            free(ui_elements[i]);
-            ui_elements[i] = NULL;
+            SDL_DestroyTexture(ui_elements[i].texture);
+            ui_elements[i].texture = NULL;
         }
     free(ui_elements);
     ui_elements = NULL;
+    element_count = 0;
     printf("ui_elements freed\n");
 }
 
 // helper function to create ui_element of the game board
-__forceinline bool create_board()
+__forceinline int create_board()
 {
     return ui_create_element(
         (SDL_Rect){BOARD_X, BOARD_Y, BOARD_SIZE, BOARD_SIZE,},
@@ -96,7 +97,7 @@ __forceinline bool create_board()
 }
 
 // helper function to create the ui_element for each piece in the board
-__forceinline bool create_piece(const int x, const int y, const Uint8 type)
+__forceinline int create_piece(const int x, const int y, const Uint8 type)
 {
     return ui_create_element(
         (SDL_Rect){(BOARD_X + 5) + (65 * x), (BOARD_Y + 5) + (65 * y), 0, 0},
@@ -106,25 +107,29 @@ __forceinline bool create_piece(const int x, const int y, const Uint8 type)
 }
 
 // sets up the initial data of the ui_element
-bool ui_create_element( const SDL_Rect rect, const ELM_init init, const Uint8 type)
+int ui_create_element(const SDL_Rect rect, const ELM_init init, const Uint8 type)
 {
-    if(element_count == 0)
-        ui_elements = (Element**)malloc(sizeof(Element*));
-    else
-        ui_elements = (Element**)realloc(ui_elements, (element_count + 1) * sizeof(Element*));
+    {
+        Element* temp_elements = NULL;
 
-    if(ui_elements == NULL)
-        return false;
+        if (ui_elements == NULL)
+            temp_elements = (Element*)malloc(sizeof(Element));
+        else
+            temp_elements = (Element*)realloc(ui_elements, (element_count + 1) * sizeof(Element));
 
-    ui_elements[element_count] = (Element*)malloc(sizeof(Element));
-    *ui_elements[element_count] = (Element){0};
+        if (temp_elements == NULL)
+            return error;
 
-    ui_elements[element_count]->rect = rect;
-    ui_elements[element_count]->init = init;
-    ui_elements[element_count]->type = type;
+        ui_elements = temp_elements;
+    }
+    ui_elements[element_count] = (Element){0};
 
-    if(!ui_elements[element_count]->init(ui_elements[element_count], renderer))
-        return false;
+    ui_elements[element_count].rect = rect;
+    ui_elements[element_count].init = init;
+    ui_elements[element_count].type = type;
+
+    if (ui_elements[element_count].init(&ui_elements[element_count], renderer) < 0)
+        return error;
 
     element_count++;
     return true;

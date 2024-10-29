@@ -20,13 +20,12 @@
 #ifndef UI_H
 #define UI_H
 
-#include <SDL.h>
-#include <stdbool.h>
+#include "common.h"
 
 typedef struct Element Element;
 
-typedef bool (*ELM_init)(Element* element, SDL_Renderer* renderer);
-typedef bool (*ELM_update)(Element* element);
+typedef int (*ELM_init)(Element* element, SDL_Renderer* renderer);
+typedef int (*ELM_update)(Element* element);
 
 typedef struct Element
 {
@@ -40,12 +39,14 @@ typedef struct Element
     const char* bmp_path;
 }Element;
 
-bool ui_init_elements();
-bool ui_update_elements();
+int ui_init();
+int ui_update_elements();
 void ui_present();
-void ui_free_elements();
-bool create_board();
-bool create_piece(int x, int y, Uint8 type);
-bool ui_create_element(SDL_Rect rect, ELM_init init, Uint8 type);
+void ui_free();
+int create_board();
+int create_piece(int x, int y, Uint8 type);
+int ui_create_element(SDL_Rect rect, ELM_init init, Uint8 type);
+
+extern _Bool update;
 
 #endif //UI_H

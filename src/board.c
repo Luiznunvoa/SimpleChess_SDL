@@ -56,7 +56,7 @@ int last_locked_x; // x value of the last piece locked
 int last_locked_y; // y value of the last piece locked
 
 // Initializes the board with a texture and fills it with colors based on a board map.
-bool board_init(Element* board, SDL_Renderer* renderer)
+int board_init(Element* board, SDL_Renderer* renderer)
 {
     int pitch;
     void* pixels;
@@ -112,7 +112,7 @@ bool board_init(Element* board, SDL_Renderer* renderer)
 }
 
 // Updates the board, redrawing selected and locked pieces if needed.
-bool board_update(Element* board)
+int board_update(Element* board)
 {
     int pitch;
     void* pixels;
@@ -244,7 +244,7 @@ void draw_locked_piece(
 }
 
 // Locks texture and allocates pixel format for safe pixel access.
-bool lock_texture_and_alloc_format(
+int lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,
     int* pitch,

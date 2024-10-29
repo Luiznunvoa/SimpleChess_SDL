@@ -32,12 +32,12 @@ SDL_Renderer* renderer;
 SDL_Window* window;
 
 // SDL, Window and renderer initializations
-bool window_init()
+int window_init()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("SDL Initialization error: %s\n", SDL_GetError());
-        return false;
+        return error;
     }
 
     window  = SDL_CreateWindow(
@@ -50,7 +50,7 @@ bool window_init()
     if (window == NULL)
     {
         printf("Window initialization error: %s\n", SDL_GetError());
-        return false;
+        return error;
     }
 
     SDL_Surface* iconSurface = SDL_LoadBMP("../../assets/black_pawn.bmp");
@@ -64,7 +64,7 @@ bool window_init()
     else
     {
         printf("Error loading icon: %s\n", SDL_GetError());
-        return false;
+        return error;
     }
 
     renderer = SDL_CreateRenderer(
@@ -76,7 +76,7 @@ bool window_init()
     if (renderer == NULL)
     {
         printf("Renderer initialization error: %s\n", SDL_GetError());
-        return false;
+        return error;
     }
 
     SDL_SetRenderDrawColor(renderer, WINDOW_COLOR);

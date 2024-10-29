@@ -20,9 +20,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include <SDL.h>
-#include <stdbool.h>
 
+#include "common.h"
 #include "ui.h"
 
 typedef struct
@@ -31,8 +30,8 @@ typedef struct
     int select_y; // y value of the piece selected by the cursor
 }BoardData;
 
-bool board_init(Element* board, SDL_Renderer* renderer);
-bool board_update(Element* board);
+int board_init(Element* board, SDL_Renderer* renderer);
+int board_update(Element* board);
 void draw_selected_cell(
     const Element* board,
     const SDL_PixelFormat* format,
@@ -45,7 +44,7 @@ void draw_locked_piece(
     Uint16* pixelData,
     int pitch
     );
-bool lock_texture_and_alloc_format(
+int lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,
     int* pitch,
