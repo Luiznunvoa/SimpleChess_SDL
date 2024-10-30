@@ -42,6 +42,8 @@ add_executable(SimpleChess_SDL ../src/main.c
         ../src/res.h
         ../src/ui.c
         ../src/ui.h
+        ../src/board.c
+        ../src/board.h
 )
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} ${SDL2_TTF_LIBRARY})

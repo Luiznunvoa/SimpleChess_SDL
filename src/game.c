@@ -20,7 +20,6 @@
 #include "game.h"
 #include "res.h"
 
-
 #define FPS 60
 
 void game()
@@ -30,26 +29,30 @@ void game()
     if(!init(&game.renderer, &game.window))
     {
         SDL_ShowSimpleMessageBox(
-           SDL_MESSAGEBOX_INFORMATION,
+           SDL_MESSAGEBOX_ERROR,
            "Initialization ERROR",
-           "Fail to Initializing Resources",
+           "Failed to Initializing Resources",
            game.window);
         quit(game.renderer, game.window);
         return;
     }
 
-    //game.ui_elements = init_elements();
+    game.ui_elements = init_elements(&game.renderer);
 
-    /*if(game.ui_elements == NULL)
+    if(game.ui_elements == NULL)
     {
         SDL_ShowSimpleMessageBox(
-           SDL_MESSAGEBOX_INFORMATION,
+           SDL_MESSAGEBOX_ERROR,
            "Initialization ERROR",
-           "Fail to Initializing Ui Elements",
+           "Failed to Initialize UI Elements",
            game.window);
         quit(game.renderer, game.window);
         return;
-    }*/
+    }
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Starting game..\n");
+
+    game.update = true;
 
     for (_Bool quit = 0; !quit;)
     {
@@ -57,13 +60,20 @@ void game()
 
         game.start_time = SDL_GetTicks();
 
-        /*
-        update_elements(game.ui_elements);
+        if(game.update)
+        {
+            game.update = false;
 
-        ui_present(game.ui_elements);*
-        */
+            const int result = update_elements(&game.ui_elements);
 
-        SDL_RenderPresent(game.renderer);
+            if(result == error)
+                return;
+
+            if(result == true)
+                game.update = true;
+
+            ui_present(game.ui_elements, &game.renderer);
+        }
 
         game.frame_time = SDL_GetTicks() - game.start_time;
 
@@ -71,7 +81,9 @@ void game()
             SDL_Delay((1000 / FPS) - game.frame_time); // sleeps through the time remaining to keep the fps stable
     }
 
-    //free_elements(game.ui_elements);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Freeing game..\n");
+
+    free_elements(&game.ui_elements);
     quit(game.renderer, game.window);
 }
 

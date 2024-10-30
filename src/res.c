@@ -32,7 +32,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
-        SDL_Log("SDL Initialization error: %s\n", SDL_GetError());
+       SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"SDL Initialization error: %s\n", SDL_GetError());
         return false;
     }
 
@@ -45,7 +45,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
 
     if (*window == NULL)
     {
-        SDL_Log("Window initialization error: %s\n", SDL_GetError());
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Window initialization error: %s\n", SDL_GetError());
         return false;
     }
 
@@ -59,7 +59,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
     }
     else
     {
-        SDL_Log("Error loading icon: %s\n", SDL_GetError());
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Error loading icon: %s\n", SDL_GetError());
         return false;
     }
 
@@ -71,7 +71,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
 
     if (*renderer == NULL)
     {
-        SDL_Log("Renderer initialization error: %s\n", SDL_GetError());
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Renderer initialization error: %s\n", SDL_GetError());
         return false;
     }
 

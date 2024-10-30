@@ -17,32 +17,26 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#ifndef UI_H
-#define UI_H
+#ifndef BOARD_H
+#define BOARD_H
 
 #include "common.h"
+#include "ui.h"
 
-typedef struct Element Element;
+_Bool board_init(Element* board, SDL_Renderer** renderer);
+_Bool lock_texture_and_alloc_format(
+    SDL_Texture* texture,
+    void** pixels,
+    int* pitch,
+    SDL_PixelFormat** format,
+    SDL_PixelFormatEnum enum_format
+);
+void draw_cell(
+    Uint16* pixelData,
+    int pitch,
+    int startX, int startY,
+    int size,
+     Uint16 color
+    );
 
-typedef _Bool (*ELM_init)(Element* element, SDL_Renderer** renderer);
-typedef int (*ELM_update)(Element* element);
-
-typedef struct Element
-{
-    SDL_Texture* texture;
-    SDL_Rect rect;
-
-    ELM_init init;
-    ELM_update update;
-
-    Uint8 type;
-    const char* bmp_path;
-}Element;
-
-Element* init_elements(SDL_Renderer** renderer);
-int update_elements(Element** elements);
-void free_elements(Element** elements);
-void ui_present(Element* elements, SDL_Renderer** renderer);
-_Bool ui_create_element(Element** elements, SDL_Renderer** renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type);
-
-#endif //UI_H
+#endif //BOARD_H
