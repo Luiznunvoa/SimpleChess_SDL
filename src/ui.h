@@ -40,9 +40,9 @@ typedef struct Element
 }Element;
 
 Element* init_elements(SDL_Renderer** renderer);
-int update_elements(Element** elements);
-void free_elements(Element** elements);
-void ui_present(Element* elements, SDL_Renderer** renderer);
-_Bool ui_create_element(Element** elements, SDL_Renderer** renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type);
+int update_UI(Element** elements);
+void free_UI(Element** elements);
+void present_UI(Element* elements, SDL_Renderer** renderer);
+_Bool create_element(Element** elements, SDL_Renderer** renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type);
 
 #endif //UI_H

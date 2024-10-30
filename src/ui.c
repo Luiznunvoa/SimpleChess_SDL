@@ -28,15 +28,15 @@ Element* init_elements(SDL_Renderer** renderer)
 {
     Element* elements = NULL;
 
-    if(!ui_create_element(&elements, renderer, BOARD_RECT, board_init, 0))
+    if(!create_element(&elements, renderer, BOARD_RECT, board_init, 0))
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
-        free_elements(&elements);
+        free_UI(&elements);
     };
     return  elements;
 }
 
-void free_elements(Element** elements)
+void free_UI(Element** elements)
 {
     for (int i = 0; i < element_count; i++)
     {
@@ -51,7 +51,7 @@ void free_elements(Element** elements)
     element_count = 0;
 }
 
-int update_elements(Element** elements)
+int update_UI(Element** elements)
 {
     int result = false;
 
@@ -74,7 +74,7 @@ int update_elements(Element** elements)
     return result;
 }
 
-void ui_present(Element* elements, SDL_Renderer** renderer)
+void present_UI(Element* elements, SDL_Renderer** renderer)
 {
     for (int i = 0; i < element_count; i++)
         if(elements[i].texture != NULL)
@@ -83,7 +83,7 @@ void ui_present(Element* elements, SDL_Renderer** renderer)
     SDL_RenderPresent(*renderer);
 }
 
-_Bool ui_create_element(Element** elements, SDL_Renderer** renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type)
+_Bool create_element(Element** elements, SDL_Renderer** renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type)
 {
     Element* temp_elements = NULL;
 

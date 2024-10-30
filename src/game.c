@@ -31,9 +31,10 @@ void game()
     {
         SDL_ShowSimpleMessageBox(
            SDL_MESSAGEBOX_ERROR,
-           "Initialization ERROR",
-           "Failed to Initializing Resources",
-           game.window);
+           "ERROR!",
+           "Critical Error: Failed to Initializing Resources",
+           game.window
+           );
         quit(game.renderer, game.window);
         return;
     }
@@ -44,14 +45,15 @@ void game()
     {
         SDL_ShowSimpleMessageBox(
            SDL_MESSAGEBOX_ERROR,
-           "Initialization ERROR",
-           "Failed to Initialize UI Elements",
-           game.window);
+           "ERROR!",
+           "Critical Error: Failed to Initialize UI Elements",
+           game.window
+           );
         quit(game.renderer, game.window);
         return;
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Starting game..\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Starting game...\n");
 
     game.update = true;
 
@@ -65,15 +67,23 @@ void game()
         {
             game.update = false;
 
-            const int result = update_elements(&game.ui_elements);
+            const int result = update_UI(&game.ui_elements);
 
             if (result == error)
-                return;
+            {
+                SDL_ShowSimpleMessageBox(
+                   SDL_MESSAGEBOX_ERROR,
+                   "ERROR!",
+                   "Critical Error: Failed to update an UI Element",
+                   game.window
+                   );
+                break;
+            }
 
             if (result == true)
                 game.update = true;
 
-            ui_present(game.ui_elements, &game.renderer);
+            present_UI(game.ui_elements, &game.renderer);
         }
 
         game.frame_time = SDL_GetTicks() - game.start_time;
@@ -82,9 +92,9 @@ void game()
             SDL_Delay((1000 / FPS) - game.frame_time); // sleeps through the time remaining to keep the fps stable
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Freeing game..\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Freeing game...\n");
 
-    free_elements(&game.ui_elements);
+    free_UI(&game.ui_elements);
     quit(game.renderer, game.window);
 }
 
