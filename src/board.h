@@ -23,7 +23,20 @@
 #include "common.h"
 #include "ui.h"
 
+typedef struct
+{
+    int select_x; // x value of the piece selected by the cursor
+    int select_y; // y value of the piece selected by the cursor
+}BoardData;
+
 _Bool board_init(Element* board, SDL_Renderer** renderer);
+int board_update(Element* board);
+_Bool draw_selected_cell(
+    const Element* board,
+    const SDL_PixelFormat* format,
+    Uint16* pixelData,
+    int pitch
+    );
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,
@@ -38,5 +51,7 @@ void draw_cell(
     int size,
      Uint16 color
     );
+
+extern BoardData board_data;
 
 #endif //BOARD_H

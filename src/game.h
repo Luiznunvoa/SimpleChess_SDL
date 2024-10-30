@@ -37,6 +37,7 @@ typedef struct
 }GameData;
 
 void game();
-_Bool event_proc();
+_Bool event_proc(_Bool* update);
+_Bool key_input_proc(SDL_Keycode keycode, _Bool* update);
 
 #endif //GAME_H

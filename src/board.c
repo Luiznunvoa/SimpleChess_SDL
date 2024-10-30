@@ -21,6 +21,7 @@
 
 #define DARK_CELL_COLOR 0x734B
 #define BRIGHT_CELL_COLOR 0x9C90
+#define SELECTION_COLOR 0x2ce5
 #define BORDER_COLOR 0
 
 #define BORDER_SIZE (board->rect.w / 100)
@@ -37,6 +38,11 @@ const char board_map[8][8] =
     {'0', '1', '0', '1', '0', '1', '0', '1'},
     {'1', '0', '1', '0', '1', '0', '1', '0'},
 };
+
+BoardData board_data; // Structure with the board selection cursor information
+
+int last_selected_x; // x value of the last piece selected
+int last_selected_y; // y value of the last piece selected
 
 _Bool board_init(Element* board, SDL_Renderer** renderer)
 {
@@ -88,8 +94,76 @@ _Bool board_init(Element* board, SDL_Renderer** renderer)
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
 
-    board->update = NULL;
+    board->update = board_update;
     return true;
+}
+
+int board_update(Element* board)
+{
+    int result;
+    int pitch;
+    void* pixels;
+
+    SDL_PixelFormat* format;
+
+    if (!lock_texture_and_alloc_format(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565))
+    {
+        SDL_DestroyTexture(board->texture);
+        return error;
+    }
+
+    Uint16* pixelData = (Uint16*)pixels;
+
+    result = draw_selected_cell(board, format, pixelData, pitch);
+
+    /*
+    draw_locked_piece(board, format, pixelData, pitch);
+    highlight_possible_moves(board, pixelData, pitch, format);
+    */
+
+    SDL_FreeFormat(format);
+    SDL_UnlockTexture(board->texture);
+
+    return result;
+}
+
+_Bool draw_selected_cell(
+    const Element* board,
+    const SDL_PixelFormat* format,
+    Uint16* pixelData,
+    const int pitch
+    )
+{
+    int result;
+
+    // Reverts color of previously selected cell, if any.
+    if (last_selected_x != -1 &&last_selected_y != -1)
+    {
+        const Uint16 originalColor = (board_map[last_selected_y][last_selected_x] == '1') ?
+            DARK_CELL_COLOR :
+            BRIGHT_CELL_COLOR;
+
+        const int start_x = (BORDER_SIZE +last_selected_x * CELL_SIZE);
+        const int start_y =  (BORDER_SIZE +last_selected_y * CELL_SIZE);
+
+        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
+    }
+
+    const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
+    const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);
+
+    draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, SELECTION_COLOR);
+
+    // Updates board state the select cursor changed position
+    if(last_selected_x == board_data.select_x &&last_selected_y == board_data.select_y)
+        result = false;
+    else
+        result = true;
+
+   last_selected_x = board_data.select_x;
+   last_selected_y = board_data.select_y;
+
+    return result;
 }
 
 void draw_cell(

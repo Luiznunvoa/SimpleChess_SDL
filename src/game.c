@@ -19,6 +19,7 @@
 
 #include "game.h"
 #include "res.h"
+#include "Board.h"
 
 #define FPS 60
 
@@ -26,7 +27,7 @@ void game()
 {
     GameData game = (GameData){0};
 
-    if(!init(&game.renderer, &game.window))
+    if (!init(&game.renderer, &game.window))
     {
         SDL_ShowSimpleMessageBox(
            SDL_MESSAGEBOX_ERROR,
@@ -39,7 +40,7 @@ void game()
 
     game.ui_elements = init_elements(&game.renderer);
 
-    if(game.ui_elements == NULL)
+    if (game.ui_elements == NULL)
     {
         SDL_ShowSimpleMessageBox(
            SDL_MESSAGEBOX_ERROR,
@@ -56,20 +57,20 @@ void game()
 
     for (_Bool quit = 0; !quit;)
     {
-        quit = event_proc();
+        quit = event_proc(&game.update);
 
         game.start_time = SDL_GetTicks();
 
-        if(game.update)
+        if (game.update)
         {
             game.update = false;
 
             const int result = update_elements(&game.ui_elements);
 
-            if(result == error)
+            if (result == error)
                 return;
 
-            if(result == true)
+            if (result == true)
                 game.update = true;
 
             ui_present(game.ui_elements, &game.renderer);
@@ -87,7 +88,7 @@ void game()
     quit(game.renderer, game.window);
 }
 
-_Bool event_proc()
+_Bool event_proc(_Bool* update)
 {
     SDL_Event event;
 
@@ -97,8 +98,42 @@ _Bool event_proc()
         {
         case SDL_QUIT:
             return true;
+        case SDL_KEYUP:
+            return key_input_proc(event.key.keysym.sym, update);
         default:
         }
+    }
+    return false;
+}
+
+// Keyboard input processing, treating the logic of the arrow keys to move the cursor and the ESC key to close the app
+_Bool key_input_proc(const SDL_Keycode keycode, _Bool* update)
+{
+    switch (keycode)
+    {
+    case SDLK_ESCAPE:
+        return true;
+    case SDLK_UP:
+        if(board_data.select_y > 0)
+            board_data.select_y -= 1;
+        *update = true;
+        break;
+    case SDLK_DOWN:
+        if(board_data.select_y < 7)
+            board_data.select_y += 1;
+        *update = true;
+        break;
+    case SDLK_LEFT:
+        if(board_data.select_x > 0)
+            board_data.select_x -= 1;
+        *update = true;
+        break;
+    case SDLK_RIGHT:
+        if(board_data.select_x < 7)
+            board_data.select_x += 1;
+        *update = true;
+        break;
+    default:
     }
     return false;
 }
