@@ -24,7 +24,7 @@
 
 typedef struct Element Element;
 
-typedef int (*ELM_init)(Element* element, SDL_Renderer* renderer);
+typedef _Bool (*ELM_init)(Element* element, SDL_Renderer* renderer);
 typedef int (*ELM_update)(Element* element);
 
 typedef struct Element
@@ -39,14 +39,9 @@ typedef struct Element
     const char* bmp_path;
 }Element;
 
-int ui_init();
-int ui_update_elements();
-void ui_present();
-void ui_free();
-int create_board();
-int create_piece(int x, int y, Uint8 type);
-int ui_create_element(SDL_Rect rect, ELM_init init, Uint8 type);
-
-extern _Bool update;
+Element* init_elements();
+int update_elements(Element* elements);
+void free_elements(Element* elements);
+void present_ui(Element* elements);
 
 #endif //UI_H

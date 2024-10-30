@@ -17,81 +17,74 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#include <stdio.h>
-
 #include "res.h"
 
 #define GAME_TITLE "SimpleChess"
+#define WINDOW_WIDTH 600
+#define WINDOW_HEIGHT 600
 #define WINDOW_X SDL_WINDOWPOS_CENTERED
 #define WINDOW_Y SDL_WINDOWPOS_CENTERED
 #define WINDOW_FLAGS (SDL_WINDOW_SHOWN)
-#define WINDOW_COLOR 143, 138, 134, 1
 #define RENDERER_FLAGS (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)
+#define BACKGROUND_COLOR 143, 138, 134, 1
 
-SDL_Renderer* renderer;
-SDL_Window* window;
-
-// SDL, Window and renderer initializations
-int window_init()
+_Bool init(SDL_Renderer** renderer, SDL_Window** window)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
-        printf("SDL Initialization error: %s\n", SDL_GetError());
-        return error;
+        SDL_Log("SDL Initialization error: %s\n", SDL_GetError());
+        return false;
     }
 
-    window  = SDL_CreateWindow(
+    *window  = SDL_CreateWindow(
         GAME_TITLE,
         WINDOW_X, WINDOW_Y,
         WINDOW_WIDTH, WINDOW_HEIGHT,
         WINDOW_FLAGS
         );
 
-    if (window == NULL)
+    if (*window == NULL)
     {
-        printf("Window initialization error: %s\n", SDL_GetError());
-        return error;
+        SDL_Log("Window initialization error: %s\n", SDL_GetError());
+        return false;
     }
 
     SDL_Surface* iconSurface = SDL_LoadBMP("../../assets/black_pawn.bmp");
 
     if (iconSurface != NULL)
     {
-        SDL_SetWindowIcon(window, iconSurface);
+        SDL_SetWindowIcon(*window, iconSurface);
         SDL_FreeSurface(iconSurface);
         iconSurface = NULL;
     }
     else
     {
-        printf("Error loading icon: %s\n", SDL_GetError());
-        return error;
+        SDL_Log("Error loading icon: %s\n", SDL_GetError());
+        return false;
     }
 
-    renderer = SDL_CreateRenderer(
-        window,
+    *renderer = SDL_CreateRenderer(
+        *window,
         -1,
         RENDERER_FLAGS
         );
 
-    if (renderer == NULL)
+    if (*renderer == NULL)
     {
-        printf("Renderer initialization error: %s\n", SDL_GetError());
-        return error;
+        SDL_Log("Renderer initialization error: %s\n", SDL_GetError());
+        return false;
     }
 
-    SDL_SetRenderDrawColor(renderer, WINDOW_COLOR);
+    SDL_SetRenderDrawColor(*renderer, BACKGROUND_COLOR);
 
-    SDL_RenderClear(renderer);
+    SDL_RenderClear(*renderer);
 
-    printf("window initialized\n");
     return true;
 }
 
-// Window and renderer Destruction
-void window_free()
+void quit(SDL_Renderer* renderer, SDL_Window* window)
 {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    printf("window freed\n");
 }

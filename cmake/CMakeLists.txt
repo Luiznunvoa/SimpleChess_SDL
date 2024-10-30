@@ -35,17 +35,13 @@ find_package(SDL2_ttf REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIR})
 
 add_executable(SimpleChess_SDL ../src/main.c
+        ../src/common.h
+        ../src/game.h
+        ../src/game.c
         ../src/res.c
         ../src/res.h
-        ../src/game.c
-        ../src/game.h
         ../src/ui.c
         ../src/ui.h
-        ../src/board.c
-        ../src/board.h
-        ../src/pieces.h
-        ../src/pieces.c
-        ../src/common.h
 )
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} ${SDL2_TTF_LIBRARY})

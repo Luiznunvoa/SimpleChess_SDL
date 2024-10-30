@@ -22,12 +22,7 @@
 
 #include "common.h"
 
-#define WINDOW_WIDTH 600
-#define WINDOW_HEIGHT 600
-
-int window_init();
-void window_free();
-
-extern SDL_Renderer* renderer;
+_Bool init(SDL_Renderer** renderer, SDL_Window** window);
+void quit(SDL_Renderer* renderer, SDL_Window* window);
 
 #endif //RES_H
