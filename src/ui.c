@@ -22,94 +22,116 @@
 
 #define BOARD_RECT (SDL_Rect){40, 40, 520, 520}
 
-int element_count = 0;
+UI_Data ui = (UI_Data){0};
 
-Element* init_elements(SDL_Renderer** renderer)
+_Bool init_ui(SDL_Renderer** renderer)
 {
-    Element* elements = NULL;
+    ui.renderer = *renderer;
+    ui.update = true;
 
-    if(!create_element(&elements, renderer, BOARD_RECT, board_init, 0))
+    if(!ui_create_element(BOARD_RECT, board_init, 0))
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
-        free_UI(&elements);
-    };
-    return  elements;
-}
-
-void free_UI(Element** elements)
-{
-    for (int i = 0; i < element_count; i++)
-    {
-        if (elements[i]->texture != NULL)
-        {
-            SDL_DestroyTexture(elements[i]->texture);
-            elements[i]->texture = NULL;
-        }
+        free_UI();
+        return false;
     }
-    free(*elements);
-    *elements = NULL;
-    element_count = 0;
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Initialized");
+    return true;
 }
 
-int update_UI(Element** elements)
+void free_UI()
+{
+    for(int i = 0; i < ui.element_count; i++)
+        if(ui.elements[i].texture != NULL)
+        {
+            SDL_DestroyTexture(ui.elements[i].texture);
+
+        }
+    free(ui.elements);
+    ui.elements = NULL;
+    SDL_DestroyRenderer(ui.renderer);
+    ui.renderer = NULL;
+    ui.element_count = 0;
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
+}
+
+_Bool UI()
+{
+    while(ui.update)
+    {
+        ui.update = false;
+
+        const int result = update_ui();
+
+        if(result < 0)
+        {
+            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to update UI\n");
+            return false;
+        }
+
+      if(result == true)
+            ui.update = true;
+
+        present_ui();
+        return true;
+    }
+    return true;
+}
+
+int update_ui()
 {
     int result = false;
-
-    for(int i = 0; i < element_count; i++)
-    {
-        if(*elements[i]->update != NULL)
-        {
-            result = elements[i]->update(elements[i]);
-
-            if(result == error)
+    for(int i = 0; i < ui.element_count; i++)
+        if(ui.elements[i].update != NULL)
+            switch (ui.elements[i].update(&ui.elements[i]))
             {
-                SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error updating UI element\n");
+            case error:
                 return error;
-            }
-
-            if(result == true)
+            case true:
                 result = true;
-        }
-    }
+            default:
+                continue;
+            }
     return result;
 }
 
-void present_UI(Element* elements, SDL_Renderer** renderer)
+void present_ui()
 {
-    for (int i = 0; i < element_count; i++)
-        if(elements[i].texture != NULL)
-            SDL_RenderCopy(*renderer, elements[i].texture, NULL, &elements[i].rect);
+    for (int i = 0; i < ui.element_count; i++)
+        if(ui.elements[i].texture != NULL)
+            SDL_RenderCopy(ui.renderer, ui.elements[i].texture, NULL, &ui.elements[i].rect);
 
-    SDL_RenderPresent(*renderer);
+    SDL_RenderPresent(ui.renderer);
 }
 
-_Bool create_element(Element** elements, SDL_Renderer** renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type)
+_Bool ui_create_element(const SDL_Rect rect, const ELM_init init, const Uint8 type)
 {
-    Element* temp_elements = NULL;
+    Element* temp_elements;
 
-    if (*elements == NULL)
+    if(ui.element_count == 0)
         temp_elements = (Element*)malloc(sizeof(Element));
     else
-        temp_elements = (Element*)realloc(elements, (element_count + 1) * sizeof(Element));
+        temp_elements = (Element*)realloc(ui.elements, (ui.element_count + 1) * sizeof(Element));
 
-    if (temp_elements == NULL)
+    if(temp_elements == NULL)
         return false;
 
-    *elements = temp_elements;
-    temp_elements = NULL;
+    ui.elements = temp_elements;
+    ui.elements[ui.element_count] = (Element){0};
 
-    *elements[element_count] = (Element){0};
+    ui.elements[ui.element_count].rect = rect;
+    ui.elements[ui.element_count].init = init;
+    ui.elements[ui.element_count].type = type;
 
-    elements[element_count]->rect = rect;
-    elements[element_count]->init = init;
-    elements[element_count]->type = type;
-
-    if(elements[element_count]->init == NULL)
+    if(!ui.elements[ui.element_count].init(&ui.elements[ui.element_count], &ui.renderer))
         return false;
 
-    if(!elements[element_count]->init(elements[element_count], renderer))
-        return false;
-
-    element_count++;
+    ui.element_count++;
     return true;
+}
+
+void refresh_ui()
+{
+    ui.update = true;
 }

@@ -26,4 +26,6 @@
 #define false   0
 #define error   -1
 
+void alert(const char* text, SDL_Window* window);
+
 #endif //COMMON_H

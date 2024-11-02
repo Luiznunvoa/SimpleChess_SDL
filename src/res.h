@@ -23,6 +23,6 @@
 #include "common.h"
 
 _Bool init(SDL_Renderer** renderer, SDL_Window** window);
-void quit(SDL_Renderer* renderer, SDL_Window* window);
+void quit(SDL_Renderer** renderer, SDL_Window** window);
 
 #endif //RES_H

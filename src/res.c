@@ -71,7 +71,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
 
     if (*renderer == NULL)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Renderer initialization error: %s\n", SDL_GetError());
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Failure in the renderer initialization: %s\n", SDL_GetError());
         return false;
     }
 
@@ -79,12 +79,15 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
 
     SDL_RenderClear(*renderer);
 
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Initialized");
+
     return true;
 }
 
-void quit(SDL_Renderer* renderer, SDL_Window* window)
+void quit(SDL_Renderer** renderer, SDL_Window** window)
 {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(*renderer);
+    SDL_DestroyWindow(*window);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Deallocated");
     SDL_Quit();
 }

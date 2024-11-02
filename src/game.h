@@ -20,24 +20,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "common.h"
-#include "ui.h"
-
-typedef struct
-{
-    SDL_Renderer* renderer;
-    SDL_Window* window;
-
-    Uint32 start_time; // The tick that the frame started
-    Uint32 frame_time; // The time that the frame took to be rendered
-
-    _Bool update;
-
-    Element* ui_elements;
-}GameData;
-
 void game();
-_Bool event_proc(_Bool* update);
-_Bool key_input_proc(SDL_Keycode keycode, _Bool* update);
+_Bool event_proc();
 
 #endif //GAME_H

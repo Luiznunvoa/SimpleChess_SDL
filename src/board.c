@@ -41,9 +41,6 @@ const char board_map[8][8] =
 
 BoardData board_data; // Structure with the board selection cursor information
 
-int last_selected_x; // x value of the last piece selected
-int last_selected_y; // y value of the last piece selected
-
 _Bool board_init(Element* board, SDL_Renderer** renderer)
 {
     int pitch;
@@ -100,10 +97,8 @@ _Bool board_init(Element* board, SDL_Renderer** renderer)
 
 int board_update(Element* board)
 {
-    int result;
     int pitch;
     void* pixels;
-
     SDL_PixelFormat* format;
 
     if (!lock_texture_and_alloc_format(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565))
@@ -114,12 +109,8 @@ int board_update(Element* board)
 
     Uint16* pixelData = (Uint16*)pixels;
 
-    result = draw_selected_cell(board, format, pixelData, pitch);
 
-    /*
-    draw_locked_piece(board, format, pixelData, pitch);
-    highlight_possible_moves(board, pixelData, pitch, format);
-    */
+    const _Bool result = draw_selected_cell(board, format, pixelData, pitch);
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -134,34 +125,35 @@ _Bool draw_selected_cell(
     const int pitch
     )
 {
-    int result;
-
     // Reverts color of previously selected cell, if any.
-    if (last_selected_x != -1 &&last_selected_y != -1)
+    if (board_data.last_selected_x != -1 &&board_data.last_selected_y != -1)
     {
-        const Uint16 originalColor = (board_map[last_selected_y][last_selected_x] == '1') ?
+        const Uint16 originalColor = (board_map[board_data.last_selected_y][board_data.last_selected_x] == '1') ?
             DARK_CELL_COLOR :
             BRIGHT_CELL_COLOR;
 
-        const int start_x = (BORDER_SIZE +last_selected_x * CELL_SIZE);
-        const int start_y =  (BORDER_SIZE +last_selected_y * CELL_SIZE);
+        const int start_x = (BORDER_SIZE +board_data.last_selected_x * CELL_SIZE);
+        const int start_y =  (BORDER_SIZE +board_data.last_selected_y * CELL_SIZE);
 
         draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
 
+    const Uint16 color = SELECTION_COLOR;
+
     const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
     const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);
 
-    draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, SELECTION_COLOR);
+    draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
+    int result;
     // Updates board state the select cursor changed position
-    if(last_selected_x == board_data.select_x &&last_selected_y == board_data.select_y)
+    if(board_data.last_selected_x == board_data.select_x &&board_data.last_selected_y == board_data.select_y)
         result = false;
     else
         result = true;
 
-   last_selected_x = board_data.select_x;
-   last_selected_y = board_data.select_y;
+   board_data.last_selected_x = board_data.select_x;
+   board_data.last_selected_y = board_data.select_y;
 
     return result;
 }
@@ -181,7 +173,6 @@ void draw_cell(
             row[x] = color;
     }
 }
-
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,

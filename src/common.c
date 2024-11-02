@@ -17,44 +17,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#ifndef UI_H
-#define UI_H
-
 #include "common.h"
 
-typedef struct Element Element;
-
-typedef _Bool (*ELM_init)(Element* element,SDL_Renderer** renderer);
-typedef int (*ELM_update)(Element* element);
-
-typedef struct
+void alert(const char* text, SDL_Window* window)
 {
-    int element_count;
-    _Bool update;
-
-    Element* elements;
-
-    SDL_Renderer* renderer;
-}UI_Data;
-
-typedef struct Element
-{
-    SDL_Texture* texture;
-    SDL_Rect rect;
-
-    ELM_init init;
-    ELM_update update;
-
-    Uint8 type;
-    const char* bmp_path;
-}Element;
-
-_Bool init_ui(SDL_Renderer** renderer);
-_Bool UI();
-int update_ui();
-void present_ui();
-_Bool ui_create_element(SDL_Rect rect, ELM_init init, Uint8 type);
-void free_UI();
-void refresh_ui();
-
-#endif //UI_H
+    SDL_ShowSimpleMessageBox(
+            SDL_MESSAGEBOX_ERROR,
+            "ERROR!",
+            text,
+            window
+            );
+}

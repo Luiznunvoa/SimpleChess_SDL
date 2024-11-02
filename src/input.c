@@ -17,44 +17,37 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#ifndef UI_H
-#define UI_H
+#include "input.h"
+#include "board.h"
+#include "ui.h"
 
-#include "common.h"
-
-typedef struct Element Element;
-
-typedef _Bool (*ELM_init)(Element* element,SDL_Renderer** renderer);
-typedef int (*ELM_update)(Element* element);
-
-typedef struct
+_Bool key_input_proc(const SDL_Keycode keycode)
 {
-    int element_count;
-    _Bool update;
-
-    Element* elements;
-
-    SDL_Renderer* renderer;
-}UI_Data;
-
-typedef struct Element
-{
-    SDL_Texture* texture;
-    SDL_Rect rect;
-
-    ELM_init init;
-    ELM_update update;
-
-    Uint8 type;
-    const char* bmp_path;
-}Element;
-
-_Bool init_ui(SDL_Renderer** renderer);
-_Bool UI();
-int update_ui();
-void present_ui();
-_Bool ui_create_element(SDL_Rect rect, ELM_init init, Uint8 type);
-void free_UI();
-void refresh_ui();
-
-#endif //UI_H
+    switch (keycode)
+    {
+    case SDLK_ESCAPE:
+        return true;
+    case SDLK_UP:
+        if(board_data.select_y > 0)
+            board_data.select_y -= 1;
+        refresh_ui();
+        break;
+    case SDLK_DOWN:
+        if(board_data.select_y < 7)
+            board_data.select_y += 1;
+        refresh_ui();
+        break;
+    case SDLK_LEFT:
+        if(board_data.select_x > 0)
+            board_data.select_x -= 1;
+        refresh_ui();
+        break;
+    case SDLK_RIGHT:
+        if(board_data.select_x < 7)
+            board_data.select_x += 1;
+        refresh_ui();
+        break;
+    default:
+    }
+    return false;
+}

@@ -19,86 +19,56 @@
 
 #include "game.h"
 #include "res.h"
-#include "Board.h"
+#include "ui.h"
+#include "input.h"
 
 #define FPS 60
 
 void game()
 {
-    GameData game = (GameData){0};
+    SDL_Renderer* renderer = NULL;
+    SDL_Window* window = NULL;
 
-    if (!init(&game.renderer, &game.window))
+    Uint32 start_time = 0; // The tick that the frame started
+    Uint32 frame_time = 0; // The time that the frame took to be rendered
+
+    if(!init(&renderer, &window))
     {
-        SDL_ShowSimpleMessageBox(
-           SDL_MESSAGEBOX_ERROR,
-           "ERROR!",
-           "Critical Error: Failed to Initializing Resources",
-           game.window
-           );
-        quit(game.renderer, game.window);
+        alert("Critical Error: Failed to Initialize Window", window);
+        quit(&renderer, &window);
         return;
     }
 
-    game.ui_elements = init_elements(&game.renderer);
-
-    if (game.ui_elements == NULL)
+    if(!init_ui(&renderer))
     {
-        SDL_ShowSimpleMessageBox(
-           SDL_MESSAGEBOX_ERROR,
-           "ERROR!",
-           "Critical Error: Failed to Initialize UI Elements",
-           game.window
-           );
-        quit(game.renderer, game.window);
+        alert("Critical Error: Failed to Initialize the UI", window);
+        quit(&renderer, &window);
         return;
     }
-
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Starting game...\n");
-
-    game.update = true;
 
     for (_Bool quit = 0; !quit;)
     {
-        quit = event_proc(&game.update);
+        start_time = SDL_GetTicks();
 
-        game.start_time = SDL_GetTicks();
+        quit = event_proc();
 
-        if (game.update)
+        if(!UI())
         {
-            game.update = false;
-
-            const int result = update_UI(&game.ui_elements);
-
-            if (result == error)
-            {
-                SDL_ShowSimpleMessageBox(
-                   SDL_MESSAGEBOX_ERROR,
-                   "ERROR!",
-                   "Critical Error: Failed to update an UI Element",
-                   game.window
-                   );
-                break;
-            }
-
-            if (result == true)
-                game.update = true;
-
-            present_UI(game.ui_elements, &game.renderer);
+            alert("Critical Error: Failed to Update the UI", window);
+            quit = true;
         }
 
-        game.frame_time = SDL_GetTicks() - game.start_time;
+        frame_time = SDL_GetTicks() - start_time;
 
-        if (game.frame_time < (1000 / FPS))
-            SDL_Delay((1000 / FPS) - game.frame_time); // sleeps through the time remaining to keep the fps stable
+        if (frame_time < (1000 / FPS))
+            SDL_Delay((1000 / FPS) - frame_time); // sleeps through the time remaining to keep the fps stable
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Freeing game...\n");
-
-    free_UI(&game.ui_elements);
-    quit(game.renderer, game.window);
+    free_UI();
+    quit(&renderer, &window);
 }
 
-_Bool event_proc(_Bool* update)
+_Bool event_proc()
 {
     SDL_Event event;
 
@@ -109,41 +79,9 @@ _Bool event_proc(_Bool* update)
         case SDL_QUIT:
             return true;
         case SDL_KEYUP:
-            return key_input_proc(event.key.keysym.sym, update);
+            key_input_proc(event.key.keysym.sym);
         default:
         }
-    }
-    return false;
-}
-
-// Keyboard input processing, treating the logic of the arrow keys to move the cursor and the ESC key to close the app
-_Bool key_input_proc(const SDL_Keycode keycode, _Bool* update)
-{
-    switch (keycode)
-    {
-    case SDLK_ESCAPE:
-        return true;
-    case SDLK_UP:
-        if(board_data.select_y > 0)
-            board_data.select_y -= 1;
-        *update = true;
-        break;
-    case SDLK_DOWN:
-        if(board_data.select_y < 7)
-            board_data.select_y += 1;
-        *update = true;
-        break;
-    case SDLK_LEFT:
-        if(board_data.select_x > 0)
-            board_data.select_x -= 1;
-        *update = true;
-        break;
-    case SDLK_RIGHT:
-        if(board_data.select_x < 7)
-            board_data.select_x += 1;
-        *update = true;
-        break;
-    default:
     }
     return false;
 }
