@@ -22,24 +22,15 @@
 #define DARK_CELL_COLOR 0x734B
 #define BRIGHT_CELL_COLOR 0x9C90
 #define SELECTION_COLOR 0x2ce5
-#define BORDER_COLOR 0
+#define BORDER_COLOR 0x0000
 
 #define BORDER_SIZE (board->rect.w / 100)
 #define CELL_SIZE ((board->rect.w / 8) -1)
 
-const char board_map[8][8] =
-{
-    {'0', '1', '0', '1', '0', '1', '0', '1'},
-    {'1', '0', '1', '0', '1', '0', '1', '0'},
-    {'0', '1', '0', '1', '0', '1', '0', '1'},
-    {'1', '0', '1', '0', '1', '0', '1', '0'},
-    {'0', '1', '0', '1', '0', '1', '0', '1'},
-    {'1', '0', '1', '0', '1', '0', '1', '0'},
-    {'0', '1', '0', '1', '0', '1', '0', '1'},
-    {'1', '0', '1', '0', '1', '0', '1', '0'},
-};
+BoardData board_data = (BoardData){0};
 
-BoardData board_data; // Structure with the board selection cursor information
+int last_selected_x;
+int last_selected_y;
 
 _Bool board_init(Element* board, SDL_Renderer** renderer)
 {
@@ -55,11 +46,11 @@ _Bool board_init(Element* board, SDL_Renderer** renderer)
         SDL_PIXELFORMAT_RGB565,
         SDL_TEXTUREACCESS_STREAMING,
         board->rect.w, board->rect.h
-        );
+    );
 
     if (!board->texture)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Error creating texture: %s\n", SDL_GetError());
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error creating texture: %s\n", SDL_GetError());
         return false;
     }
 
@@ -71,16 +62,13 @@ _Bool board_init(Element* board, SDL_Renderer** renderer)
 
     Uint16* pixelData = (Uint16*)pixels;
 
-    // Draws a border around the board(i'm just drawing a big black square than a smaller on top, calling the gap a border).
+
     draw_cell(pixelData, pitch, 0, 0, board->rect.w, BORDER_COLOR);
 
-    // Iterates through board cells, filling each with one of two colors based on the board map.
     for (int row = 0; row < 8; row++)
         for (int col = 0; col < 8; col++)
         {
-            const Uint16 color = (board_map[row][col] == '1') ?
-            DARK_CELL_COLOR :
-            BRIGHT_CELL_COLOR;
+            const Uint16 color = get_board_color(row, col);
 
             const int start_x = (col * CELL_SIZE + BORDER_SIZE);
             const int start_y = (row * CELL_SIZE + BORDER_SIZE);
@@ -95,7 +83,7 @@ _Bool board_init(Element* board, SDL_Renderer** renderer)
     return true;
 }
 
-int board_update(Element* board)
+int board_update(const Element* board)
 {
     int pitch;
     void* pixels;
@@ -108,7 +96,6 @@ int board_update(Element* board)
     }
 
     Uint16* pixelData = (Uint16*)pixels;
-
 
     const _Bool result = draw_selected_cell(board, format, pixelData, pitch);
 
@@ -123,17 +110,14 @@ _Bool draw_selected_cell(
     const SDL_PixelFormat* format,
     Uint16* pixelData,
     const int pitch
-    )
+)
 {
-    // Reverts color of previously selected cell, if any.
-    if (board_data.last_selected_x != -1 &&board_data.last_selected_y != -1)
+    if (last_selected_x != -1 && last_selected_y != -1)
     {
-        const Uint16 originalColor = (board_map[board_data.last_selected_y][board_data.last_selected_x] == '1') ?
-            DARK_CELL_COLOR :
-            BRIGHT_CELL_COLOR;
+        const Uint16 originalColor = get_board_color(last_selected_y, last_selected_x);
 
-        const int start_x = (BORDER_SIZE +board_data.last_selected_x * CELL_SIZE);
-        const int start_y =  (BORDER_SIZE +board_data.last_selected_y * CELL_SIZE);
+        const int start_x = (BORDER_SIZE + last_selected_x * CELL_SIZE);
+        const int start_y = (BORDER_SIZE + last_selected_y * CELL_SIZE);
 
         draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
@@ -146,14 +130,13 @@ _Bool draw_selected_cell(
     draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
     int result;
-    // Updates board state the select cursor changed position
-    if(board_data.last_selected_x == board_data.select_x &&board_data.last_selected_y == board_data.select_y)
+    if (last_selected_x == board_data.select_x && last_selected_y == board_data.select_y)
         result = false;
     else
         result = true;
 
-   board_data.last_selected_x = board_data.select_x;
-   board_data.last_selected_y = board_data.select_y;
+    last_selected_x = board_data.select_x;
+    last_selected_y = board_data.select_y;
 
     return result;
 }
@@ -164,7 +147,7 @@ void draw_cell(
     const int startX, const int startY,
     const int size,
     const Uint16 color
-    )
+)
 {
     for (int y = startY; y < startY + size; y++)
     {
@@ -173,6 +156,7 @@ void draw_cell(
             row[x] = color;
     }
 }
+
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,
@@ -183,17 +167,22 @@ _Bool lock_texture_and_alloc_format(
 {
     if (SDL_LockTexture(texture, NULL, pixels, pitch) < 0)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Error locking texture: %s\n", SDL_GetError());
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error locking texture: %s\n", SDL_GetError());
         return false;
     }
 
     *format = SDL_AllocFormat(enum_format);
     if (!*format)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Error allocating pixel format: %s\n", SDL_GetError());
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error allocating pixel format: %s\n", SDL_GetError());
         SDL_UnlockTexture(texture);
         return false;
     }
 
     return true;
+}
+
+__forceinline Uint16 get_board_color(const int row, const int col)
+{
+    return ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_CELL_COLOR : BRIGHT_CELL_COLOR;
 }

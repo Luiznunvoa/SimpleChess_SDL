@@ -25,7 +25,7 @@
 typedef struct Element Element;
 
 typedef _Bool (*ELM_init)(Element* element,SDL_Renderer** renderer);
-typedef int (*ELM_update)(Element* element);
+typedef int (*ELM_update)(const Element* element);
 
 typedef struct
 {

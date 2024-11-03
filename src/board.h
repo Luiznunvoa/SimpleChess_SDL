@@ -27,12 +27,10 @@ typedef struct
 {
     int select_x; // x value of the piece selected by the cursor
     int select_y; // y value of the piece selected by the cursor
-    int last_selected_x; // x value of the last piece selected
-    int last_selected_y; // y value of the last piece selected
 }BoardData;
 
 _Bool board_init(Element* board, SDL_Renderer** renderer);
-int board_update(Element* board);
+int board_update(const Element* board);
 _Bool draw_selected_cell(
     const Element* board,
     const SDL_PixelFormat* format,
@@ -53,6 +51,8 @@ void draw_cell(
     int size,
      Uint16 color
     );
+Uint16 get_board_color(int row, int col);
+
 extern BoardData board_data;
 
 #endif //BOARD_H
