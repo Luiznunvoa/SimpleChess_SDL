@@ -17,7 +17,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#define FPS 60
+#define FPS 15
 
 #include "game.h"
 #include "input.h"
@@ -77,8 +77,8 @@ _Bool event_proc(UIContext* ui)
             return true;
         case SDL_KEYUP:
             key_input_proc(event.key.keysym.sym);
-        default:
             refresh_ui(ui);
+        default:
         }
     }
     return false;

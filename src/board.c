@@ -22,6 +22,7 @@
 #define DARK_CELL_COLOR 0x734B
 #define BRIGHT_CELL_COLOR 0x9C90
 #define SELECTION_COLOR 0x2ce5
+#define PIECE_SELECTION_COLOR 0x32f1
 #define BORDER_COLOR 0x0000
 
 #define BORDER_SIZE (board->rect.w / 100)
@@ -97,7 +98,7 @@ int board_update(const Element* board)
 
     Uint16* pixelData = (Uint16*)pixels;
 
-    _Bool result = false;
+    const _Bool result = false;
 
     draw_selected_cell(board, format, pixelData, pitch);
 
@@ -124,7 +125,19 @@ void draw_selected_cell(
         draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
 
-    const Uint16 color = SELECTION_COLOR;
+    Uint16 color;
+
+    if(board_data.select_x == board_data.selected_piece_x && board_data.select_y == board_data.selected_piece_y)
+    {
+        color = PIECE_SELECTION_COLOR;
+    }
+    else
+    {
+        board_data.selecting = false;
+        color = SELECTION_COLOR;
+        board_data.selected_piece_x = -1;
+        board_data.selected_piece_y = -1;
+    }
 
     const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
     const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);

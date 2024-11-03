@@ -27,6 +27,9 @@ typedef struct
 {
     int select_x; // x value of the piece selected by the cursor
     int select_y; // y value of the piece selected by the cursor
+    int selected_piece_x;
+    int selected_piece_y;
+    _Bool selecting;
 }BoardData;
 
 _Bool board_init(Element* board, SDL_Renderer* renderer);

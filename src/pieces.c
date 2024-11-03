@@ -1,4 +1,24 @@
+//
+// Copyright (c) 2024 Luiz Gabriel Moraes "Luiz".
+//
+// This file is part of SimpleChess_SDL.
+//
+// SimpleChess_SDL is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License, version 3
+// as published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// SimpleChess_SDL is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>..
+//
+
 #include "pieces.h"
+#include "board.h"
 
 Uint8 piece_board[8][8] = {
     {1, 2, 3, 4, 5, 6, 7, 8},   
@@ -79,5 +99,27 @@ _Bool pieces_init(Element* piece, SDL_Renderer* renderer)
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error creating the texture: %s\n", SDL_GetError());
         return false;
     }
+
+    piece->update = pieces_update;
     return true;
+}
+
+// Generic piece update function for debug purposes
+int pieces_update(Element* piece, SDL_Renderer* renderer)
+{
+    // Calculates the piece's position on the board based on screen coordinates.
+    const int x = (piece->rect.x - 45) / 65;
+    const int y = (piece->rect.y - 45) / 65;
+
+    int result = false;
+
+    // Checks if the current piece matches the selected board position and isn't locked.
+    if(board_data.select_x == x && board_data.select_y == y && !board_data.selecting)
+    {
+        board_data.selected_piece_x = x;
+        board_data.selected_piece_y = y;
+        board_data.selecting = true;
+        result = true;
+    }
+    return result;
 }
