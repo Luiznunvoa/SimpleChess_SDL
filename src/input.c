@@ -19,7 +19,6 @@
 
 #include "input.h"
 #include "board.h"
-#include "ui.h"
 
 _Bool key_input_proc(const SDL_Keycode keycode)
 {
@@ -45,6 +44,5 @@ _Bool key_input_proc(const SDL_Keycode keycode)
         break;
     default:
     }
-    refresh_ui();
     return false;
 }

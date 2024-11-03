@@ -97,7 +97,9 @@ int board_update(const Element* board)
 
     Uint16* pixelData = (Uint16*)pixels;
 
-    const _Bool result = draw_selected_cell(board, format, pixelData, pitch);
+    _Bool result = false;
+
+    draw_selected_cell(board, format, pixelData, pitch);
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -105,7 +107,7 @@ int board_update(const Element* board)
     return result;
 }
 
-_Bool draw_selected_cell(
+void draw_selected_cell(
     const Element* board,
     const SDL_PixelFormat* format,
     Uint16* pixelData,
@@ -129,16 +131,8 @@ _Bool draw_selected_cell(
 
     draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
-    int result;
-    if (last_selected_x == board_data.select_x && last_selected_y == board_data.select_y)
-        result = false;
-    else
-        result = true;
-
     last_selected_x = board_data.select_x;
     last_selected_y = board_data.select_y;
-
-    return result;
 }
 
 void draw_cell(

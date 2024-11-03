@@ -33,9 +33,7 @@ typedef struct
     _Bool update;
 
     Element* elements;
-
-    SDL_Renderer* renderer;
-}UI_Data;
+}UIContext;
 
 typedef struct Element
 {
@@ -49,12 +47,12 @@ typedef struct Element
     const char* bmp_path;
 }Element;
 
-_Bool init_ui(SDL_Renderer** renderer);
-_Bool UI();
-int update_ui();
-void present_ui();
-_Bool ui_create_element(SDL_Rect rect, ELM_init init, Uint8 type);
-void free_UI();
-void refresh_ui();
+_Bool init_ui(UIContext* ui, SDL_Renderer** renderer);
+_Bool UI(UIContext* ui, SDL_Renderer** renderer);
+int update_ui(UIContext* ui);
+void present_ui(UIContext* ui, SDL_Renderer** renderer);
+_Bool ui_create_element(UIContext* ui, SDL_Renderer** renderer, SDL_Rect rect, ELM_init init, Uint8 type);
+void free_UI(UIContext* ui);
+void refresh_ui(UIContext* ui);
 
 #endif //UI_H

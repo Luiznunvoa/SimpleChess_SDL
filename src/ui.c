@@ -22,17 +22,15 @@
 
 #define BOARD_RECT (SDL_Rect){40, 40, 520, 520}
 
-UI_Data ui = (UI_Data){0};
-
-_Bool init_ui(SDL_Renderer** renderer)
+_Bool init_ui(UIContext* ui, SDL_Renderer** renderer)
 {
-    ui.renderer = *renderer;
-    ui.update = true;
+    *ui = (UIContext){0};
+    ui->update = true;
 
-    if(!ui_create_element(BOARD_RECT, board_init, 0))
+    if(!ui_create_element(ui, renderer, BOARD_RECT, board_init, 0))
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
-        free_UI();
+        free_UI(ui);
         return false;
     }
 
@@ -40,29 +38,29 @@ _Bool init_ui(SDL_Renderer** renderer)
     return true;
 }
 
-void free_UI()
+void free_UI(UIContext* ui)
 {
-    for(int i = 0; i < ui.element_count; i++)
-        if(ui.elements[i].texture != NULL)
+    for(int i = 0; i < ui->element_count; i++)
+        if(ui->elements[i].texture != NULL)
         {
-            SDL_DestroyTexture(ui.elements[i].texture);
+            SDL_DestroyTexture(ui->elements[i].texture);
 
         }
-    free(ui.elements);
-    ui.elements = NULL;
-    SDL_DestroyRenderer(ui.renderer);
-    ui.renderer = NULL;
-    ui.element_count = 0;
+    free(ui->elements);
+    ui->elements = NULL;
+
+    ui->element_count = 0;
+
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
 }
 
-_Bool UI()
+_Bool UI(UIContext* ui, SDL_Renderer** renderer)
 {
-    while(ui.update)
+    while(ui->update)
     {
-        ui.update = false;
+        ui->update = false;
 
-        const int result = update_ui();
+        const int result = update_ui(ui);
 
         if(result < 0)
         {
@@ -71,20 +69,19 @@ _Bool UI()
         }
 
       if(result == true)
-            ui.update = true;
+            ui->update = true;
 
-        present_ui();
-        return true;
+        present_ui(ui, renderer);
     }
     return true;
 }
 
-int update_ui()
+int update_ui(UIContext* ui)
 {
     int result = false;
-    for(int i = 0; i < ui.element_count; i++)
-        if(ui.elements[i].update != NULL)
-            switch (ui.elements[i].update(&ui.elements[i]))
+    for(int i = 0; i < ui->element_count; i++)
+        if(ui->elements[i].update != NULL)
+            switch (ui->elements[i].update(&ui->elements[i]))
             {
             case error:
                 return error;
@@ -96,42 +93,42 @@ int update_ui()
     return result;
 }
 
-void present_ui()
+void present_ui(UIContext* ui, SDL_Renderer** renderer)
 {
-    for (int i = 0; i < ui.element_count; i++)
-        if(ui.elements[i].texture != NULL)
-            SDL_RenderCopy(ui.renderer, ui.elements[i].texture, NULL, &ui.elements[i].rect);
+    for (int i = 0; i < ui->element_count; i++)
+        if(ui->elements[i].texture != NULL)
+            SDL_RenderCopy(*renderer, ui->elements[i].texture, NULL, &ui->elements[i].rect);
 
-    SDL_RenderPresent(ui.renderer);
+    SDL_RenderPresent(*renderer);
 }
 
-_Bool ui_create_element(const SDL_Rect rect, const ELM_init init, const Uint8 type)
+_Bool ui_create_element(UIContext* ui, SDL_Renderer** renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type)
 {
     Element* temp_elements;
 
-    if(ui.element_count == 0)
+    if(ui->element_count == 0)
         temp_elements = (Element*)malloc(sizeof(Element));
     else
-        temp_elements = (Element*)realloc(ui.elements, (ui.element_count + 1) * sizeof(Element));
+        temp_elements = (Element*)realloc(ui->elements, (ui->element_count + 1) * sizeof(Element));
 
     if(temp_elements == NULL)
         return false;
 
-    ui.elements = temp_elements;
-    ui.elements[ui.element_count] = (Element){0};
+    ui->elements = temp_elements;
+    ui->elements[ui->element_count] = (Element){0};
 
-    ui.elements[ui.element_count].rect = rect;
-    ui.elements[ui.element_count].init = init;
-    ui.elements[ui.element_count].type = type;
+    ui->elements[ui->element_count].rect = rect;
+    ui->elements[ui->element_count].init = init;
+    ui->elements[ui->element_count].type = type;
 
-    if(!ui.elements[ui.element_count].init(&ui.elements[ui.element_count], &ui.renderer))
+    if(!ui->elements[ui->element_count].init(&ui->elements[ui->element_count], renderer))
         return false;
 
-    ui.element_count++;
+    ui->element_count++;
     return true;
 }
 
-void refresh_ui()
+void refresh_ui(UIContext* ui)
 {
-    ui.update = true;
+    ui->update = true;
 }

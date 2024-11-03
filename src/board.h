@@ -31,7 +31,7 @@ typedef struct
 
 _Bool board_init(Element* board, SDL_Renderer** renderer);
 int board_update(const Element* board);
-_Bool draw_selected_cell(
+void draw_selected_cell(
     const Element* board,
     const SDL_PixelFormat* format,
     Uint16* pixelData,

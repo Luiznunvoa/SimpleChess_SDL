@@ -28,7 +28,7 @@
 #define RENDERER_FLAGS (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)
 #define BACKGROUND_COLOR 143, 138, 134, 1
 
-_Bool init(SDL_Renderer** renderer, SDL_Window** window)
+_Bool init(WindowContext* res)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -36,14 +36,14 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
         return false;
     }
 
-    *window  = SDL_CreateWindow(
+    res->window  = SDL_CreateWindow(
         GAME_TITLE,
         WINDOW_X, WINDOW_Y,
         WINDOW_WIDTH, WINDOW_HEIGHT,
         WINDOW_FLAGS
         );
 
-    if (*window == NULL)
+    if (res->window == NULL)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Window initialization error: %s\n", SDL_GetError());
         return false;
@@ -53,7 +53,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
 
     if (iconSurface != NULL)
     {
-        SDL_SetWindowIcon(*window, iconSurface);
+        SDL_SetWindowIcon(res->window, iconSurface);
         SDL_FreeSurface(iconSurface);
         iconSurface = NULL;
     }
@@ -63,31 +63,34 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
         return false;
     }
 
-    *renderer = SDL_CreateRenderer(
-        *window,
+    res->renderer = SDL_CreateRenderer(
+        res->window,
         -1,
         RENDERER_FLAGS
         );
 
-    if (*renderer == NULL)
+    if (res->renderer == NULL)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Failure in the renderer initialization: %s\n", SDL_GetError());
         return false;
     }
 
-    SDL_SetRenderDrawColor(*renderer, BACKGROUND_COLOR);
+    SDL_SetRenderDrawColor(res->renderer, BACKGROUND_COLOR);
 
-    SDL_RenderClear(*renderer);
+    SDL_RenderClear(res->renderer);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Initialized");
+
+    res->frame_time = 0;
+    res->start_time = 0;
 
     return true;
 }
 
-void quit(SDL_Renderer** renderer, SDL_Window** window)
+void quit(const WindowContext* res)
 {
-    SDL_DestroyRenderer(*renderer);
-    SDL_DestroyWindow(*window);
+    SDL_DestroyRenderer(res->renderer);
+    SDL_DestroyWindow(res->window);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Deallocated");
     SDL_Quit();
 }

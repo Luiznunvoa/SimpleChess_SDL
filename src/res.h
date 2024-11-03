@@ -22,7 +22,16 @@
 
 #include "common.h"
 
-_Bool init(SDL_Renderer** renderer, SDL_Window** window);
-void quit(SDL_Renderer** renderer, SDL_Window** window);
+typedef struct
+{
+    SDL_Renderer* renderer;
+    SDL_Window* window;
+
+    Uint32 start_time; // The tick that the frame started
+    Uint32 frame_time; // The time that the frame took to be rendered
+}WindowContext;
+
+_Bool init(WindowContext* res);
+void quit(const WindowContext* res);
 
 #endif //RES_H

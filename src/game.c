@@ -17,58 +17,55 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#include "game.h"
-#include "res.h"
-#include "ui.h"
-#include "input.h"
-
 #define FPS 60
+
+#include "game.h"
+#include "input.h"
+#include "res.h"
 
 void game()
 {
-    SDL_Renderer* renderer = NULL;
-    SDL_Window* window = NULL;
+    WindowContext res;
 
-    Uint32 start_time = 0; // The tick that the frame started
-    Uint32 frame_time = 0; // The time that the frame took to be rendered
-
-    if(!init(&renderer, &window))
+    if(!init(&res))
     {
-        alert("Critical Error: Failed to Initialize Window", window);
-        quit(&renderer, &window);
+        alert("Critical Error: Failed to Initialize Window", res.window);
+        quit(&res);
         return;
     }
 
-    if(!init_ui(&renderer))
+    UIContext ui;
+
+    if(!init_ui(&ui, &res.renderer))
     {
-        alert("Critical Error: Failed to Initialize the UI", window);
-        quit(&renderer, &window);
+        alert("Critical Error: Failed to Initialize the UI", res.window);
+        quit(&res);
         return;
     }
 
     for (_Bool quit = 0; !quit;)
     {
-        start_time = SDL_GetTicks();
+        res.start_time = SDL_GetTicks();
 
-        quit = event_proc();
+        quit = event_proc(&ui);
 
-        if(!UI())
+        if(!UI(&ui, &res.renderer))
         {
-            alert("Critical Error: Failed to Update the UI", window);
+            alert("Critical Error: Failed to Update the UI", res.window);
             quit = true;
         }
 
-        frame_time = SDL_GetTicks() - start_time;
+        res.frame_time = SDL_GetTicks() - res.start_time;
 
-        if (frame_time < (1000 / FPS))
-            SDL_Delay((1000 / FPS) - frame_time); // sleeps through the time remaining to keep the fps stable
+        if (res.frame_time < (1000 / FPS))
+            SDL_Delay((1000 / FPS) - res.frame_time); // sleeps through the time remaining to keep the fps stable
     }
 
-    free_UI();
-    quit(&renderer, &window);
+    free_UI(&ui);
+    quit(&res);
 }
 
-_Bool event_proc()
+_Bool event_proc(UIContext* ui)
 {
     SDL_Event event;
 
@@ -81,6 +78,7 @@ _Bool event_proc()
         case SDL_KEYUP:
             key_input_proc(event.key.keysym.sym);
         default:
+            refresh_ui(ui);
         }
     }
     return false;
