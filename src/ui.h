@@ -24,7 +24,7 @@
 
 typedef struct Element Element;
 
-typedef _Bool (*ELM_init)(Element* element,SDL_Renderer** renderer);
+typedef _Bool (*ELM_init)(Element* element,SDL_Renderer* renderer);
 typedef int (*ELM_update)(const Element* element);
 
 typedef struct
@@ -47,11 +47,11 @@ typedef struct Element
     const char* bmp_path;
 }Element;
 
-_Bool init_ui(UIContext* ui, SDL_Renderer** renderer);
-_Bool UI(UIContext* ui, SDL_Renderer** renderer);
+_Bool init_ui(UIContext* ui, SDL_Renderer* renderer);
+_Bool UI(UIContext* ui, SDL_Renderer* renderer);
 int update_ui(UIContext* ui);
-void present_ui(UIContext* ui, SDL_Renderer** renderer);
-_Bool ui_create_element(UIContext* ui, SDL_Renderer** renderer, SDL_Rect rect, ELM_init init, Uint8 type);
+void present_ui(UIContext* ui, SDL_Renderer* renderer);
+_Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 type);
 void free_UI(UIContext* ui);
 void refresh_ui(UIContext* ui);
 

@@ -36,7 +36,7 @@ void game()
 
     UIContext ui;
 
-    if(!init_ui(&ui, &res.renderer))
+    if(!init_ui(&ui, res.renderer))
     {
         alert("Critical Error: Failed to Initialize the UI", res.window);
         quit(&res);
@@ -49,7 +49,7 @@ void game()
 
         quit = event_proc(&ui);
 
-        if(!UI(&ui, &res.renderer))
+        if(!UI(&ui, res.renderer))
         {
             alert("Critical Error: Failed to Update the UI", res.window);
             quit = true;

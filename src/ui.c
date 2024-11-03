@@ -19,10 +19,14 @@
 
 #include "ui.h"
 #include "board.h"
+#include "pieces.h"
 
-#define BOARD_RECT (SDL_Rect){40, 40, 520, 520}
+#define BOARD_X 40
+#define BOARD_Y 40
+#define BOARD_RECT (SDL_Rect){BOARD_X, BOARD_Y, 520, 520}
+#define PIECE_RECT(x, y) (SDL_Rect){(BOARD_X + 5) + (65 * x), (BOARD_Y + 5) + (65 * y), 0, 0}
 
-_Bool init_ui(UIContext* ui, SDL_Renderer** renderer)
+_Bool init_ui(UIContext* ui, SDL_Renderer* renderer)
 {
     *ui = (UIContext){0};
     ui->update = true;
@@ -33,6 +37,12 @@ _Bool init_ui(UIContext* ui, SDL_Renderer** renderer)
         free_UI(ui);
         return false;
     }
+
+    for(int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
+            if (piece_board[y][x] != 0)
+                if(!ui_create_element(ui, renderer, PIECE_RECT(x, y), pieces_init, piece_board[y][x]))
+                    return false;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Initialized");
     return true;
@@ -54,7 +64,7 @@ void free_UI(UIContext* ui)
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
 }
 
-_Bool UI(UIContext* ui, SDL_Renderer** renderer)
+_Bool UI(UIContext* ui, SDL_Renderer* renderer)
 {
     while(ui->update)
     {
@@ -93,16 +103,16 @@ int update_ui(UIContext* ui)
     return result;
 }
 
-void present_ui(UIContext* ui, SDL_Renderer** renderer)
+void present_ui(UIContext* ui, SDL_Renderer* renderer)
 {
     for (int i = 0; i < ui->element_count; i++)
         if(ui->elements[i].texture != NULL)
-            SDL_RenderCopy(*renderer, ui->elements[i].texture, NULL, &ui->elements[i].rect);
+            SDL_RenderCopy(renderer, ui->elements[i].texture, NULL, &ui->elements[i].rect);
 
-    SDL_RenderPresent(*renderer);
+    SDL_RenderPresent(renderer);
 }
 
-_Bool ui_create_element(UIContext* ui, SDL_Renderer** renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type)
+_Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type)
 {
     Element* temp_elements;
 

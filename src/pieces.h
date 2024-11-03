@@ -17,42 +17,31 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef PIECES_H
+#define PIECES_H
 
 #include "common.h"
 #include "ui.h"
 
-typedef struct
+typedef enum
 {
-    int select_x; // x value of the piece selected by the cursor
-    int select_y; // y value of the piece selected by the cursor
-}BoardData;
+    NOT_A_PIECE,
+    BLACK_PAWN,
+    WHITE_PAWN,
+    BLACK_HORSE,
+    WHITE_HORSE,
+    BLACK_BISHOP,
+    WHITE_BISHOP,
+    BLACK_ROOK,
+    WHITE_ROOK,
+    BLACK_QUEEN,
+    WHITE_QUEEN,
+    BLACK_KING,
+    WHITE_KING
+} piece_types;
 
-_Bool board_init(Element* board, SDL_Renderer* renderer);
-int board_update(const Element* board);
-void draw_selected_cell(
-    const Element* board,
-    const SDL_PixelFormat* format,
-    Uint16* pixelData,
-    int pitch
-    );
-_Bool lock_texture_and_alloc_format(
-    SDL_Texture* texture,
-    void** pixels,
-    int* pitch,
-    SDL_PixelFormat** format,
-    SDL_PixelFormatEnum enum_format
-);
-void draw_cell(
-    Uint16* pixelData,
-    int pitch,
-    int startX, int startY,
-    int size,
-     Uint16 color
-    );
-Uint16 get_board_color(int row, int col);
+_Bool pieces_init(Element* piece, SDL_Renderer* renderer);
 
-extern BoardData board_data;
+extern Uint8 piece_board[8][8];
 
-#endif //BOARD_H
+#endif //PIECES_H

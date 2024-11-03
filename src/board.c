@@ -32,7 +32,7 @@ BoardData board_data = (BoardData){0};
 int last_selected_x;
 int last_selected_y;
 
-_Bool board_init(Element* board, SDL_Renderer** renderer)
+_Bool board_init(Element* board, SDL_Renderer* renderer)
 {
     int pitch;
     void* pixels;
@@ -42,7 +42,7 @@ _Bool board_init(Element* board, SDL_Renderer** renderer)
     board->rect.h += 2 * BORDER_SIZE;
 
     board->texture = SDL_CreateTexture(
-        *renderer,
+        renderer,
         SDL_PIXELFORMAT_RGB565,
         SDL_TEXTUREACCESS_STREAMING,
         board->rect.w, board->rect.h
