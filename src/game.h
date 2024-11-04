@@ -20,9 +20,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "ui.h"
-
 void game();
-_Bool event_proc(UIContext* ui);
+_Bool event_proc(_Bool* update);
 
 #endif //GAME_H

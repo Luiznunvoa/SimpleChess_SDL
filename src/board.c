@@ -21,8 +21,9 @@
 
 #define DARK_CELL_COLOR 0x734B
 #define BRIGHT_CELL_COLOR 0x9C90
-#define SELECTION_COLOR 0x2ce5
-#define PIECE_SELECTION_COLOR 0x32f1
+#define CURSOR_CELL_COLOR 0x2ce5
+#define PIECE_CELL_COLOR 0x32f1
+#define ORIGINAL_CELL_COLOR(row, col) ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_CELL_COLOR : BRIGHT_CELL_COLOR;
 #define BORDER_COLOR 0x0000
 
 #define BORDER_SIZE (board->rect.w / 100)
@@ -64,17 +65,17 @@ _Bool board_init(Element* board, SDL_Renderer* renderer)
     Uint16* pixelData = (Uint16*)pixels;
 
 
-    draw_cell(pixelData, pitch, 0, 0, board->rect.w, BORDER_COLOR);
+    draw_square(pixelData, pitch, 0, 0, board->rect.w, BORDER_COLOR);
 
     for (int row = 0; row < 8; row++)
         for (int col = 0; col < 8; col++)
         {
-            const Uint16 color = get_board_color(row, col);
+            const Uint16 color = ORIGINAL_CELL_COLOR(row, col);
 
             const int start_x = (col * CELL_SIZE + BORDER_SIZE);
             const int start_y = (row * CELL_SIZE + BORDER_SIZE);
 
-            draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+            draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
         }
 
     SDL_FreeFormat(format);
@@ -117,24 +118,22 @@ void draw_selected_cell(
 {
     if (last_selected_x != -1 && last_selected_y != -1)
     {
-        const Uint16 originalColor = get_board_color(last_selected_y, last_selected_x);
+        const Uint16 originalColor = ORIGINAL_CELL_COLOR(last_selected_y, last_selected_x);
 
         const int start_x = (BORDER_SIZE + last_selected_x * CELL_SIZE);
         const int start_y = (BORDER_SIZE + last_selected_y * CELL_SIZE);
 
-        draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
+        draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
 
     Uint16 color;
 
     if(board_data.select_x == board_data.selected_piece_x && board_data.select_y == board_data.selected_piece_y)
-    {
-        color = PIECE_SELECTION_COLOR;
-    }
+        color = PIECE_CELL_COLOR;
     else
     {
         board_data.selecting = false;
-        color = SELECTION_COLOR;
+        color = CURSOR_CELL_COLOR;
         board_data.selected_piece_x = -1;
         board_data.selected_piece_y = -1;
     }
@@ -142,13 +141,13 @@ void draw_selected_cell(
     const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
     const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);
 
-    draw_cell(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+    draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
     last_selected_x = board_data.select_x;
     last_selected_y = board_data.select_y;
 }
 
-void draw_cell(
+void draw_square(
     Uint16* pixelData,
     const int pitch,
     const int startX, const int startY,
@@ -187,9 +186,4 @@ _Bool lock_texture_and_alloc_format(
     }
 
     return true;
-}
-
-__forceinline Uint16 get_board_color(const int row, const int col)
-{
-    return ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_CELL_COLOR : BRIGHT_CELL_COLOR;
 }

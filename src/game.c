@@ -22,6 +22,7 @@
 #include "game.h"
 #include "input.h"
 #include "res.h"
+#include "ui.h"
 
 void game()
 {
@@ -47,12 +48,19 @@ void game()
     {
         res.start_time = SDL_GetTicks();
 
-        quit = event_proc(&ui);
+        quit = event_proc(&ui.update);
 
-        if(!UI(&ui, res.renderer))
+        while(ui.update)
         {
-            alert("Critical Error: Failed to Update the UI", res.window);
-            quit = true;
+            ui.update = false;
+
+            if(!update_ui(&ui))
+            {
+                alert("Critical Error: Failed to Update the UI", res.window);
+                quit = true;
+            }
+            else
+                present_ui(ui.elements, ui.element_count, res.renderer);
         }
 
         res.frame_time = SDL_GetTicks() - res.start_time;
@@ -65,7 +73,7 @@ void game()
     quit(&res);
 }
 
-_Bool event_proc(UIContext* ui)
+_Bool event_proc(_Bool* update)
 {
     SDL_Event event;
 
@@ -77,7 +85,7 @@ _Bool event_proc(UIContext* ui)
             return true;
         case SDL_KEYUP:
             key_input_proc(event.key.keysym.sym);
-            refresh_ui(ui);
+            *update = true;
         default:
         }
     }

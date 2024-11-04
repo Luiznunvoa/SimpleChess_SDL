@@ -105,7 +105,7 @@ _Bool pieces_init(Element* piece, SDL_Renderer* renderer)
 }
 
 // Generic piece update function for debug purposes
-int pieces_update(Element* piece, SDL_Renderer* renderer)
+int pieces_update(const Element* piece)
 {
     // Calculates the piece's position on the board based on screen coordinates.
     const int x = (piece->rect.x - 45) / 65;
@@ -113,7 +113,6 @@ int pieces_update(Element* piece, SDL_Renderer* renderer)
 
     int result = false;
 
-    // Checks if the current piece matches the selected board position and isn't locked.
     if(board_data.select_x == x && board_data.select_y == y && !board_data.selecting)
     {
         board_data.selected_piece_x = x;

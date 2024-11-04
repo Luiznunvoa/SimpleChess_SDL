@@ -64,50 +64,30 @@ void free_UI(UIContext* ui)
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
 }
 
-_Bool UI(UIContext* ui, SDL_Renderer* renderer)
+_Bool update_ui(UIContext* ui)
 {
-    while(ui->update)
-    {
-        ui->update = false;
-
-        const int result = update_ui(ui);
-
-        if(result < 0)
-        {
-            SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to update UI\n");
-            return false;
-        }
-
-      if(result == true)
-            ui->update = true;
-
-        present_ui(ui, renderer);
-    }
-    return true;
-}
-
-int update_ui(UIContext* ui)
-{
-    int result = false;
     for(int i = 0; i < ui->element_count; i++)
         if(ui->elements[i].update != NULL)
             switch (ui->elements[i].update(&ui->elements[i]))
             {
             case error:
-                return error;
+                return false;
             case true:
-                result = true;
+                ui->update = true;
+                break;
+            case false:
+                break;
             default:
-                continue;
+                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Weird update return");
             }
-    return result;
+    return true;
 }
 
-void present_ui(UIContext* ui, SDL_Renderer* renderer)
+void present_ui(const Element* elements, const int element_count,  SDL_Renderer* renderer)
 {
-    for (int i = 0; i < ui->element_count; i++)
-        if(ui->elements[i].texture != NULL)
-            SDL_RenderCopy(renderer, ui->elements[i].texture, NULL, &ui->elements[i].rect);
+    for (int i = 0; i < element_count; i++)
+        if(elements[i].texture != NULL)
+            SDL_RenderCopy(renderer, elements[i].texture, NULL, &elements[i].rect);
 
     SDL_RenderPresent(renderer);
 }
@@ -136,9 +116,4 @@ _Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, const SDL_Rect re
 
     ui->element_count++;
     return true;
-}
-
-void refresh_ui(UIContext* ui)
-{
-    ui->update = true;
 }

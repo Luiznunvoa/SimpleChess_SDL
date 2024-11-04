@@ -47,15 +47,13 @@ _Bool lock_texture_and_alloc_format(
     SDL_PixelFormat** format,
     SDL_PixelFormatEnum enum_format
 );
-void draw_cell(
+void draw_square(
     Uint16* pixelData,
     int pitch,
     int startX, int startY,
     int size,
      Uint16 color
     );
-Uint16 get_board_color(int row, int col);
-
 extern BoardData board_data;
 
 #endif //BOARD_H

@@ -41,7 +41,7 @@ typedef enum
 } piece_types;
 
 _Bool pieces_init(Element* piece, SDL_Renderer* renderer);
-int pieces_update(Element* piece, SDL_Renderer* renderer);
+int pieces_update(const Element* piece);
 
 extern Uint8 piece_board[8][8];
 

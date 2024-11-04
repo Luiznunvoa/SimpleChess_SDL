@@ -49,10 +49,9 @@ typedef struct Element
 
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer);
 _Bool UI(UIContext* ui, SDL_Renderer* renderer);
-int update_ui(UIContext* ui);
-void present_ui(UIContext* ui, SDL_Renderer* renderer);
+_Bool update_ui(UIContext* ui);
+void present_ui(const Element* elements, const int element_count,  SDL_Renderer* renderer);
 _Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 type);
 void free_UI(UIContext* ui);
-void refresh_ui(UIContext* ui);
 
 #endif //UI_H
