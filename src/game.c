@@ -69,7 +69,7 @@ void game()
             SDL_Delay((1000 / FPS) - res.frame_time); // sleeps through the time remaining to keep the fps stable
     }
 
-    free_UI(&ui);
+    free_UI(ui.elements, ui.element_count);
     quit(&res);
 }
 
@@ -84,8 +84,8 @@ _Bool event_proc(_Bool* update)
         case SDL_QUIT:
             return true;
         case SDL_KEYUP:
-            key_input_proc(event.key.keysym.sym);
             *update = true;
+            return key_input_proc(event.key.keysym.sym);
         default:
         }
     }

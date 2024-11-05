@@ -25,11 +25,12 @@
 
 typedef struct
 {
-    int select_x; // x value of the piece selected by the cursor
-    int select_y; // y value of the piece selected by the cursor
-    int selected_piece_x;
-    int selected_piece_y;
     _Bool selecting;
+    int cursor_x;           // x value of the  cursor
+    int cursor_y;           // y value of the cursor
+    int last_cursor_x;
+    int last_cursor_y;
+    _Bool locked;
 }BoardData;
 
 _Bool board_init(Element* board, SDL_Renderer* renderer);
@@ -40,6 +41,12 @@ void draw_selected_cell(
     Uint16* pixelData,
     int pitch
     );
+void draw_locked_cell(
+   const Element* board,
+   const SDL_PixelFormat* format,
+   Uint16* pixelData,
+   int pitch
+);
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,

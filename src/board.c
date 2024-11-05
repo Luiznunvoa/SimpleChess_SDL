@@ -18,6 +18,7 @@
 //
 
 #include "board.h"
+#include "pieces.h"
 
 #define DARK_CELL_COLOR 0x734B
 #define BRIGHT_CELL_COLOR 0x9C90
@@ -30,9 +31,6 @@
 #define CELL_SIZE ((board->rect.w / 8) -1)
 
 BoardData board_data = (BoardData){0};
-
-int last_selected_x;
-int last_selected_y;
 
 _Bool board_init(Element* board, SDL_Renderer* renderer)
 {
@@ -116,35 +114,35 @@ void draw_selected_cell(
     const int pitch
 )
 {
-    if (last_selected_x != -1 && last_selected_y != -1)
+    if (board_data.last_cursor_x != -1 && board_data.last_cursor_y != -1)
     {
-        const Uint16 originalColor = ORIGINAL_CELL_COLOR(last_selected_y, last_selected_x);
+        const Uint16 originalColor = ORIGINAL_CELL_COLOR(board_data.last_cursor_y, board_data.last_cursor_x);
 
-        const int start_x = (BORDER_SIZE + last_selected_x * CELL_SIZE);
-        const int start_y = (BORDER_SIZE + last_selected_y * CELL_SIZE);
+        const int start_x = (BORDER_SIZE + board_data.last_cursor_x * CELL_SIZE);
+        const int start_y = (BORDER_SIZE + board_data.last_cursor_y * CELL_SIZE);
 
         draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
 
     Uint16 color;
 
-    if(board_data.select_x == board_data.selected_piece_x && board_data.select_y == board_data.selected_piece_y)
-        color = PIECE_CELL_COLOR;
-    else
+    if(piece_board[board_data.cursor_y][board_data.cursor_x] == 0)
     {
         board_data.selecting = false;
         color = CURSOR_CELL_COLOR;
-        board_data.selected_piece_x = -1;
-        board_data.selected_piece_y = -1;
+    }
+    else
+    {
+        color = PIECE_CELL_COLOR;
     }
 
-    const int start_x = (BORDER_SIZE + board_data.select_x * CELL_SIZE);
-    const int start_y = (BORDER_SIZE + board_data.select_y * CELL_SIZE);
+    const int start_x = (BORDER_SIZE + board_data.cursor_x * CELL_SIZE);
+    const int start_y = (BORDER_SIZE + board_data.cursor_y * CELL_SIZE);
 
     draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
-    last_selected_x = board_data.select_x;
-    last_selected_y = board_data.select_y;
+    board_data.last_cursor_x = board_data.cursor_x;
+    board_data.last_cursor_y = board_data.cursor_y;
 }
 
 void draw_square(

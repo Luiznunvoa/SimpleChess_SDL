@@ -34,7 +34,7 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer)
     if(!ui_create_element(ui, renderer, BOARD_RECT, board_init, 0))
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
-        free_UI(ui);
+        free_UI(ui->elements, ui->element_count);
         return false;
     }
 
@@ -48,18 +48,14 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer)
     return true;
 }
 
-void free_UI(UIContext* ui)
+void free_UI(Element* elements, const int element_count)
 {
-    for(int i = 0; i < ui->element_count; i++)
-        if(ui->elements[i].texture != NULL)
-        {
-            SDL_DestroyTexture(ui->elements[i].texture);
+    for(int i = 0; i < element_count; i++)
+        if(elements[i].texture != NULL)
+            SDL_DestroyTexture(elements[i].texture);
 
-        }
-    free(ui->elements);
-    ui->elements = NULL;
-
-    ui->element_count = 0;
+    free(elements);
+    elements = NULL;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
 }

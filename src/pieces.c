@@ -113,10 +113,8 @@ int pieces_update(const Element* piece)
 
     int result = false;
 
-    if(board_data.select_x == x && board_data.select_y == y && !board_data.selecting)
+    if(board_data.cursor_x == x && board_data.cursor_y == y && !board_data.selecting)
     {
-        board_data.selected_piece_x = x;
-        board_data.selected_piece_y = y;
         board_data.selecting = true;
         result = true;
     }

@@ -27,21 +27,23 @@ _Bool key_input_proc(const SDL_Keycode keycode)
     case SDLK_ESCAPE:
         return true;
     case SDLK_UP:
-        if(board_data.select_y > 0)
-            board_data.select_y -= 1;
+        if(board_data.cursor_y > 0)
+            board_data.cursor_y -= 1;
         break;
     case SDLK_DOWN:
-        if(board_data.select_y < 7)
-            board_data.select_y += 1;
+        if(board_data.cursor_y < 7)
+            board_data.cursor_y += 1;
         break;
     case SDLK_LEFT:
-        if(board_data.select_x > 0)
-            board_data.select_x -= 1;
+        if(board_data.cursor_x > 0)
+            board_data.cursor_x -= 1;
         break;
     case SDLK_RIGHT:
-        if(board_data.select_x < 7)
-            board_data.select_x += 1;
+        if(board_data.cursor_x < 7)
+            board_data.cursor_x += 1;
         break;
+    case SDLK_i:
+        board_data.locked = !board_data.locked;
     default:
     }
     return false;

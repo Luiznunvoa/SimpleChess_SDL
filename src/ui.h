@@ -44,14 +44,14 @@ typedef struct Element
     ELM_update update;
 
     Uint8 type;
+
     const char* bmp_path;
 }Element;
 
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer);
-_Bool UI(UIContext* ui, SDL_Renderer* renderer);
 _Bool update_ui(UIContext* ui);
 void present_ui(const Element* elements, const int element_count,  SDL_Renderer* renderer);
 _Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 type);
-void free_UI(UIContext* ui);
+void free_UI(Element* elements, const int element_count);
 
 #endif //UI_H
