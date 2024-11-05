@@ -116,7 +116,7 @@ int pieces_update(const Element* piece)
     if(board_data.cursor_x == x && board_data.cursor_y == y && !board_data.selecting)
     {
         board_data.selecting = true;
-        result = true;
+        result = 2;
     }
     return result;
 }

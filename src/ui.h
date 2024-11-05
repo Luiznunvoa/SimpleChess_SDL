@@ -30,6 +30,7 @@ typedef int (*ELM_update)(const Element* element);
 typedef struct
 {
     _Bool update;
+    _Bool delete;
 
     Element* elements;
 }UIContext;
@@ -50,9 +51,10 @@ typedef struct Element
 }Element;
 
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer);
+void free_UI(Element* elements);
 _Bool update_ui(UIContext* ui);
 void present_ui(const Element* elements, SDL_Renderer* renderer);
-_Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 info);
-void free_UI(Element* elements);
+_Bool ui_create_element(Element** elements, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 info);
+void ui_delete_element(Element** elements, const Uint8 info);
 
 #endif //UI_H

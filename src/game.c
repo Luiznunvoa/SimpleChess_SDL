@@ -22,7 +22,6 @@
 #include "game.h"
 #include "input.h"
 #include "res.h"
-#include "ui.h"
 
 void game()
 {
@@ -48,7 +47,7 @@ void game()
     {
         res.start_time = SDL_GetTicks();
 
-        quit = event_proc(&ui.update);
+        quit = event_proc(&ui);
 
 
         while(ui.update)
@@ -74,7 +73,7 @@ void game()
     quit(&res);
 }
 
-_Bool event_proc(_Bool* update)
+_Bool event_proc(UIContext* ui)
 {
     SDL_Event event;
 
@@ -85,8 +84,11 @@ _Bool event_proc(_Bool* update)
         case SDL_QUIT:
             return true;
         case SDL_KEYUP:
-            *update = true;
+            ui->update = true;
             return key_input_proc(event.key.keysym.sym);
+        case SDL_MOUSEWHEEL:
+            ui_delete_element(&ui->elements, 5);
+            ui->update = true;
         default:
         }
     }

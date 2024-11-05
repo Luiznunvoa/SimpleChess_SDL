@@ -31,7 +31,7 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer)
     *ui = (UIContext){0};
     ui->update = true;
 
-    if(!ui_create_element(ui, renderer, BOARD_RECT, board_init, 0))
+    if(!ui_create_element(&ui->elements, renderer, BOARD_RECT, board_init, 0))
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
         free_UI(ui->elements);
@@ -41,7 +41,7 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer)
     for(int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
             if (piece_board[y][x] != 0)
-                if(!ui_create_element(ui, renderer, PIECE_RECT(x, y), pieces_init, piece_board[y][x]))
+                if(!ui_create_element(&ui->elements, renderer, PIECE_RECT(x, y), pieces_init, piece_board[y][x]))
                     return false;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Initialized");
@@ -74,12 +74,16 @@ void free_UI(Element* elements)
 
 _Bool update_ui(UIContext* ui)
 {
-    const Element* current = ui->elements;
+    Element* current = ui->elements;
+    Element* previous = NULL;
+
     while (current != NULL)
     {
         if (current->update != NULL)
         {
-            switch (current->update(current))
+            const int update_result = current->update(current);
+
+            switch (update_result)
             {
             case error:
                 return false;
@@ -88,15 +92,28 @@ _Bool update_ui(UIContext* ui)
                 break;
             case false:
                 break;
+            case 2:
+                {
+                    Element* element_to_delete = current;
+                    current = current->next;
+
+                    ui_delete_element(&(ui->elements), element_to_delete->info);
+
+                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Element deleted due to update result 2");
+
+                    continue;
+                }
             default:
                 SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Weird update return");
             }
         }
+
+        previous = current;
         current = current->next;
     }
+
     return true;
 }
-
 
 void present_ui(const Element* elements, SDL_Renderer* renderer)
 {
@@ -112,8 +129,7 @@ void present_ui(const Element* elements, SDL_Renderer* renderer)
     SDL_RenderPresent(renderer);
 }
 
-
-_Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, const SDL_Rect rect, const ELM_init init, const Uint8 info)
+_Bool ui_create_element(Element** elements, SDL_Renderer* renderer, const SDL_Rect rect, const ELM_init init, const Uint8 info)
 {
     Element* new_element = (Element*)malloc(sizeof(Element));
 
@@ -131,13 +147,13 @@ _Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, const SDL_Rect re
         return false;
     }
 
-    if (ui->elements == NULL)
+    if (*elements == NULL)
     {
-        ui->elements = new_element;
+        *elements = new_element;
     }
     else
     {
-        Element* temp_elements = ui->elements;
+        Element* temp_elements = *elements;
         while(temp_elements->next != NULL)
         {
             temp_elements = temp_elements->next;
@@ -147,3 +163,44 @@ _Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, const SDL_Rect re
 
     return true;
 }
+
+void ui_delete_element(Element** elements, const Uint8 info)
+{
+    if (elements == NULL || *elements == NULL)
+        return;
+
+    Element* current = *elements;
+    Element* previous = NULL;
+
+    while (current != NULL)
+    {
+        if (current->info == info)
+        {
+            if (previous == NULL)
+                *elements = current->next;
+            else
+                previous->next = current->next;
+
+            if (current->texture != NULL)
+            {
+                SDL_DestroyTexture(current->texture);
+                current->texture = NULL;
+            }
+
+            const int board_x = current->rect.x - (BOARD_X + 5);
+            const int board_y = current->rect.y - (BOARD_Y + 5);
+            piece_board[board_y / 65][board_x / 65] = 0;
+
+            free(current);
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Element with info %d deleted", info);
+            return;
+        }
+
+        previous = current;
+        current = current->next;
+    }
+
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Element with info %d not found", info);
+}
+
+
