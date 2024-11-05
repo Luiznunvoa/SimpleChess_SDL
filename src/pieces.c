@@ -74,7 +74,7 @@ _Bool pieces_init(Element* piece, SDL_Renderer* renderer)
     };
 
     for (int i = 0; i < sizeof(piece_map) / sizeof(piece_map[0]); i++)
-        if (piece->type == piece_map[i].piece_number)
+        if (piece->info == piece_map[i].piece_number)
         {
             piece->bmp_path = piece_map[i].bmp_path;
             break;

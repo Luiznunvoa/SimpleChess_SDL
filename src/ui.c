@@ -34,7 +34,7 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer)
     if(!ui_create_element(ui, renderer, BOARD_RECT, board_init, 0))
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
-        free_UI(ui->elements, ui->element_count);
+        free_UI(ui->elements);
         return false;
     }
 
@@ -48,13 +48,25 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer)
     return true;
 }
 
-void free_UI(Element* elements, const int element_count)
+void free_UI(Element* elements)
 {
-    for(int i = 0; i < element_count; i++)
-        if(elements[i].texture != NULL)
-            SDL_DestroyTexture(elements[i].texture);
+    Element* current = elements;
+    while (current != NULL)
+    {
+        Element* next = current->next;
 
-    free(elements);
+        if (current->texture != NULL)
+        {
+            SDL_DestroyTexture(current->texture);
+            current->texture = NULL;
+        }
+
+        free(current);
+        current = NULL;
+
+        current = next;
+    }
+
     elements = NULL;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
@@ -62,9 +74,12 @@ void free_UI(Element* elements, const int element_count)
 
 _Bool update_ui(UIContext* ui)
 {
-    for(int i = 0; i < ui->element_count; i++)
-        if(ui->elements[i].update != NULL)
-            switch (ui->elements[i].update(&ui->elements[i]))
+    const Element* current = ui->elements;
+    while (current != NULL)
+    {
+        if (current->update != NULL)
+        {
+            switch (current->update(current))
             {
             case error:
                 return false;
@@ -76,40 +91,59 @@ _Bool update_ui(UIContext* ui)
             default:
                 SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Weird update return");
             }
+        }
+        current = current->next;
+    }
     return true;
 }
 
-void present_ui(const Element* elements, const int element_count,  SDL_Renderer* renderer)
+
+void present_ui(const Element* elements, SDL_Renderer* renderer)
 {
-    for (int i = 0; i < element_count; i++)
-        if(elements[i].texture != NULL)
-            SDL_RenderCopy(renderer, elements[i].texture, NULL, &elements[i].rect);
+    const Element* current = elements;
+    while (current != NULL)
+    {
+        if (current->texture != NULL)
+            SDL_RenderCopy(renderer, current->texture, NULL, &current->rect);
+
+        current = current->next;
+    }
 
     SDL_RenderPresent(renderer);
 }
 
-_Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, const SDL_Rect rect, const ELM_init init, const Uint8 type)
+
+_Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, const SDL_Rect rect, const ELM_init init, const Uint8 info)
 {
-    Element* temp_elements;
+    Element* new_element = (Element*)malloc(sizeof(Element));
 
-    if(ui->element_count == 0)
-        temp_elements = (Element*)malloc(sizeof(Element));
+    if (!new_element)
+        return false;
+
+    *new_element = (Element){0};
+    new_element->rect = rect;
+    new_element->init = init;
+    new_element->info = info;
+
+    if(!new_element->init(new_element, renderer))
+    {
+        free(new_element);
+        return false;
+    }
+
+    if (ui->elements == NULL)
+    {
+        ui->elements = new_element;
+    }
     else
-        temp_elements = (Element*)realloc(ui->elements, (ui->element_count + 1) * sizeof(Element));
+    {
+        Element* temp_elements = ui->elements;
+        while(temp_elements->next != NULL)
+        {
+            temp_elements = temp_elements->next;
+        }
+        temp_elements->next = new_element;
+    }
 
-    if(temp_elements == NULL)
-        return false;
-
-    ui->elements = temp_elements;
-    ui->elements[ui->element_count] = (Element){0};
-
-    ui->elements[ui->element_count].rect = rect;
-    ui->elements[ui->element_count].init = init;
-    ui->elements[ui->element_count].type = type;
-
-    if(!ui->elements[ui->element_count].init(&ui->elements[ui->element_count], renderer))
-        return false;
-
-    ui->element_count++;
     return true;
 }

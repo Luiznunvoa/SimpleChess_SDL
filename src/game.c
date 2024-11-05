@@ -50,6 +50,7 @@ void game()
 
         quit = event_proc(&ui.update);
 
+
         while(ui.update)
         {
             ui.update = false;
@@ -60,7 +61,7 @@ void game()
                 quit = true;
             }
             else
-                present_ui(ui.elements, ui.element_count, res.renderer);
+                present_ui(ui.elements,  res.renderer);
         }
 
         res.frame_time = SDL_GetTicks() - res.start_time;
@@ -69,7 +70,7 @@ void game()
             SDL_Delay((1000 / FPS) - res.frame_time); // sleeps through the time remaining to keep the fps stable
     }
 
-    free_UI(ui.elements, ui.element_count);
+    free_UI(ui.elements);
     quit(&res);
 }
 

@@ -29,7 +29,6 @@ typedef int (*ELM_update)(const Element* element);
 
 typedef struct
 {
-    int element_count;
     _Bool update;
 
     Element* elements;
@@ -43,15 +42,17 @@ typedef struct Element
     ELM_init init;
     ELM_update update;
 
-    Uint8 type;
+    Uint8 info;
 
     const char* bmp_path;
+
+    Element* next;
 }Element;
 
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer);
 _Bool update_ui(UIContext* ui);
-void present_ui(const Element* elements, const int element_count,  SDL_Renderer* renderer);
-_Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 type);
-void free_UI(Element* elements, const int element_count);
+void present_ui(const Element* elements, SDL_Renderer* renderer);
+_Bool ui_create_element(UIContext* ui, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 info);
+void free_UI(Element* elements);
 
 #endif //UI_H

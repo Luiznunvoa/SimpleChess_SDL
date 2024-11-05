@@ -23,23 +23,6 @@
 #include "common.h"
 #include "ui.h"
 
-typedef enum
-{
-    NOT_A_PIECE,
-    BLACK_PAWN,
-    WHITE_PAWN,
-    BLACK_HORSE,
-    WHITE_HORSE,
-    BLACK_BISHOP,
-    WHITE_BISHOP,
-    BLACK_ROOK,
-    WHITE_ROOK,
-    BLACK_QUEEN,
-    WHITE_QUEEN,
-    BLACK_KING,
-    WHITE_KING
-} piece_types;
-
 _Bool pieces_init(Element* piece, SDL_Renderer* renderer);
 int pieces_update(const Element* piece);
 
