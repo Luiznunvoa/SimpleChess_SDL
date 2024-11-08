@@ -26,17 +26,16 @@
 typedef struct
 {
     _Bool selecting;
-    int cursor_x;           // x value of the  cursor
-    int cursor_y;           // y value of the cursor
     int last_cursor_x;
     int last_cursor_y;
     _Bool locked;
 }BoardData;
 
 _Bool board_init(Element* board, SDL_Renderer* renderer);
-int board_update(const Element* board);
+int board_update(const Element* board, GameContext* game);
 void draw_selected_cell(
     const Element* board,
+    int cursor_x, int cursor_y,
     const SDL_PixelFormat* format,
     Uint16* pixelData,
     int pitch

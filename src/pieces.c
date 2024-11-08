@@ -105,7 +105,7 @@ _Bool pieces_init(Element* piece, SDL_Renderer* renderer)
 }
 
 // Generic piece update function for debug purposes
-int pieces_update(const Element* piece)
+int pieces_update(const Element* piece, GameContext* game)
 {
     // Calculates the piece's position on the board based on screen coordinates.
     const int x = (piece->rect.x - 45) / 65;
@@ -113,7 +113,7 @@ int pieces_update(const Element* piece)
 
     int result = false;
 
-    if(board_data.cursor_x == x && board_data.cursor_y == y && !board_data.selecting)
+    if(game->cursor_x == x && game->cursor_y == y && !board_data.selecting)
     {
         board_data.selecting = true;
         result = true;

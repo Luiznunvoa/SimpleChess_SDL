@@ -84,7 +84,7 @@ _Bool board_init(Element* board, SDL_Renderer* renderer)
     return true;
 }
 
-int board_update(const Element* board)
+int board_update(const Element* board, GameContext* game)
 {
     int pitch;
     void* pixels;
@@ -100,7 +100,7 @@ int board_update(const Element* board)
 
     const _Bool result = false;
 
-    draw_selected_cell(board, format, pixelData, pitch);
+    draw_selected_cell(board, game->cursor_x, game->cursor_y, format, pixelData, pitch);
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -110,6 +110,7 @@ int board_update(const Element* board)
 
 void draw_selected_cell(
     const Element* board,
+    int cursor_x, int cursor_y,
     const SDL_PixelFormat* format,
     Uint16* pixelData,
     const int pitch
@@ -127,7 +128,7 @@ void draw_selected_cell(
 
     Uint16 color;
 
-    if(piece_board[board_data.cursor_y][board_data.cursor_x] == 0)
+    if(piece_board[cursor_y][cursor_x] == 0)
     {
         board_data.selecting = false;
         color = CURSOR_CELL_COLOR;
@@ -137,13 +138,13 @@ void draw_selected_cell(
         color = PIECE_CELL_COLOR;
     }
 
-    const int start_x = (BORDER_SIZE + board_data.cursor_x * CELL_SIZE);
-    const int start_y = (BORDER_SIZE + board_data.cursor_y * CELL_SIZE);
+    const int start_x = (BORDER_SIZE + cursor_x * CELL_SIZE);
+    const int start_y = (BORDER_SIZE + cursor_y * CELL_SIZE);
 
     draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
-    board_data.last_cursor_x = board_data.cursor_x;
-    board_data.last_cursor_y = board_data.cursor_y;
+    board_data.last_cursor_x = cursor_x;
+    board_data.last_cursor_y = cursor_y;
 }
 
 void draw_square(

@@ -72,7 +72,7 @@ void free_UI(Element* elements)
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
 }
 
-_Bool update_ui(UIContext* ui)
+_Bool update_ui(UIContext* ui, GameContext* game)
 {
     Element* current = ui->elements;
     Element* previous = NULL;
@@ -81,7 +81,7 @@ _Bool update_ui(UIContext* ui)
     {
         if (current->update != NULL)
         {
-            const int update_result = current->update(current);
+            const int update_result = current->update(current, game);
 
             switch (update_result)
             {

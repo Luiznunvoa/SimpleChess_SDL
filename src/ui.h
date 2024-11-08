@@ -21,11 +21,12 @@
 #define UI_H
 
 #include "common.h"
+#include "game.h"
 
 typedef struct Element Element;
 
 typedef _Bool (*ELM_init)(Element* element,SDL_Renderer* renderer);
-typedef int (*ELM_update)(const Element* element);
+typedef int (*ELM_update)(const Element* element, GameContext* game);
 
 typedef struct
 {
@@ -52,7 +53,7 @@ typedef struct Element
 
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer);
 void free_UI(Element* elements);
-_Bool update_ui(UIContext* ui);
+_Bool update_ui(UIContext* ui, GameContext* game);
 void present_ui(const Element* elements, SDL_Renderer* renderer);
 _Bool ui_create_element(Element** elements, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 info);
 void ui_delete_element(Element** elements, const Uint8 info);

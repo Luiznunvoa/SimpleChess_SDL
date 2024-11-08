@@ -20,7 +20,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "ui.h"
+#include "common.h"
 
 typedef struct
 {
@@ -31,6 +31,6 @@ typedef struct
 }GameContext;
 
 void game();
-_Bool event_proc(UIContext* ui, GameContext* game);
+_Bool event_proc(_Bool* update, GameContext* game);
 
 #endif //GAME_H
