@@ -42,8 +42,6 @@ _Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y)
         if(*cursor_x < 7)
             *cursor_x += 1;
         break;
-    case SDLK_i:
-        board_data.locked = !board_data.locked;
     default:
     }
     return false;

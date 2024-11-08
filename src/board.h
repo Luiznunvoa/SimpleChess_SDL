@@ -25,7 +25,6 @@
 
 typedef struct
 {
-    _Bool selecting;
     int last_cursor_x;
     int last_cursor_y;
     _Bool locked;
@@ -36,6 +35,7 @@ int board_update(const Element* board, GameContext* game);
 void draw_selected_cell(
     const Element* board,
     int cursor_x, int cursor_y,
+    _Bool* selected, _Bool* selecting,
     const SDL_PixelFormat* format,
     Uint16* pixelData,
     int pitch
@@ -60,6 +60,5 @@ void draw_square(
     int size,
      Uint16 color
     );
-extern BoardData board_data;
 
 #endif //BOARD_H

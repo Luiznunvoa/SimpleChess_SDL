@@ -100,7 +100,7 @@ int board_update(const Element* board, GameContext* game)
 
     const _Bool result = false;
 
-    draw_selected_cell(board, game->cursor_x, game->cursor_y, format, pixelData, pitch);
+    draw_selected_cell(board, game->cursor_x, game->cursor_y, &game->selected, &game->selecting, format, pixelData, pitch);
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -111,6 +111,7 @@ int board_update(const Element* board, GameContext* game)
 void draw_selected_cell(
     const Element* board,
     int cursor_x, int cursor_y,
+    _Bool* selected, _Bool* selecting,
     const SDL_PixelFormat* format,
     Uint16* pixelData,
     const int pitch
@@ -130,12 +131,14 @@ void draw_selected_cell(
 
     if(piece_board[cursor_y][cursor_x] == 0)
     {
-        board_data.selecting = false;
         color = CURSOR_CELL_COLOR;
+        *selecting = false;
+        *selected = true;
     }
     else
     {
         color = PIECE_CELL_COLOR;
+        *selected = false;
     }
 
     const int start_x = (BORDER_SIZE + cursor_x * CELL_SIZE);

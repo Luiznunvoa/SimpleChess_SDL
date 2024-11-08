@@ -113,9 +113,9 @@ int pieces_update(const Element* piece, GameContext* game)
 
     int result = false;
 
-    if(game->cursor_x == x && game->cursor_y == y && !board_data.selecting)
+    if(game->cursor_x == x && game->cursor_y == y && !game->selecting)
     {
-        board_data.selecting = true;
+        game->selecting = true;
         result = true;
     }
     return result;
