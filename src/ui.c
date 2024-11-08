@@ -74,8 +74,7 @@ void free_UI(Element* elements)
 
 _Bool update_ui(UIContext* ui, GameContext* game)
 {
-    Element* current = ui->elements;
-    Element* previous = NULL;
+    const Element* current = ui->elements;
 
     while (current != NULL)
     {
@@ -94,12 +93,10 @@ _Bool update_ui(UIContext* ui, GameContext* game)
                 break;
             case 2:
                 {
-                    Element* element_to_delete = current;
+                    const Element* element_to_delete = current;
                     current = current->next;
 
                     ui_delete_element(&(ui->elements), element_to_delete->info);
-
-                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Element deleted due to update result 2");
 
                     continue;
                 }
@@ -108,7 +105,6 @@ _Bool update_ui(UIContext* ui, GameContext* game)
             }
         }
 
-        previous = current;
         current = current->next;
     }
 
@@ -192,7 +188,7 @@ void ui_delete_element(Element** elements, const Uint8 info)
             piece_board[board_y / 65][board_x / 65] = 0;
 
             free(current);
-            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Element with info %d deleted", info);
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Element %d deleted", info);
             return;
         }
 

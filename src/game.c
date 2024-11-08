@@ -87,7 +87,7 @@ _Bool event_proc(_Bool* update, GameContext* game)
             return true;
         case SDL_KEYUP:
             *update = true;
-            return key_input_proc(event.key.keysym.sym, &game->cursor_x, &game->cursor_y);
+            return key_input_proc(event.key.keysym.sym, &game->cursor_x, &game->cursor_y, &game->delete);
         default:
         }
     }

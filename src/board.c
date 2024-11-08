@@ -25,8 +25,8 @@
 #define BRIGHT_CELL_COLOR 0x9C90
 #define CURSOR_CELL_COLOR 0x2ce5
 #define PIECE_CELL_COLOR 0x32f1
-#define ORIGINAL_CELL_COLOR(row, col) ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_CELL_COLOR : BRIGHT_CELL_COLOR;
 #define BORDER_COLOR 0x0000
+#define ORIGINAL_CELL_COLOR(row, col) ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_CELL_COLOR : BRIGHT_CELL_COLOR;
 
 #define BORDER_SIZE (board->rect.w / 100)
 #define CELL_SIZE ((board->rect.w / 8) -1)
@@ -117,12 +117,12 @@ void draw_selected_cell(
     const int pitch
 )
 {
-    if (board_data.last_cursor_x != -1 && board_data.last_cursor_y != -1)
+    if (board_data.last_cursor_pos_x != -1 && board_data.last_cursor_pos_y != -1)
     {
-        const Uint16 originalColor = ORIGINAL_CELL_COLOR(board_data.last_cursor_y, board_data.last_cursor_x);
+        const Uint16 originalColor = ORIGINAL_CELL_COLOR(board_data.last_cursor_pos_y, board_data.last_cursor_pos_x);
 
-        const int start_x = (BORDER_SIZE + board_data.last_cursor_x * CELL_SIZE);
-        const int start_y = (BORDER_SIZE + board_data.last_cursor_y * CELL_SIZE);
+        const int start_x = (BORDER_SIZE + board_data.last_cursor_pos_x * CELL_SIZE);
+        const int start_y = (BORDER_SIZE + board_data.last_cursor_pos_y * CELL_SIZE);
 
         draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
@@ -131,14 +131,14 @@ void draw_selected_cell(
 
     if(piece_board[cursor_y][cursor_x] == 0)
     {
+        *selected = false;
+        *selecting = true;
         color = CURSOR_CELL_COLOR;
-        *selecting = false;
-        *selected = true;
     }
     else
     {
+        *selecting = true;
         color = PIECE_CELL_COLOR;
-        *selected = false;
     }
 
     const int start_x = (BORDER_SIZE + cursor_x * CELL_SIZE);
@@ -146,8 +146,8 @@ void draw_selected_cell(
 
     draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
-    board_data.last_cursor_x = cursor_x;
-    board_data.last_cursor_y = cursor_y;
+    board_data.last_cursor_pos_x = cursor_x;
+    board_data.last_cursor_pos_y = cursor_y;
 }
 
 void draw_square(

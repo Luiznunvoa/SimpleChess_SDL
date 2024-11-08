@@ -20,14 +20,13 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "common.h"
-
 typedef struct
 {
     int cursor_x;
     int cursor_y;
     _Bool selecting;
     _Bool selected;
+    _Bool delete;
 }GameContext;
 
 void game();

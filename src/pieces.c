@@ -113,10 +113,20 @@ int pieces_update(const Element* piece, GameContext* game)
 
     int result = false;
 
-    if(game->cursor_x == x && game->cursor_y == y && !game->selecting)
+    if(game->cursor_x == x && game->cursor_y == y)
     {
-        game->selecting = true;
-        result = true;
+        if(game->selecting && !game->selected)
+        {
+            game->selecting = false;
+            game->selected = true;
+            result = true;
+        }
+        else if(game->delete)
+        {
+            game->delete = false;
+            result = 2;
+        }
     }
+
     return result;
 }

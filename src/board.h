@@ -25,9 +25,8 @@
 
 typedef struct
 {
-    int last_cursor_x;
-    int last_cursor_y;
-    _Bool locked;
+    int last_cursor_pos_x;
+    int last_cursor_pos_y;
 }BoardData;
 
 _Bool board_init(Element* board, SDL_Renderer* renderer);
@@ -40,12 +39,6 @@ void draw_selected_cell(
     Uint16* pixelData,
     int pitch
     );
-void draw_locked_cell(
-   const Element* board,
-   const SDL_PixelFormat* format,
-   Uint16* pixelData,
-   int pitch
-);
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,
