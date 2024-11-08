@@ -20,7 +20,7 @@
 #include "input.h"
 #include "board.h"
 
-_Bool key_input_proc(const SDL_Keycode keycode)
+_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y)
 {
     switch (keycode)
     {

@@ -19,6 +19,7 @@
 
 #include "board.h"
 #include "pieces.h"
+#include "game.h"
 
 #define DARK_CELL_COLOR 0x734B
 #define BRIGHT_CELL_COLOR 0x9C90

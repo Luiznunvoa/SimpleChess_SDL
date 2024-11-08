@@ -22,7 +22,15 @@
 
 #include "ui.h"
 
+typedef struct
+{
+    int cursor_x;
+    int cursor_y;
+    _Bool selecting;
+    _Bool selected;
+}GameContext;
+
 void game();
-_Bool event_proc(UIContext* ui);
+_Bool event_proc(UIContext* ui, GameContext* game);
 
 #endif //GAME_H

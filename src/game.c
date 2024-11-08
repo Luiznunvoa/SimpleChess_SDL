@@ -43,12 +43,13 @@ void game()
         return;
     }
 
+    GameContext game;
+
     for (_Bool quit = 0; !quit;)
     {
         res.start_time = SDL_GetTicks();
 
-        quit = event_proc(&ui);
-
+        quit = event_proc(&ui, &game);
 
         while(ui.update)
         {
@@ -73,7 +74,7 @@ void game()
     quit(&res);
 }
 
-_Bool event_proc(UIContext* ui)
+_Bool event_proc(UIContext* ui, GameContext* game)
 {
     SDL_Event event;
 
@@ -85,7 +86,7 @@ _Bool event_proc(UIContext* ui)
             return true;
         case SDL_KEYUP:
             ui->update = true;
-            return key_input_proc(event.key.keysym.sym);
+            return key_input_proc(event.key.keysym.sym, &game->cursor_x, &game->cursor_y);
         case SDL_MOUSEWHEEL:
             ui_delete_element(&ui->elements, 5);
             ui->update = true;
