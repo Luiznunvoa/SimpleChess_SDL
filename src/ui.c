@@ -125,7 +125,13 @@ void present_ui(const Element* elements, SDL_Renderer* renderer)
     SDL_RenderPresent(renderer);
 }
 
-_Bool ui_create_element(Element** elements, SDL_Renderer* renderer, const SDL_Rect rect, const ELM_init init, const Uint8 info)
+_Bool ui_create_element(
+    Element** elements,
+    SDL_Renderer* renderer,
+    const SDL_Rect rect,
+    const ELM_init init,
+    const Uint8 info
+)
 {
     Element* new_element = (Element*)malloc(sizeof(Element));
 
@@ -160,7 +166,12 @@ _Bool ui_create_element(Element** elements, SDL_Renderer* renderer, const SDL_Re
     return true;
 }
 
-void ui_delete_element(Element** elements, _Bool* update, int(*board_map)[8][8], const Uint8 info)
+void ui_delete_element(
+    Element** elements,
+    _Bool* update,
+    int(*board_map)[8][8],
+    const Uint8 info
+)
 {
     if (elements == NULL || *elements == NULL)
     {

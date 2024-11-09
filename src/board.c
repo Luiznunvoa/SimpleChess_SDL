@@ -30,7 +30,8 @@
 #define BORDER_SIZE (board->rect.w / 100)
 #define CELL_SIZE ((board->rect.w / 8) -1)
 
-BoardData board_data = (BoardData){0};
+int last_cursor_pos_x = 0;
+int last_cursor_pos_y = 0;
 
 _Bool board_init(Element* board, SDL_Renderer* renderer)
 {
@@ -97,32 +98,36 @@ int board_update(const Element* board, GameContext* game)
 
     Uint16* pixelData = (Uint16*)pixels;
 
-    const _Bool result = false;
-
-    draw_selected_cell(board, game->cursor_x, game->cursor_y, &game->selected, &game->selecting, game->board_map, format, pixelData, pitch);
+    draw_selected_cell(
+        board,
+        game->cursor_x, game->cursor_y,
+        &game->selected, &game->selecting,
+        game->board_map,
+        pixelData,
+        pitch
+        );
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
 
-    return result;
+    return false;
 }
 
 void draw_selected_cell(
     const Element* board,
-    int cursor_x, int cursor_y,
+    const int cursor_x, const int cursor_y,
     _Bool* selected, _Bool* selecting,
     int board_map[8][8],
-    const SDL_PixelFormat* format,
     Uint16* pixelData,
     const int pitch
 )
 {
-    if (board_data.last_cursor_pos_x != -1 && board_data.last_cursor_pos_y != -1)
+    if (last_cursor_pos_x != -1 && last_cursor_pos_y != -1)
     {
-        const Uint16 originalColor = ORIGINAL_CELL_COLOR(board_data.last_cursor_pos_y, board_data.last_cursor_pos_x);
+        const Uint16 originalColor = ORIGINAL_CELL_COLOR(last_cursor_pos_y, last_cursor_pos_x);
 
-        const int start_x = (BORDER_SIZE + board_data.last_cursor_pos_x * CELL_SIZE);
-        const int start_y = (BORDER_SIZE + board_data.last_cursor_pos_y * CELL_SIZE);
+        const int start_x = (BORDER_SIZE + last_cursor_pos_x * CELL_SIZE);
+        const int start_y = (BORDER_SIZE + last_cursor_pos_y * CELL_SIZE);
 
         draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
@@ -146,8 +151,8 @@ void draw_selected_cell(
 
     draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
-    board_data.last_cursor_pos_x = cursor_x;
-    board_data.last_cursor_pos_y = cursor_y;
+    last_cursor_pos_x = cursor_x;
+    last_cursor_pos_y = cursor_y;
 }
 
 void draw_square(

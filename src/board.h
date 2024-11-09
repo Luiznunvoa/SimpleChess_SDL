@@ -23,23 +23,16 @@
 #include "common.h"
 #include "ui.h"
 
-typedef struct
-{
-    int last_cursor_pos_x;
-    int last_cursor_pos_y;
-}BoardData;
-
 _Bool board_init(Element* board, SDL_Renderer* renderer);
 int board_update(const Element* board, GameContext* game);
 void draw_selected_cell(
     const Element* board,
-    int cursor_x, int cursor_y,
+    const int cursor_x, const int cursor_y,
     _Bool* selected, _Bool* selecting,
     int board_map[8][8],
-    const SDL_PixelFormat* format,
     Uint16* pixelData,
     int pitch
-    );
+);
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,
@@ -53,6 +46,6 @@ void draw_square(
     int startX, int startY,
     int size,
      Uint16 color
-    );
+);
 
 #endif //BOARD_H

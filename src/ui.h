@@ -54,7 +54,18 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int board_map[8][8]);
 void free_UI(Element* elements);
 _Bool update_ui(UIContext* ui, GameContext* game);
 void present_ui(const Element* elements, SDL_Renderer* renderer);
-_Bool ui_create_element(Element** elements, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 info);
-void ui_delete_element(Element** elements, _Bool* update, int(*board_map)[8][8], const Uint8 info);
+_Bool ui_create_element(
+    Element** elements,
+    SDL_Renderer* renderer,
+    const SDL_Rect rect,
+    const ELM_init init,
+    const Uint8 info
+);
+void ui_delete_element(
+    Element** elements,
+    _Bool* update,
+    int(*board_map)[8][8],
+    const Uint8 info
+);
 
 #endif //UI_H
