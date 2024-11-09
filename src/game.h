@@ -27,6 +27,8 @@ typedef struct
     _Bool selecting;
     _Bool selected;
     _Bool delete;
+
+    int  board_map[8][8];
 }GameContext;
 
 void game();

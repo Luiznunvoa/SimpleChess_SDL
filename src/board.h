@@ -35,6 +35,7 @@ void draw_selected_cell(
     const Element* board,
     int cursor_x, int cursor_y,
     _Bool* selected, _Bool* selecting,
+    int board_map[8][8],
     const SDL_PixelFormat* format,
     Uint16* pixelData,
     int pitch

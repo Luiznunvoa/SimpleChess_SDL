@@ -26,6 +26,4 @@
 _Bool pieces_init(Element* piece, SDL_Renderer* renderer);
 int pieces_update(const Element* piece, GameContext* game);
 
-extern Uint8 piece_board[8][8];
-
 #endif //PIECES_H

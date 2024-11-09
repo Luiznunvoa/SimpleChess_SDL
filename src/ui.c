@@ -26,7 +26,7 @@
 #define BOARD_RECT (SDL_Rect){BOARD_X, BOARD_Y, 520, 520}
 #define PIECE_RECT(x, y) (SDL_Rect){(BOARD_X + 5) + (65 * x), (BOARD_Y + 5) + (65 * y), 0, 0}
 
-_Bool init_ui(UIContext* ui, SDL_Renderer* renderer)
+_Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int board_map[8][8])
 {
     *ui = (UIContext){0};
     ui->update = true;
@@ -40,8 +40,8 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer)
 
     for(int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
-            if (piece_board[y][x] != 0)
-                if(!ui_create_element(&ui->elements, renderer, PIECE_RECT(x, y), pieces_init, piece_board[y][x]))
+            if (board_map[y][x] != 0)
+                if(!ui_create_element(&ui->elements, renderer, PIECE_RECT(x, y), pieces_init, board_map[y][x]))
                     return false;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Initialized");
@@ -96,7 +96,7 @@ _Bool update_ui(UIContext* ui, GameContext* game)
                     const Element* element_to_delete = current;
                     current = current->next;
 
-                    ui_delete_element(&(ui->elements), element_to_delete->info);
+                    ui_delete_element( &(ui->elements), &ui->update,  &game->board_map, element_to_delete->info);
 
                     continue;
                 }
@@ -160,10 +160,13 @@ _Bool ui_create_element(Element** elements, SDL_Renderer* renderer, const SDL_Re
     return true;
 }
 
-void ui_delete_element(Element** elements, const Uint8 info)
+void ui_delete_element(Element** elements, _Bool* update, int(*board_map)[8][8], const Uint8 info)
 {
     if (elements == NULL || *elements == NULL)
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "No element to delete");
         return;
+    }
 
     Element* current = *elements;
     Element* previous = NULL;
@@ -185,17 +188,18 @@ void ui_delete_element(Element** elements, const Uint8 info)
 
             const int board_x = current->rect.x - (BOARD_X + 5);
             const int board_y = current->rect.y - (BOARD_Y + 5);
-            piece_board[board_y / 65][board_x / 65] = 0;
+
+            (*board_map)[board_y / 65][board_x / 65] = 0;
+
+            *update = true;
 
             free(current);
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Element %d deleted", info);
             return;
         }
-
         previous = current;
         current = current->next;
     }
-
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Element with info %d not found", info);
 }
 

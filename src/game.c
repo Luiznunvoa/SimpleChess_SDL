@@ -35,16 +35,32 @@ void game()
         return;
     }
 
+    GameContext game = (GameContext){0};
+    {
+        const int temp_board_map[8][8] = {
+            {1, 2, 3, 4, 5, 6, 7, 8},
+            {9, 10, 11, 12, 13, 14, 15, 16},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {17, 18, 19, 20, 21, 22, 23, 24},
+            {25, 26, 27, 28, 29, 30, 31, 32}
+        };
+
+       for(int y = 0; y < 8; y++)
+           for(int x = 0; x < 8; x++)
+               game.board_map[x][y] = temp_board_map[x][y];
+    }
+
     UIContext ui;
 
-    if(!init_ui(&ui, res.renderer))
+    if(!init_ui(&ui, res.renderer, game.board_map))
     {
         alert("Critical Error: Failed to Initialize the UI", res.window);
         quit(&res);
         return;
     }
-
-    GameContext game = (GameContext){0};
 
     for (_Bool quit = 0; !quit;)
     {
@@ -68,7 +84,7 @@ void game()
         res.frame_time = SDL_GetTicks() - res.start_time;
 
         if (res.frame_time < (1000 / FPS))
-            SDL_Delay((1000 / FPS) - res.frame_time); // sleeps through the time remaining to keep the fps stable
+            SDL_Delay((1000 / FPS) - res.frame_time);
     }
 
     free_UI(ui.elements);

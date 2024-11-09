@@ -31,7 +31,6 @@ typedef int (*ELM_update)(const Element* element, GameContext* game);
 typedef struct
 {
     _Bool update;
-    _Bool delete;
 
     Element* elements;
 }UIContext;
@@ -51,11 +50,11 @@ typedef struct Element
     Element* next;
 }Element;
 
-_Bool init_ui(UIContext* ui, SDL_Renderer* renderer);
+_Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int board_map[8][8]);
 void free_UI(Element* elements);
 _Bool update_ui(UIContext* ui, GameContext* game);
 void present_ui(const Element* elements, SDL_Renderer* renderer);
 _Bool ui_create_element(Element** elements, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 info);
-void ui_delete_element(Element** elements, const Uint8 info);
+void ui_delete_element(Element** elements, _Bool* update, int(*board_map)[8][8], const Uint8 info);
 
 #endif //UI_H

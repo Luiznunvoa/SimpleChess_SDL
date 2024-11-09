@@ -18,7 +18,6 @@
 //
 
 #include "board.h"
-#include "pieces.h"
 #include "game.h"
 
 #define DARK_CELL_COLOR 0x734B
@@ -100,7 +99,7 @@ int board_update(const Element* board, GameContext* game)
 
     const _Bool result = false;
 
-    draw_selected_cell(board, game->cursor_x, game->cursor_y, &game->selected, &game->selecting, format, pixelData, pitch);
+    draw_selected_cell(board, game->cursor_x, game->cursor_y, &game->selected, &game->selecting, game->board_map, format, pixelData, pitch);
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -112,6 +111,7 @@ void draw_selected_cell(
     const Element* board,
     int cursor_x, int cursor_y,
     _Bool* selected, _Bool* selecting,
+    int board_map[8][8],
     const SDL_PixelFormat* format,
     Uint16* pixelData,
     const int pitch
@@ -129,7 +129,7 @@ void draw_selected_cell(
 
     Uint16 color;
 
-    if(piece_board[cursor_y][cursor_x] == 0)
+    if(board_map[cursor_y][cursor_x] == 0)
     {
         *selected = false;
         *selecting = true;
