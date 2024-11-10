@@ -26,7 +26,7 @@
 #define BOARD_RECT (SDL_Rect){BOARD_X, BOARD_Y, 520, 520}
 #define PIECE_RECT(x, y) (SDL_Rect){(BOARD_X + 5) + (65 * x), (BOARD_Y + 5) + (65 * y), 0, 0}
 
-_Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int board_map[8][8])
+_Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
 {
     *ui = (UIContext){0};
     ui->update = true;
@@ -38,11 +38,25 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int board_map[8][8])
         return false;
     }
 
+    const int temp_board_map[8][8] = {
+        {1, 2, 3, 4, 5, 6, 7, 8},
+        {9, 10, 11, 12, 13, 14, 15, 16},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {17, 18, 19, 20, 21, 22, 23, 24},
+        {25, 26, 27, 28, 29, 30, 31, 32}
+    };
+
     for(int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
-            if (board_map[y][x] != 0)
-                if(!ui_create_element(&ui->elements, renderer, PIECE_RECT(x, y), pieces_init, board_map[y][x]))
+            if (temp_board_map[y][x] != 0)
+                if(!ui_create_element(&ui->elements, renderer, PIECE_RECT(x, y), pieces_init, temp_board_map[y][x]))
                     return false;
+                else
+                    (*board_map)[y][x] = temp_board_map[y][x];
+
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Initialized");
     return true;

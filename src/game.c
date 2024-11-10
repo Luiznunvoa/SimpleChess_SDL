@@ -24,56 +24,31 @@
 
 void game()
 {
+    GameContext game = (GameContext){0};
+
     WindowContext res;
 
     if (!init(&res))
         quit(&res);
 
-    GameContext game;
-
-    init_game(&game);
-
     UIContext ui;
 
-    if (!init_ui(&ui, res.renderer, game.board_map))
+    if (!init_ui(&ui, res.renderer, &game.board_map))
         quit(&res);
 
-    while(true)
+    while (SDL_WaitEvent(&game.event))
     {
-        if (SDL_WaitEvent(&game.event))
-        {
-            if (!event_proc(&game, &ui.update))
-                break;
+        if (!event_proc(&game, &ui.update))
+            break;
 
-            while (ui.update)
-                if (update_ui(&ui, &game))
-                    present_ui(ui.elements,  res.renderer);
-                else
-                    break;
-        }
+        while (ui.update)
+            if (update_ui(&ui, &game))
+                present_ui(ui.elements,  res.renderer);
+            else
+                break;
     }
     free_ui(ui.elements);
     quit(&res);
-}
-
-void init_game(GameContext* game)
-{
-    *game = (GameContext){0};
-
-    const int _temp_board_map[8][8] = {
-        {1, 2, 3, 4, 5, 6, 7, 8},
-        {9, 10, 11, 12, 13, 14, 15, 16},
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {17, 18, 19, 20, 21, 22, 23, 24},
-        {25, 26, 27, 28, 29, 30, 31, 32}
-    };
-
-    for (int y = 0; y < 8; y++)
-        for (int x = 0; x < 8; x++)
-            game->board_map[x][y] = _temp_board_map[x][y];
 }
 
 _Bool event_proc(GameContext* game, _Bool* update)
@@ -83,8 +58,10 @@ _Bool event_proc(GameContext* game, _Bool* update)
     case SDL_QUIT:
         return false;
     case SDL_KEYUP:
-        return key_input_proc(game->event.key.keysym.sym, &game->cursor_x, &game->cursor_y, &game->delete, update);
+        return key_input_proc(game->event.key.keysym.sym, &game->cursor_x, &game->cursor_y, game->selected, &game->delete, update);
     default:
+        *update = false;
+        return true;
     }
-    return true;
+
 }

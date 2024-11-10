@@ -50,7 +50,7 @@ typedef struct Element
     Element* next;
 }Element;
 
-_Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int board_map[8][8]);
+_Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8]);
 void free_ui(Element* elements);
 _Bool update_ui(UIContext* ui, GameContext* game);
 void present_ui(const Element* elements, SDL_Renderer* renderer);

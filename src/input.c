@@ -20,7 +20,7 @@
 #include "input.h"
 #include "board.h"
 
-_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool* delete, _Bool* update)
+_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool selected, _Bool* delete, _Bool* update)
 {
     switch (keycode)
     {
@@ -43,7 +43,8 @@ _Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _B
             *cursor_x += 1;
         break;
     case SDLK_e:
-        *delete = true;
+        if(selected)
+            *delete = true;
         break;
     default:
         *update = false;

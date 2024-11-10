@@ -36,7 +36,6 @@ typedef struct
 }GameContext;
 
 void game();
-void init_game(GameContext* game);
 _Bool event_proc(GameContext* game, _Bool* update);
 
 #endif //GAME_H
