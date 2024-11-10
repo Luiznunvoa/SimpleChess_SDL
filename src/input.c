@@ -20,12 +20,12 @@
 #include "input.h"
 #include "board.h"
 
-_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool* delete)
+_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool* delete, _Bool* update)
 {
     switch (keycode)
     {
     case SDLK_ESCAPE:
-        return true;
+        return false;
     case SDLK_UP:
         if(*cursor_y > 0)
             *cursor_y -= 1;
@@ -46,6 +46,9 @@ _Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _B
         *delete = true;
         break;
     default:
+        *update = false;
+        return true;
     }
-    return false;
+    *update = true;
+    return true;
 }

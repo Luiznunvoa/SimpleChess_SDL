@@ -36,14 +36,14 @@ _Bool init(WindowContext* res)
         return false;
     }
 
-    res->window  = SDL_CreateWindow(
+    res->_window  = SDL_CreateWindow(
         GAME_TITLE,
         WINDOW_X, WINDOW_Y,
         WINDOW_WIDTH, WINDOW_HEIGHT,
         WINDOW_FLAGS
         );
 
-    if (res->window == NULL)
+    if (res->_window == NULL)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Window initialization error: %s\n", SDL_GetError());
         return false;
@@ -53,7 +53,7 @@ _Bool init(WindowContext* res)
 
     if (iconSurface != NULL)
     {
-        SDL_SetWindowIcon(res->window, iconSurface);
+        SDL_SetWindowIcon(res->_window, iconSurface);
         SDL_FreeSurface(iconSurface);
         iconSurface = NULL;
     }
@@ -64,7 +64,7 @@ _Bool init(WindowContext* res)
     }
 
     res->renderer = SDL_CreateRenderer(
-        res->window,
+        res->_window,
         -1,
         RENDERER_FLAGS
         );
@@ -79,10 +79,9 @@ _Bool init(WindowContext* res)
 
     SDL_RenderClear(res->renderer);
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Initialized");
+    SDL_RenderPresent(res->renderer);
 
-    res->frame_time = 0;
-    res->start_time = 0;
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Initialized");
 
     return true;
 }
@@ -90,7 +89,7 @@ _Bool init(WindowContext* res)
 void quit(const WindowContext* res)
 {
     SDL_DestroyRenderer(res->renderer);
-    SDL_DestroyWindow(res->window);
+    SDL_DestroyWindow(res->_window);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Deallocated");
     SDL_Quit();
 }

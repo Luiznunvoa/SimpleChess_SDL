@@ -25,10 +25,7 @@
 typedef struct
 {
     SDL_Renderer* renderer;
-    SDL_Window* window;
-
-    Uint32 start_time; // The tick that the frame started
-    Uint32 frame_time; // The time that the frame took to be rendered
+    SDL_Window* _window;
 }WindowContext;
 
 _Bool init(WindowContext* res);

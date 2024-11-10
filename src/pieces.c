@@ -113,6 +113,7 @@ int pieces_update(const Element* piece, GameContext* game)
             game->delete = false;
             result = 2;
         }
+
     }
 
     return result;

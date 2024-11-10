@@ -20,6 +20,8 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "common.h"
+
 typedef struct
 {
     int cursor_x;
@@ -29,9 +31,12 @@ typedef struct
     _Bool delete;
 
     int  board_map[8][8];
+
+    SDL_Event event;
 }GameContext;
 
 void game();
-_Bool event_proc(_Bool* update, GameContext* game);
+void init_game(GameContext* game);
+_Bool event_proc(GameContext* game, _Bool* update);
 
 #endif //GAME_H

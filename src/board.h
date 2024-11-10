@@ -23,6 +23,12 @@
 #include "common.h"
 #include "ui.h"
 
+typedef struct
+{
+    int _last_cursor_pos_x;
+    int _last_cursor_pos_y;
+}BoardData;
+
 _Bool board_init(Element* board, SDL_Renderer* renderer);
 int board_update(const Element* board, GameContext* game);
 void draw_selected_cell(

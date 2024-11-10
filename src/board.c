@@ -30,8 +30,7 @@
 #define BORDER_SIZE (board->rect.w / 100)
 #define CELL_SIZE ((board->rect.w / 8) -1)
 
-int last_cursor_pos_x = 0;
-int last_cursor_pos_y = 0;
+BoardData data = (BoardData){0};
 
 _Bool board_init(Element* board, SDL_Renderer* renderer)
 {
@@ -122,12 +121,12 @@ void draw_selected_cell(
     const int pitch
 )
 {
-    if (last_cursor_pos_x != -1 && last_cursor_pos_y != -1)
+    if (data._last_cursor_pos_x != -1 && data._last_cursor_pos_y != -1)
     {
-        const Uint16 originalColor = ORIGINAL_CELL_COLOR(last_cursor_pos_y, last_cursor_pos_x);
+        const Uint16 originalColor = ORIGINAL_CELL_COLOR(data._last_cursor_pos_y, data._last_cursor_pos_x);
 
-        const int start_x = (BORDER_SIZE + last_cursor_pos_x * CELL_SIZE);
-        const int start_y = (BORDER_SIZE + last_cursor_pos_y * CELL_SIZE);
+        const int start_x = (BORDER_SIZE + data._last_cursor_pos_x * CELL_SIZE);
+        const int start_y = (BORDER_SIZE + data._last_cursor_pos_y * CELL_SIZE);
 
         draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
@@ -151,8 +150,8 @@ void draw_selected_cell(
 
     draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
-    last_cursor_pos_x = cursor_x;
-    last_cursor_pos_y = cursor_y;
+    data._last_cursor_pos_x = cursor_x;
+    data._last_cursor_pos_y = cursor_y;
 }
 
 void draw_square(

@@ -34,7 +34,7 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int board_map[8][8])
     if(!ui_create_element(&ui->elements, renderer, BOARD_RECT, board_init, 0))
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
-        free_UI(ui->elements);
+        free_ui(ui->elements);
         return false;
     }
 
@@ -48,7 +48,7 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int board_map[8][8])
     return true;
 }
 
-void free_UI(Element* elements)
+void free_ui(Element* elements)
 {
     Element* current = elements;
     while (current != NULL)
@@ -75,6 +75,8 @@ void free_UI(Element* elements)
 _Bool update_ui(UIContext* ui, GameContext* game)
 {
     const Element* current = ui->elements;
+
+    ui->update = false;
 
     while (current != NULL)
     {
