@@ -101,18 +101,19 @@ int update_pieces(Element const* piece, GameContext* game)
 
     if(game->cursor_x == x && game->cursor_y == y)
     {
-        if(game->selecting && !game->selected)
+        if(game->flag == SELECT_PIECE)
         {
-            game->selecting = false;
-            game->selected = true;
+            game->flag = DEFAULT;
+            game->cursor_x = x;
+            game->cursor_y = y;
             result = true;
         }
-        else if(game->flag == DELETE_SELECTED_ELEMENT)
+        else if(game->flag == DELETE_PIECE)
             result = 2;
-        else if(game->locking)
+        else if(game->flag == LOCK_PIECE)
         {
-            game->locking = false;
-            game->locked = true;
+            game->flag = DEFAULT;
+            game->piece_locked = true;
             game->locked_piece_x = x;
             game->locked_piece_y = y;
         }

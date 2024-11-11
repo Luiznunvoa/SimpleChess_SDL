@@ -19,7 +19,7 @@
 
 #include "input.h"
 
-_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool selected, Uint32* flag, _Bool* update, _Bool* locking)
+_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool* update, Uint32* flag)
 {
     switch (keycode)
     {
@@ -42,11 +42,10 @@ _Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _B
             *cursor_x += 1;
         break;
     case SDLK_e:
-        if(selected)
-            *flag = 2;
+        *flag = 4;
         break;
     case SDLK_f:
-        *locking = !*locking;
+        *flag = 3;
         break;
     default:
         *update = false;

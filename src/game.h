@@ -24,9 +24,11 @@
 
 typedef enum
 {
-    NONE,
+    DEFAULT,
     QUIT_GAME,
-    DELETE_SELECTED_ELEMENT,
+    SELECT_PIECE,
+    LOCK_PIECE,
+    DELETE_PIECE,
 } GameFlags;
 
 typedef struct
@@ -34,14 +36,10 @@ typedef struct
     int cursor_x;
     int cursor_y;
 
-    _Bool selecting;
-    _Bool selected;
-
     int locked_piece_x;
     int locked_piece_y;
 
-    _Bool locking;
-    _Bool locked;
+    _Bool piece_locked;
 
     int board[8][8];
 

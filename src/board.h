@@ -34,7 +34,6 @@ int update_board(const Element* board, GameContext* game);
 void draw_selected_cell(
     const Element* board,
     const int cursor_x, const int cursor_y,
-    _Bool* selected, _Bool* selecting,
     int board_map[8][8],
     Uint16* pixelData,
     int pitch

@@ -72,13 +72,11 @@ _Bool event_proc(GameContext* game, _Bool* update)
         return key_input_proc(
             game->event.key.keysym.sym,
             &game->cursor_x, &game->cursor_y,
-            game->selected,
-            (Uint32*)&game->flag,
             update,
-            &game->locking
-            );
+            (Uint32*)&game->flag
+        );
     default:
-        game->flag = NONE;
+        game->flag = DEFAULT;
         *update = false;
         return true;
     }

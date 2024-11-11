@@ -95,21 +95,10 @@ int update_board(Element const* board, GameContext* game)
     draw_selected_cell(
         board,
         game->cursor_x, game->cursor_y,
-        &game->selected, &game->selecting,
         game->board,
         pixelData,
         pitch
         );
-
-    if(game->locked)
-        draw_locked_cell(
-            board,
-            game->cursor_x, game->cursor_y,
-            game->locked_piece_x, game->locked_piece_y,
-            game->locked,
-            pixelData,
-            pitch
-            );
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -120,7 +109,6 @@ int update_board(Element const* board, GameContext* game)
 void draw_selected_cell(
     const Element* board,
     const int cursor_x, const int cursor_y,
-    _Bool* selected, _Bool* selecting,
     int board_map[8][8],
     Uint16* pixelData,
     const int pitch
@@ -139,16 +127,9 @@ void draw_selected_cell(
     Uint16 color;
 
     if(board_map[cursor_y][cursor_x] == 0)
-    {
-        *selected = false;
-        *selecting = true;
         color = CURSOR_CELL_COLOR;
-    }
     else
-    {
-        *selecting = true;
         color = PIECE_CELL_COLOR;
-    }
 
     const int start_x = (BORDER_SIZE + cursor_x * CELL_SIZE);
     const int start_y = (BORDER_SIZE + cursor_y * CELL_SIZE);
