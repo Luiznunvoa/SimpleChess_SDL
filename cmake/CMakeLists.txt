@@ -44,7 +44,6 @@ add_executable(SimpleChess_SDL ../src/main.c
         ../src/ui.h
         ../src/board.c
         ../src/board.h
-        ../src/common.c
         ../src/input.c
         ../src/input.h
         ../src/pieces.c

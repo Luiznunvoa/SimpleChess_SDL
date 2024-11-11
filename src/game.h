@@ -22,15 +22,30 @@
 
 #include "common.h"
 
+typedef enum
+{
+    NONE,
+    QUIT_GAME,
+    DELETE_SELECTED_ELEMENT,
+} GameFlags;
+
 typedef struct
 {
     int cursor_x;
     int cursor_y;
+
     _Bool selecting;
     _Bool selected;
-    _Bool delete;
 
-    int  board_map[8][8];
+    int locked_piece_x;
+    int locked_piece_y;
+
+    _Bool locking;
+    _Bool locked;
+
+    int board[8][8];
+
+    GameFlags flag;
 
     SDL_Event event;
 }GameContext;

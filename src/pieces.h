@@ -23,7 +23,7 @@
 #include "common.h"
 #include "ui.h"
 
-_Bool pieces_init(Element* piece, SDL_Renderer* renderer);
-int pieces_update(const Element* piece, GameContext* game);
+_Bool init_pieces(Element* piece, SDL_Renderer* renderer);
+int update_pieces(Element const* piece, GameContext* game);
 
 #endif //PIECES_H

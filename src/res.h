@@ -25,7 +25,7 @@
 typedef struct
 {
     SDL_Renderer* renderer;
-    SDL_Window* _window;
+    SDL_Window* window;
 }WindowContext;
 
 _Bool init(WindowContext* res);

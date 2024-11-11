@@ -18,13 +18,11 @@
 //
 
 #include "board.h"
-#include "game.h"
 
 #define DARK_CELL_COLOR 0x734B
 #define BRIGHT_CELL_COLOR 0x9C90
 #define CURSOR_CELL_COLOR 0x2ce5
 #define PIECE_CELL_COLOR 0x32f1
-#define BORDER_COLOR 0x0000
 #define ORIGINAL_CELL_COLOR(row, col) ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_CELL_COLOR : BRIGHT_CELL_COLOR;
 
 #define BORDER_SIZE (board->rect.w / 100)
@@ -32,7 +30,7 @@
 
 BoardData data = (BoardData){0};
 
-_Bool board_init(Element* board, SDL_Renderer* renderer)
+_Bool init_board(Element* board, SDL_Renderer* renderer)
 {
     int pitch;
     void* pixels;
@@ -62,9 +60,6 @@ _Bool board_init(Element* board, SDL_Renderer* renderer)
 
     Uint16* pixelData = (Uint16*)pixels;
 
-
-    draw_square(pixelData, pitch, 0, 0, board->rect.w, BORDER_COLOR);
-
     for (int row = 0; row < 8; row++)
         for (int col = 0; col < 8; col++)
         {
@@ -79,11 +74,11 @@ _Bool board_init(Element* board, SDL_Renderer* renderer)
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
 
-    board->update = board_update;
+    board->update = update_board;
     return true;
 }
 
-int board_update(const Element* board, GameContext* game)
+int update_board(Element const* board, GameContext* game)
 {
     int pitch;
     void* pixels;
@@ -101,10 +96,20 @@ int board_update(const Element* board, GameContext* game)
         board,
         game->cursor_x, game->cursor_y,
         &game->selected, &game->selecting,
-        game->board_map,
+        game->board,
         pixelData,
         pitch
         );
+
+    if(game->locked)
+        draw_locked_cell(
+            board,
+            game->cursor_x, game->cursor_y,
+            game->locked_piece_x, game->locked_piece_y,
+            game->locked,
+            pixelData,
+            pitch
+            );
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -121,12 +126,12 @@ void draw_selected_cell(
     const int pitch
 )
 {
-    if (data._last_cursor_pos_x != -1 && data._last_cursor_pos_y != -1)
+    if (data.last_cursor_pos_x != -1 && data.last_cursor_pos_y != -1)
     {
-        const Uint16 originalColor = ORIGINAL_CELL_COLOR(data._last_cursor_pos_y, data._last_cursor_pos_x);
+        const Uint16 originalColor = ORIGINAL_CELL_COLOR(data.last_cursor_pos_y, data.last_cursor_pos_x);
 
-        const int start_x = (BORDER_SIZE + data._last_cursor_pos_x * CELL_SIZE);
-        const int start_y = (BORDER_SIZE + data._last_cursor_pos_y * CELL_SIZE);
+        const int start_x = (BORDER_SIZE + data.last_cursor_pos_x * CELL_SIZE);
+        const int start_y = (BORDER_SIZE + data.last_cursor_pos_y * CELL_SIZE);
 
         draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
     }
@@ -150,8 +155,20 @@ void draw_selected_cell(
 
     draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
 
-    data._last_cursor_pos_x = cursor_x;
-    data._last_cursor_pos_y = cursor_y;
+    data.last_cursor_pos_x = cursor_x;
+    data.last_cursor_pos_y = cursor_y;
+}
+
+void draw_locked_cell(
+    const Element* board,
+    const int cursor_x, const int cursor_y,
+    const int locked_piece_x, const int locked_piece_y,
+    const _Bool locked,
+    Uint16* pixelData,
+    const int pitch
+)
+{
+
 }
 
 void draw_square(
@@ -178,7 +195,7 @@ _Bool lock_texture_and_alloc_format(
     SDL_PixelFormatEnum enum_format
 )
 {
-    if (SDL_LockTexture(texture, NULL, pixels, pitch) < 0)
+    if (SDL_LockTexture(texture, NULL, pixels, pitch) > 0)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error locking texture: %s\n", SDL_GetError());
         return false;

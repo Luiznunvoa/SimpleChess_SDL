@@ -29,23 +29,34 @@ void game()
     WindowContext res;
 
     if (!init(&res))
+    {
+        SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize Window", res.window);
         quit(&res);
+        return;
+    }
 
     UIContext ui;
 
-    if (!init_ui(&ui, res.renderer, &game.board_map))
+    if (!init_ui(&ui, res.renderer, &game.board))
+    {
+        SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize UI", res.window);
         quit(&res);
+        return;
+    }
 
     while (SDL_WaitEvent(&game.event))
     {
         if (!event_proc(&game, &ui.update))
             break;
 
-        while (ui.update)
+        while (ui.update && game.flag != QUIT_GAME)
             if (update_ui(&ui, &game))
-                present_ui(ui.elements,  res.renderer);
+                present_ui(ui.elements, res.renderer);
             else
+            {
+                SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Update UI", res.window);
                 break;
+            }
     }
     free_ui(ui.elements);
     quit(&res);
@@ -58,10 +69,17 @@ _Bool event_proc(GameContext* game, _Bool* update)
     case SDL_QUIT:
         return false;
     case SDL_KEYUP:
-        return key_input_proc(game->event.key.keysym.sym, &game->cursor_x, &game->cursor_y, game->selected, &game->delete, update);
+        return key_input_proc(
+            game->event.key.keysym.sym,
+            &game->cursor_x, &game->cursor_y,
+            game->selected,
+            (Uint32*)&game->flag,
+            update,
+            &game->locking
+            );
     default:
+        game->flag = NONE;
         *update = false;
         return true;
     }
-
 }

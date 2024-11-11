@@ -29,9 +29,8 @@
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
 {
     *ui = (UIContext){0};
-    ui->update = true;
 
-    if(!ui_create_element(&ui->elements, renderer, BOARD_RECT, board_init, 0))
+    if(!create_element(&ui->elements, renderer, BOARD_RECT, init_board, 0))
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
         free_ui(ui->elements);
@@ -52,11 +51,12 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
     for(int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
             if (temp_board_map[y][x] != 0)
-                if(!ui_create_element(&ui->elements, renderer, PIECE_RECT(x, y), pieces_init, temp_board_map[y][x]))
+                if(!create_element(&ui->elements, renderer, PIECE_RECT(x, y), init_pieces, temp_board_map[y][x]))
                     return false;
                 else
                     (*board_map)[y][x] = temp_board_map[y][x];
 
+    ui->update = true;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Initialized");
     return true;
@@ -102,29 +102,27 @@ _Bool update_ui(UIContext* ui, GameContext* game)
             {
             case error:
                 return false;
+            case false:
+                break;
             case true:
                 ui->update = true;
                 break;
-            case false:
-                break;
             case 2:
-                {
-                    const Element* element_to_delete = current;
-                    current = current->next;
+                const Element* element_to_delete = current;
 
-                    ui_delete_element( &(ui->elements), &ui->update,  &game->board_map, element_to_delete->info);
+                current = current->next;
 
-                    continue;
-                }
+                delete_element( &(ui->elements), &ui->update,  &game->board, element_to_delete->info);
+
+                continue;
             default:
                 SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Weird update return");
             }
         }
-
         current = current->next;
     }
 
-    return true;
+    return true; // will always return true if no checkmate or error happened,
 }
 
 void present_ui(const Element* elements, SDL_Renderer* renderer)
@@ -141,7 +139,7 @@ void present_ui(const Element* elements, SDL_Renderer* renderer)
     SDL_RenderPresent(renderer);
 }
 
-_Bool ui_create_element(
+_Bool create_element(
     Element** elements,
     SDL_Renderer* renderer,
     const SDL_Rect rect,
@@ -182,7 +180,7 @@ _Bool ui_create_element(
     return true;
 }
 
-void ui_delete_element(
+void delete_element(
     Element** elements,
     _Bool* update,
     int(*board_map)[8][8],

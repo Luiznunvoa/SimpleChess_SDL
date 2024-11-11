@@ -22,6 +22,6 @@
 
 #include "common.h"
 
-_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool selected, _Bool* delete, _Bool* update);
+_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool selected, Uint32* flag, _Bool* update, _Bool* locking);
 
 #endif //INPUT_H

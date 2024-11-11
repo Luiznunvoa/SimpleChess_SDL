@@ -25,12 +25,12 @@
 
 typedef struct
 {
-    int _last_cursor_pos_x;
-    int _last_cursor_pos_y;
+    int last_cursor_pos_x;
+    int last_cursor_pos_y;
 }BoardData;
 
-_Bool board_init(Element* board, SDL_Renderer* renderer);
-int board_update(const Element* board, GameContext* game);
+_Bool init_board(Element* board, SDL_Renderer* renderer);
+int update_board(const Element* board, GameContext* game);
 void draw_selected_cell(
     const Element* board,
     const int cursor_x, const int cursor_y,
@@ -38,6 +38,14 @@ void draw_selected_cell(
     int board_map[8][8],
     Uint16* pixelData,
     int pitch
+);
+void draw_locked_cell(
+    const Element* board,
+    const int cursor_x, const int cursor_y,
+    const int locked_piece_x, const int locked_piece_y,
+    const _Bool locked,
+    Uint16* pixelData,
+    const int pitch
 );
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,

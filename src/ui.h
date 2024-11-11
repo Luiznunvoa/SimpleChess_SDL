@@ -26,7 +26,7 @@
 typedef struct Element Element;
 
 typedef _Bool (*ELM_init)(Element* element,SDL_Renderer* renderer);
-typedef int (*ELM_update)(const Element* element, GameContext* game);
+typedef int (*ELM_update)(Element const* element, GameContext* game);
 
 typedef struct
 {
@@ -54,14 +54,14 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8]);
 void free_ui(Element* elements);
 _Bool update_ui(UIContext* ui, GameContext* game);
 void present_ui(const Element* elements, SDL_Renderer* renderer);
-_Bool ui_create_element(
+_Bool create_element(
     Element** elements,
     SDL_Renderer* renderer,
     const SDL_Rect rect,
     const ELM_init init,
     const Uint8 info
 );
-void ui_delete_element(
+void delete_element(
     Element** elements,
     _Bool* update,
     int(*board_map)[8][8],

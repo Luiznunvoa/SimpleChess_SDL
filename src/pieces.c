@@ -18,9 +18,8 @@
 //
 
 #include "pieces.h"
-#include "board.h"
 
-_Bool pieces_init(Element* piece, SDL_Renderer* renderer)
+_Bool init_pieces(Element* piece, SDL_Renderer* renderer)
 {
     typedef struct {
         Uint8 piece_number;
@@ -89,11 +88,11 @@ _Bool pieces_init(Element* piece, SDL_Renderer* renderer)
         return false;
     }
 
-    piece->update = pieces_update;
+    piece->update = update_pieces;
     return true;
 }
 
-int pieces_update(const Element* piece, GameContext* game)
+int update_pieces(Element const* piece, GameContext* game)
 {
     const int x = (piece->rect.x - 45) / 65;
     const int y = (piece->rect.y - 45) / 65;
@@ -108,12 +107,15 @@ int pieces_update(const Element* piece, GameContext* game)
             game->selected = true;
             result = true;
         }
-        else if(game->delete)
-        {
-            game->delete = false;
+        else if(game->flag == DELETE_SELECTED_ELEMENT)
             result = 2;
+        else if(game->locking)
+        {
+            game->locking = false;
+            game->locked = true;
+            game->locked_piece_x = x;
+            game->locked_piece_y = y;
         }
-
     }
 
     return result;
