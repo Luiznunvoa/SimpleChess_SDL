@@ -44,12 +44,12 @@ void game()
         return;
     }
 
-    while (SDL_WaitEvent(&game.event))
+    while (SDL_WaitEvent(&game.event) && game.flag != QUIT_GAME)
     {
         if (!event_proc(&game, &ui.update))
             break;
 
-        while (ui.update && game.flag != QUIT_GAME)
+        while (ui.update)
             if (update_ui(&ui, &game))
                 present_ui(ui.elements, res.renderer);
             else
@@ -62,6 +62,7 @@ void game()
     quit(&res);
 }
 
+
 _Bool event_proc(GameContext* game, _Bool* update)
 {
     switch (game->event.type)
@@ -72,8 +73,8 @@ _Bool event_proc(GameContext* game, _Bool* update)
         return key_input_proc(
             game->event.key.keysym.sym,
             &game->cursor_x, &game->cursor_y,
-            update,
-            (Uint32*)&game->flag
+            (Uint32*)&game->flag,
+            update
         );
     default:
         game->flag = DEFAULT;

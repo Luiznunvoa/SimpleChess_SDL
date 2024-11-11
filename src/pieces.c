@@ -97,27 +97,26 @@ int update_pieces(Element const* piece, GameContext* game)
     const int x = (piece->rect.x - 45) / 65;
     const int y = (piece->rect.y - 45) / 65;
 
-    int result = false;
+    if (!(game->cursor_x == x && game->cursor_y == y))
+        return false;
 
-    if(game->cursor_x == x && game->cursor_y == y)
+    switch (game->flag)
     {
-        if(game->flag == SELECT_PIECE)
-        {
-            game->flag = DEFAULT;
+        case SELECT_PIECE:
             game->cursor_x = x;
             game->cursor_y = y;
-            result = true;
-        }
-        else if(game->flag == DELETE_PIECE)
-            result = 2;
-        else if(game->flag == LOCK_PIECE)
-        {
-            game->flag = DEFAULT;
+            return true;
+
+        case LOCK_PIECE:
             game->piece_locked = true;
             game->locked_piece_x = x;
             game->locked_piece_y = y;
-        }
-    }
+            return true;
 
-    return result;
+        case DELETE_PIECE:
+            return 2;
+
+        default:
+            return false;
+    }
 }

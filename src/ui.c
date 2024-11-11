@@ -102,24 +102,37 @@ _Bool update_ui(UIContext* ui, GameContext* game)
             {
             case error:
                 return false;
+
             case false:
+                current = current->next;
                 break;
+
             case true:
                 ui->update = true;
-                break;
-            case 2:
-                const Element* element_to_delete = current;
-
                 current = current->next;
+                break;
 
-                delete_element( &(ui->elements), &ui->update,  &game->board, element_to_delete->info);
+            case 2:
+                const int element_to_delete = current->info;
 
-                continue;
+                delete_element( &(ui->elements), &ui->update,  &game->board, element_to_delete);
+
+                if(element_to_delete == 32)
+                    current = NULL;
+                else
+                    current = current->next;
+                break;
+
+            case 3:
+                SDL_ShowSimpleMessageBox(64, "CHECKMATE", "GAME OVER", NULL);
+                game->flag = QUIT_GAME;
+                current = current->next;
+                break;
+
             default:
                 SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Weird update return");
             }
         }
-        current = current->next;
     }
 
     return true; // will always return true if no checkmate or error happened,
@@ -156,6 +169,7 @@ _Bool create_element(
     new_element->rect = rect;
     new_element->init = init;
     new_element->info = info;
+    new_element->next = NULL;
 
     if(!new_element->init(new_element, renderer))
     {
@@ -164,16 +178,14 @@ _Bool create_element(
     }
 
     if (*elements == NULL)
-    {
         *elements = new_element;
-    }
     else
     {
         Element* temp_elements = *elements;
+
         while(temp_elements->next != NULL)
-        {
             temp_elements = temp_elements->next;
-        }
+
         temp_elements->next = new_element;
     }
 
