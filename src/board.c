@@ -142,14 +142,16 @@ void draw_selected_cell(
 
 void draw_locked_cell(
     const Element* board,
-    const int cursor_x, const int cursor_y,
     const int locked_piece_x, const int locked_piece_y,
     const _Bool locked,
     Uint16* pixelData,
     const int pitch
 )
 {
+    const int start_x = (BORDER_SIZE + locked_piece_x * CELL_SIZE);
+    const int start_y = (BORDER_SIZE + locked_piece_y * CELL_SIZE);
 
+    draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, PIECE_CELL_COLOR);
 }
 
 void draw_square(

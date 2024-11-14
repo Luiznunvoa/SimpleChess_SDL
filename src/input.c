@@ -19,12 +19,13 @@
 
 #include "input.h"
 
-_Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y,  Uint32* flag, _Bool* update)
+void key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y,  Uint32* flag)
 {
     switch (keycode)
     {
     case SDLK_ESCAPE:
-        return false;
+        *flag = 1;
+        break;
     case SDLK_UP:
         if(*cursor_y > 0)
             *cursor_y -= 1;
@@ -41,16 +42,30 @@ _Bool key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y,  U
         if(*cursor_x < 7)
             *cursor_x += 1;
         break;
-    case SDLK_e:
+    case SDLK_e: // to delete piece NOTE for debug
         *flag = 4;
         break;
-    case SDLK_f:
+    case SDLK_f: // to lock a piece
         *flag = 3;
         break;
     default:
-        *update = false;
-        return true;
     }
-    *update = true;
-    return true;
+}
+
+void mouse_input_proc(int* cursor_x, int* cursor_y)
+{
+    int x, y;
+
+    SDL_GetMouseState(&x, &y);
+
+    const int offset = (600 - 520) / 2;
+
+    x = (x - offset) / 65;
+    y = (y - offset) / 65;
+
+    if (x >= 0 && y >= 0 && x < 8 && y < 8)
+    {
+        *cursor_x = x;
+        *cursor_y = y;
+    }
 }

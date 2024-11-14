@@ -108,6 +108,7 @@ int update_pieces(Element const* piece, GameContext* game)
             return true;
 
         case LOCK_PIECE:
+            game->flag = DEFAULT;
             game->piece_locked = true;
             game->locked_piece_x = x;
             game->locked_piece_y = y;

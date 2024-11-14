@@ -46,39 +46,29 @@ void game()
 
     while (SDL_WaitEvent(&game.event) && game.flag != QUIT_GAME)
     {
-        if (!event_proc(&game, &ui.update))
+        switch (game.event.type)
+        {
+        case SDL_QUIT:
+            game.flag = QUIT_GAME;
             break;
 
-        while (ui.update)
-            if (update_ui(&ui, &game))
-                present_ui(ui.elements, res.renderer);
-            else
-            {
-                SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Update UI", res.window);
-                break;
-            }
+        case SDL_KEYUP:
+            ui.update = true;
+
+            key_input_proc(game.event.key.keysym.sym, &game.cursor_x, &game.cursor_y, (Uint32*)&game.flag);
+            break;
+
+        case SDL_MOUSEBUTTONUP:
+            ui.update = true;
+            mouse_input_proc(&game.cursor_x, &game.cursor_y);
+            break;
+
+        default:
+            ui.update = false;
+            game.flag = DEFAULT;
+        }
+        get_ui(&ui, &game, res.renderer);
     }
     free_ui(ui.elements);
     quit(&res);
-}
-
-
-_Bool event_proc(GameContext* game, _Bool* update)
-{
-    switch (game->event.type)
-    {
-    case SDL_QUIT:
-        return false;
-    case SDL_KEYUP:
-        return key_input_proc(
-            game->event.key.keysym.sym,
-            &game->cursor_x, &game->cursor_y,
-            (Uint32*)&game->flag,
-            update
-        );
-    default:
-        game->flag = DEFAULT;
-        *update = false;
-        return true;
-    }
 }

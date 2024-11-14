@@ -40,7 +40,6 @@ void draw_selected_cell(
 );
 void draw_locked_cell(
     const Element* board,
-    const int cursor_x, const int cursor_y,
     const int locked_piece_x, const int locked_piece_y,
     const _Bool locked,
     Uint16* pixelData,

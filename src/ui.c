@@ -26,6 +26,19 @@
 #define BOARD_RECT (SDL_Rect){BOARD_X, BOARD_Y, 520, 520}
 #define PIECE_RECT(x, y) (SDL_Rect){(BOARD_X + 5) + (65 * x), (BOARD_Y + 5) + (65 * y), 0, 0}
 
+void get_ui (UIContext* ui, GameContext* game, SDL_Renderer* renderer)
+{
+    while (ui->update && game->flag != QUIT_GAME)
+        if (update_ui(ui, game))
+            present_ui(ui->elements, renderer);
+        else
+        {
+            SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Update UI", NULL);
+            game->flag = QUIT_GAME;
+            return;
+        }
+}
+
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
 {
     *ui = (UIContext){0};
@@ -37,7 +50,8 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
         return false;
     }
 
-    const int temp_board_map[8][8] = {
+    const int temp_board_map[8][8] =
+    {
         {1, 2, 3, 4, 5, 6, 7, 8},
         {9, 10, 11, 12, 13, 14, 15, 16},
         {0, 0, 0, 0, 0, 0, 0, 0},
@@ -65,6 +79,7 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
 void free_ui(Element* elements)
 {
     Element* current = elements;
+
     while (current != NULL)
     {
         Element* next = current->next;
@@ -80,7 +95,6 @@ void free_ui(Element* elements)
 
         current = next;
     }
-
     elements = NULL;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
@@ -94,6 +108,8 @@ _Bool update_ui(UIContext* ui, GameContext* game)
 
     while (current != NULL)
     {
+        const Element* next_element = current->next;
+
         if (current->update != NULL)
         {
             const int update_result = current->update(current, game);
@@ -104,43 +120,36 @@ _Bool update_ui(UIContext* ui, GameContext* game)
                 return false;
 
             case false:
-                current = current->next;
                 break;
 
             case true:
                 ui->update = true;
-                current = current->next;
                 break;
 
             case 2:
                 const int element_to_delete = current->info;
 
-                delete_element( &(ui->elements), &ui->update,  &game->board, element_to_delete);
-
-                if(element_to_delete == 32)
-                    current = NULL;
-                else
-                    current = current->next;
+                delete_element(&(ui->elements), &ui->update, &game->board, element_to_delete);
                 break;
 
             case 3:
                 SDL_ShowSimpleMessageBox(64, "CHECKMATE", "GAME OVER", NULL);
                 game->flag = QUIT_GAME;
-                current = current->next;
                 break;
 
             default:
                 SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Weird update return");
             }
         }
+        current = next_element;
     }
-
-    return true; // will always return true if no checkmate or error happened,
+    return true;
 }
 
 void present_ui(const Element* elements, SDL_Renderer* renderer)
 {
     const Element* current = elements;
+
     while (current != NULL)
     {
         if (current->texture != NULL)
@@ -223,10 +232,11 @@ void delete_element(
                 current->texture = NULL;
             }
 
-            const int board_x = current->rect.x - (BOARD_X + 5);
-            const int board_y = current->rect.y - (BOARD_Y + 5);
+            const int board_x = (current->rect.x - (BOARD_X + 5)) / 65;
+            const int board_y = (current->rect.y - (BOARD_Y + 5)) / 65;
 
-            (*board_map)[board_y / 65][board_x / 65] = 0;
+            if (board_x >= 0 && board_x < 8 && board_y >= 0 && board_y < 8)
+                (*board_map)[board_y][board_x] = 0;
 
             *update = true;
 
@@ -239,5 +249,4 @@ void delete_element(
     }
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Element with info %d not found", info);
 }
-
 

@@ -40,7 +40,6 @@ typedef struct
     int locked_piece_y;
 
     _Bool piece_locked;
-
     int board[8][8];
 
     GameFlags flag;
@@ -49,6 +48,5 @@ typedef struct
 }GameContext;
 
 void game();
-_Bool event_proc(GameContext* game, _Bool* update);
 
 #endif //GAME_H
