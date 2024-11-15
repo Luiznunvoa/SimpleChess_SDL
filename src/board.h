@@ -38,13 +38,6 @@ void draw_selected_cell(
     Uint16* pixelData,
     int pitch
 );
-void draw_locked_cell(
-    const Element* board,
-    const int locked_piece_x, const int locked_piece_y,
-    const _Bool locked,
-    Uint16* pixelData,
-    const int pitch
-);
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,
@@ -54,10 +47,10 @@ _Bool lock_texture_and_alloc_format(
 );
 void draw_square(
     Uint16* pixelData,
-    int pitch,
-    int startX, int startY,
-    int size,
-     Uint16 color
+    const int pitch,
+    const int pos_x, const int pos_y,
+    const int width, const int height,
+    const Uint16 color
 );
 
 #endif //BOARD_H

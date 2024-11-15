@@ -24,27 +24,29 @@
 
 typedef enum
 {
-    DEFAULT,
-    QUIT_GAME,
-    SELECT_PIECE,
-    LOCK_PIECE,
-    DELETE_PIECE,
+    DEFAULT,        // Nothing is happening
+    QUIT_GAME,      // Exit the game
+    SELECT_PIECE,   // There's a piece been selected
+    LOCK_PIECE,     // There's a piece been locked
+    DELETE_PIECE,   // There's a piece been deleted
 } GameFlags;
 
 typedef struct
 {
+    // Cursor position
     int cursor_x;
     int cursor_y;
 
+    // Locked piece position
     int locked_piece_x;
     int locked_piece_y;
+    _Bool piece_locked; // there's a piece locked
 
-    _Bool piece_locked;
-    int board[8][8];
+    int board[8][8]; // Board map
 
-    GameFlags flag;
+    GameFlags flag; // Game events
 
-    SDL_Event event;
+    SDL_Event event; // SDL events
 }GameContext;
 
 void game();

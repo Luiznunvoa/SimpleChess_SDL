@@ -19,26 +19,24 @@
 
 #include "board.h"
 
-#define DARK_CELL_COLOR 0x734B
-#define BRIGHT_CELL_COLOR 0x9C90
-#define CURSOR_CELL_COLOR 0x2ce5
-#define PIECE_CELL_COLOR 0x32f1
+#define DARK_CELL_COLOR 0x734B      // Dark brown color
+#define BRIGHT_CELL_COLOR 0x9C90    // Bright brown color
+#define CURSOR_CELL_COLOR 0x2ce5    // Green
+#define PIECE_CELL_COLOR 0x32f1     // Blue
+
+// Macro to determine the original cell color based on row and column indices
 #define ORIGINAL_CELL_COLOR(row, col) ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_CELL_COLOR : BRIGHT_CELL_COLOR;
 
-#define BORDER_SIZE (board->rect.w / 100)
-#define CELL_SIZE ((board->rect.w / 8) -1)
+BoardData data = (BoardData){0}; // General board data
 
-BoardData data = (BoardData){0};
-
+// Initialize the board texture and render its initial state
 _Bool init_board(Element* board, SDL_Renderer* renderer)
 {
     int pitch;
     void* pixels;
     SDL_PixelFormat* format;
 
-    board->rect.w += 2 * BORDER_SIZE;
-    board->rect.h += 2 * BORDER_SIZE;
-
+    // Create a texture for the board
     board->texture = SDL_CreateTexture(
         renderer,
         SDL_PIXELFORMAT_RGB565,
@@ -58,54 +56,56 @@ _Bool init_board(Element* board, SDL_Renderer* renderer)
         return false;
     }
 
+    // Cast the pixel buffer to a 16-bit pointer for color manipulation
     Uint16* pixelData = (Uint16*)pixels;
 
+    // Draw the initial chessboard with alternating colors
     for (int row = 0; row < 8; row++)
         for (int col = 0; col < 8; col++)
         {
-            const Uint16 color = ORIGINAL_CELL_COLOR(row, col);
-
-            const int start_x = (col * CELL_SIZE + BORDER_SIZE);
-            const int start_y = (row * CELL_SIZE + BORDER_SIZE);
-
-            draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
+            const Uint16 color = ORIGINAL_CELL_COLOR(row, col); // Determine cell color
+            draw_square(pixelData, pitch, col, row, board->rect.w, board->rect.h, color);
         }
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
 
-    board->update = update_board;
+    board->update = update_board; // Assign the update function to the board
     return true;
 }
 
+// Update the board state based on game context (e.g., cursor position or piece movement)
 int update_board(Element const* board, GameContext* game)
 {
     int pitch;
     void* pixels;
     SDL_PixelFormat* format;
 
+    // Lock the texture for updates
     if (!lock_texture_and_alloc_format(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565))
     {
         SDL_DestroyTexture(board->texture);
         return error;
     }
 
+    // Cast the pixel buffer to a 16-bit pointer for color manipulation
     Uint16* pixelData = (Uint16*)pixels;
 
+    // Update the selected cell's position
     draw_selected_cell(
         board,
         game->cursor_x, game->cursor_y,
         game->board,
         pixelData,
         pitch
-        );
-
+    );
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
 
     return false;
 }
 
+// Draw the currently selected cell and update its appearance
 void draw_selected_cell(
     const Element* board,
     const int cursor_x, const int cursor_y,
@@ -114,62 +114,29 @@ void draw_selected_cell(
     const int pitch
 )
 {
-    if (data.last_cursor_pos_x != -1 && data.last_cursor_pos_y != -1)
+    // Check if the cursor position has changed
+    if (data.last_cursor_pos_x != cursor_x || data.last_cursor_pos_y != cursor_y)
     {
+        // Restore the original color of the previous cursor cell
         const Uint16 originalColor = ORIGINAL_CELL_COLOR(data.last_cursor_pos_y, data.last_cursor_pos_x);
-
-        const int start_x = (BORDER_SIZE + data.last_cursor_pos_x * CELL_SIZE);
-        const int start_y = (BORDER_SIZE + data.last_cursor_pos_y * CELL_SIZE);
-
-        draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, originalColor);
+        draw_square(pixelData, pitch, data.last_cursor_pos_x, data.last_cursor_pos_y, board->rect.w, board->rect.h, originalColor);
     }
 
     Uint16 color;
 
-    if(board_map[cursor_y][cursor_x] == 0)
+    if (board_map[cursor_y][cursor_x] == 0) // No piece on the cell
         color = CURSOR_CELL_COLOR;
-    else
+    else // A piece is present on the cell
         color = PIECE_CELL_COLOR;
 
-    const int start_x = (BORDER_SIZE + cursor_x * CELL_SIZE);
-    const int start_y = (BORDER_SIZE + cursor_y * CELL_SIZE);
+    draw_square(pixelData, pitch, cursor_x, cursor_y, board->rect.w, board->rect.h, color);
 
-    draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, color);
-
+    // Update the last cursor position
     data.last_cursor_pos_x = cursor_x;
     data.last_cursor_pos_y = cursor_y;
 }
 
-void draw_locked_cell(
-    const Element* board,
-    const int locked_piece_x, const int locked_piece_y,
-    const _Bool locked,
-    Uint16* pixelData,
-    const int pitch
-)
-{
-    const int start_x = (BORDER_SIZE + locked_piece_x * CELL_SIZE);
-    const int start_y = (BORDER_SIZE + locked_piece_y * CELL_SIZE);
-
-    draw_square(pixelData, pitch, start_x, start_y, CELL_SIZE, PIECE_CELL_COLOR);
-}
-
-void draw_square(
-    Uint16* pixelData,
-    const int pitch,
-    const int startX, const int startY,
-    const int size,
-    const Uint16 color
-)
-{
-    for (int y = startY; y < startY + size; y++)
-    {
-        Uint16* row = pixelData + y * (pitch / 2) + startX;
-        for (int x = 0; x < size; x++)
-            row[x] = color;
-    }
-}
-
+// Lock a texture and allocate pixel format for rendering updates
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,
@@ -191,6 +158,27 @@ _Bool lock_texture_and_alloc_format(
         SDL_UnlockTexture(texture);
         return false;
     }
-
     return true;
+}
+
+// Draw a square cell on the chessboard with the specified color
+void draw_square(
+    Uint16* pixelData,
+    const int pitch,
+    const int pos_x, const int pos_y,
+    const int width, const int height,
+    const Uint16 color
+)
+{
+    // Calculate the starting position of the square in the texture
+    const int start_x = (pos_x * (width / 8));
+    const int start_y = (pos_y * (height / 8));
+
+    // Fill the square with the specified color
+    for (int y = start_y; y < start_y + (height / 8); y++)
+    {
+        Uint16* row = pixelData + y * (pitch / 2) + start_x;
+        for (int x = 0; x < (width / 8); x++)
+            row[x] = color;
+    }
 }

@@ -19,36 +19,41 @@
 
 #include "input.h"
 
-void key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y,  Uint32* flag)
+Uint32 key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y)
 {
     switch (keycode)
     {
     case SDLK_ESCAPE:
-        *flag = 1;
-        break;
+        return 1;
+
     case SDLK_UP:
         if(*cursor_y > 0)
             *cursor_y -= 1;
-        break;
+        return 2;
+
     case SDLK_DOWN:
         if(*cursor_y < 7)
             *cursor_y += 1;
-        break;
+        return 2;
+
     case SDLK_LEFT:
         if(*cursor_x > 0)
             *cursor_x -= 1;
-        break;
+        return 2;
+
     case SDLK_RIGHT:
         if(*cursor_x < 7)
             *cursor_x += 1;
-        break;
-    case SDLK_e: // to delete piece NOTE for debug
-        *flag = 4;
-        break;
-    case SDLK_f: // to lock a piece
-        *flag = 3;
-        break;
+        return 2;
+
+    case SDLK_e:
+        return 4;
+
+    case SDLK_f:
+        return 3;
+
     default:
+        return 0;
     }
 }
 

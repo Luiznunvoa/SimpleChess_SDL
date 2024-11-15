@@ -28,7 +28,7 @@ void game()
 
     WindowContext res;
 
-    if (!init(&res))
+    if (!init(&res))    // Initialize the SDL resources
     {
         SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize Window", res.window);
         quit(&res);
@@ -37,38 +37,39 @@ void game()
 
     UIContext ui;
 
-    if (!init_ui(&ui, res.renderer, &game.board))
+    if (!init_ui(&ui, res.renderer, &game.board))   // Initialize the UI elements
     {
         SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize UI", res.window);
         quit(&res);
         return;
     }
 
-    while (SDL_WaitEvent(&game.event) && game.flag != QUIT_GAME)
+    while (SDL_WaitEvent(&game.event) && game.flag != QUIT_GAME) // Main game loop
     {
         switch (game.event.type)
         {
-        case SDL_QUIT:
+        case SDL_QUIT: // User closed the window
             game.flag = QUIT_GAME;
             break;
 
-        case SDL_KEYUP:
+        case SDL_KEYUP: // User pressed and released a key
             ui.update = true;
 
-            key_input_proc(game.event.key.keysym.sym, &game.cursor_x, &game.cursor_y, (Uint32*)&game.flag);
+            game.flag = key_input_proc(game.event.key.keysym.sym, &game.cursor_x, &game.cursor_y);
             break;
 
-        case SDL_MOUSEBUTTONUP:
+        case SDL_MOUSEBUTTONUP:  // User pressed and released the mouse button
             ui.update = true;
             mouse_input_proc(&game.cursor_x, &game.cursor_y);
             break;
 
-        default:
-            ui.update = false;
-            game.flag = DEFAULT;
+        default: // Unhandled events
+            ui.update = false; // Do not update UI
+            game.flag = DEFAULT; // Reset game flag to default
         }
         get_ui(&ui, &game, res.renderer);
     }
+    // Cleanup
     free_ui(ui.elements);
     quit(&res);
 }

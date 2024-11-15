@@ -23,34 +23,34 @@
 #include "common.h"
 #include "game.h"
 
-typedef struct Element Element;
+typedef struct Element Element; // Forward declaration of the Element structure
 
-typedef _Bool (*ELM_init)(Element* element,SDL_Renderer* renderer);
+// Typedef for initialization function for an Element
+typedef _Bool (*ELM_init)(Element* element, SDL_Renderer* renderer);
 typedef int (*ELM_update)(Element const* element, GameContext* game);
 
 typedef struct
 {
-    _Bool update;
+    _Bool update;       // Indicates whether the UI needs updating
+    Element* elements;  // Linked list of UI elements
+} UIContext;
 
-    Element* elements;
-}UIContext;
-
-typedef struct Element
+typedef struct Element // Structure to represent a UI element
 {
-    SDL_Texture* texture;
-    SDL_Rect rect;
+    SDL_Texture* texture;    // Texture associated with the element
+    SDL_Rect rect;           // Rectangle defining the element's position and size
 
-    ELM_init init;
-    ELM_update update;
+    ELM_init init;           // Function pointer for element initialization
+    ELM_update update;       // Function pointer for element updates
 
-    Uint8 info;
+    Uint8 info;              // Additional information or identifier for the element
 
-    const char* bmp_path;
+    const char* bmp_path;    // File path to the bitmap image for the element
 
-    Element* next;
-}Element;
+    Element* next;           // Pointer to the next element in the linked list
+} Element;
 
-void get_ui (UIContext* ui, GameContext* game, SDL_Renderer* renderer);
+void get_ui(UIContext* ui, GameContext* game, SDL_Renderer* renderer);
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8]);
 void free_ui(Element* elements);
 _Bool update_ui(UIContext* ui, GameContext* game);
@@ -69,4 +69,4 @@ void delete_element(
     const Uint8 info
 );
 
-#endif //UI_H
+#endif // UI_H

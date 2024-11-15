@@ -103,6 +103,7 @@ int update_pieces(Element const* piece, GameContext* game)
     switch (game->flag)
     {
         case SELECT_PIECE:
+            game->flag = DEFAULT;
             game->cursor_x = x;
             game->cursor_y = y;
             return true;
