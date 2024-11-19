@@ -26,7 +26,7 @@ typedef enum
 {
     DEFAULT,        // Nothing is happening
     QUIT_GAME,      // Exit the game
-    SELECT_PIECE,   // There's a piece been selected
+    SELECT_CELL,    // There's a cell been selected
     LOCK_PIECE,     // There's a piece been locked
     DELETE_PIECE,   // There's a piece been deleted
 } GameFlags;

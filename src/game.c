@@ -48,19 +48,18 @@ void game()
     {
         switch (game.event.type)
         {
-        case SDL_QUIT: // User closed the window
+        case SDL_QUIT: // User pressed the close  window button
             game.flag = QUIT_GAME;
             break;
 
         case SDL_KEYUP: // User pressed and released a key
             ui.update = true;
-
             game.flag = key_input_proc(game.event.key.keysym.sym, &game.cursor_x, &game.cursor_y);
             break;
 
         case SDL_MOUSEBUTTONUP:  // User pressed and released the mouse button
             ui.update = true;
-            mouse_input_proc(&game.cursor_x, &game.cursor_y);
+            game.flag = mouse_input_proc(&game.cursor_x, &game.cursor_y);
             break;
 
         default: // Unhandled events

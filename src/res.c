@@ -28,6 +28,7 @@
 #define RENDERER_FLAGS (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)
 #define BACKGROUND_COLOR 143, 138, 134, 1
 
+// Initializes the SDL resources
 _Bool init(WindowContext* res)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -86,6 +87,7 @@ _Bool init(WindowContext* res)
     return true;
 }
 
+// Frees the SDL resources
 void quit(const WindowContext* res)
 {
     SDL_DestroyRenderer(res->renderer);

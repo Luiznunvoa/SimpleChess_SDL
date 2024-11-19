@@ -23,6 +23,6 @@
 #include "common.h"
 
 Uint32 key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y);
-void mouse_input_proc(int* cursor_x, int* cursor_y);
+Uint32 mouse_input_proc(int* cursor_x, int* cursor_y);
 
 #endif //INPUT_H

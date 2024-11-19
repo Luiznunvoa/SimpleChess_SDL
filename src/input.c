@@ -57,7 +57,7 @@ Uint32 key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y)
     }
 }
 
-void mouse_input_proc(int* cursor_x, int* cursor_y)
+Uint32 mouse_input_proc(int* cursor_x, int* cursor_y)
 {
     int x, y;
 
@@ -70,7 +70,13 @@ void mouse_input_proc(int* cursor_x, int* cursor_y)
 
     if (x >= 0 && y >= 0 && x < 8 && y < 8)
     {
+        if(*cursor_x == x && *cursor_y == y)
+            return 3;
+
         *cursor_x = x;
         *cursor_y = y;
+
+        return 2;
     }
+    return 0;
 }
