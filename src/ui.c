@@ -32,7 +32,8 @@ void get_ui(UIContext* ui, GameContext* game)
 {
     while (ui->update) // While the UI needs updating and the game is not quitting
     {
-        if (update_ui(ui, game)) // If updating the UI succeeds, present the updated elements
+        // If updating the UI succeeds, present the updated elements
+        if (update_ui(ui, game))
             present_ui(ui->elements, game->renderer);
         else
         {
@@ -109,6 +110,8 @@ _Bool update_ui(UIContext* ui, GameContext* game)
 
     while (current != NULL) // Process updates for each UI element
     {
+        const Element* next_element = current->next;
+
         if (current->update != NULL) // Verify if the function pointer is not NULL
         {
             switch (current->update(current, game))
@@ -136,7 +139,7 @@ _Bool update_ui(UIContext* ui, GameContext* game)
                 SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Weird update return");
             }
         }
-        current = current->next;
+        current = next_element;
     }
     return true;
 }
