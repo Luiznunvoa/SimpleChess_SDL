@@ -19,15 +19,15 @@
 
 #include "board.h"
 
-#define DARK_CELL_COLOR 0x734B      // Dark brown color
-#define BRIGHT_CELL_COLOR 0x9C90    // Bright brown color
-#define CURSOR_CELL_COLOR 0x2ce5    // Green
-#define PIECE_CELL_COLOR 0x32f1     // Blue
+#define DARK_COLOR 0x734B      // Dark brown color
+#define BRIGHT_COLOR 0x9C90    // Bright brown color
+#define CURSOR_COLOR 0x2ce5    // Green
+#define PIECE_COLOR 0x32f1     // Blue
 
 // Macro to determine the original cell color based on row and column indices
-#define ORIGINAL_CELL_COLOR(row, col) ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_CELL_COLOR : BRIGHT_CELL_COLOR;
+#define ORIGINAL_COLOR(row, col) ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_COLOR : BRIGHT_COLOR
 
-BoardData data = (BoardData){0}; // General board data
+int prev_cursor_x, prev_cursor_y = 0;
 
 // Initialize the board texture and render its initial state
 _Bool init_board(Element* board, SDL_Renderer* renderer)
@@ -60,12 +60,9 @@ _Bool init_board(Element* board, SDL_Renderer* renderer)
     Uint16* pixelData = (Uint16*)pixels;
 
     // Draw the initial chessboard with alternating colors
-    for (int row = 0; row < 8; row++)
-        for (int col = 0; col < 8; col++)
-        {
-            const Uint16 color = ORIGINAL_CELL_COLOR(row, col); // Determine cell color
-            draw_square(pixelData, pitch, col, row, board->rect.w, board->rect.h, color);
-        }
+    for (int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
+            draw_rectangle(pixelData, pitch, x, y, board->rect.w, board->rect.h, ORIGINAL_COLOR(y, x));
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -115,25 +112,28 @@ void draw_selected_cell(
 )
 {
     // Check if the cursor position has changed
-    if (data.last_cursor_pos_x != cursor_x || data.last_cursor_pos_y != cursor_y)
-    {
+    if (prev_cursor_x != cursor_x || prev_cursor_y != cursor_y)
         // Restore the original color of the previous cursor cell
-        const Uint16 originalColor = ORIGINAL_CELL_COLOR(data.last_cursor_pos_y, data.last_cursor_pos_x);
-        draw_square(pixelData, pitch, data.last_cursor_pos_x, data.last_cursor_pos_y, board->rect.w, board->rect.h, originalColor);
-    }
+        draw_rectangle(
+            pixelData,
+            pitch,
+            prev_cursor_x, prev_cursor_y,
+            board->rect.w, board->rect.h,
+            ORIGINAL_COLOR(prev_cursor_y, prev_cursor_x)
+        );
 
     Uint16 color;
 
     if (board_map[cursor_y][cursor_x] == 0) // No piece on the cell
-        color = CURSOR_CELL_COLOR;
+        color = CURSOR_COLOR;
     else // A piece is present on the cell
-        color = PIECE_CELL_COLOR;
+        color = PIECE_COLOR;
 
-    draw_square(pixelData, pitch, cursor_x, cursor_y, board->rect.w, board->rect.h, color);
+    draw_rectangle(pixelData, pitch, cursor_x, cursor_y, board->rect.w, board->rect.h, color);
 
     // Update the last cursor position
-    data.last_cursor_pos_x = cursor_x;
-    data.last_cursor_pos_y = cursor_y;
+    prev_cursor_x = cursor_x;
+    prev_cursor_y = cursor_y;
 }
 
 // Lock a texture and allocate pixel format for rendering updates
@@ -162,23 +162,23 @@ _Bool lock_texture_and_alloc_format(
 }
 
 // Draw a square cell on the chessboard with the specified color
-void draw_square(
+void draw_rectangle(
     Uint16* pixelData,
     const int pitch,
-    const int pos_x, const int pos_y,
-    const int width, const int height,
+    const int x, const int y,
+    const int w, const int h,
     const Uint16 color
 )
 {
     // Calculate the starting position of the square in the texture
-    const int start_x = (pos_x * (width / 8));
-    const int start_y = (pos_y * (height / 8));
+    const int start_x = (x * (w / 8));
+    const int start_y = (y * (h / 8));
 
     // Fill the square with the specified color
-    for (int y = start_y; y < start_y + (height / 8); y++)
+    for (int i = start_y; i < start_y + (h / 8); i++)
     {
-        Uint16* row = pixelData + y * (pitch / 2) + start_x;
-        for (int x = 0; x < (width / 8); x++)
-            row[x] = color;
+        Uint16* row = pixelData + i * (pitch / 2) + start_x;
+        for (int j = 0; j < (w / 8); j++)
+            row[j] = color;
     }
 }
