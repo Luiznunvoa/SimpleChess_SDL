@@ -33,22 +33,24 @@ typedef enum
 
 typedef struct
 {
-    // Cursor position
-    int cursor_x;
-    int cursor_y;
+    int cursor_x, cursor_y; // Cursor position
 
-    // Locked piece position
-    int locked_piece_x;
-    int locked_piece_y;
-    _Bool piece_locked; // there's a piece locked
+    int locked_x, locked_y; // Locked piece position
 
-    int board[8][8]; // Board map
+    _Bool piece_locked;     // If there's a piece locked
 
-    GameFlags flag; // Game events
+    int board[8][8];        // Board map
 
-    SDL_Event event; // SDL events
+    GameFlags flag;         // Game events
+
+    SDL_Event event;        // SDL events
+
+    SDL_Renderer* renderer; // Game renderer handle
+    SDL_Window* window;     // Game window handle
 }GameContext;
 
 void game();
+_Bool init(SDL_Renderer** renderer, SDL_Window** window);
+void quit(SDL_Renderer** renderer, SDL_Window** window);
 
 #endif //GAME_H

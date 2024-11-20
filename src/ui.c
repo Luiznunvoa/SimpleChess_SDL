@@ -28,17 +28,15 @@
 #define PIECE_RECT(x, y) (SDL_Rect){OFFSET_X + (CELL_WIDTH * x), OFFSET_Y + (CELL_HEIGHT * y)}
 
 // Function to update and present of the UI
-void get_ui(UIContext* ui, GameContext* game, SDL_Renderer* renderer)
+void get_ui(UIContext* ui, GameContext* game)
 {
-    // While the UI needs updating and the game is not quitting
-    while (ui->update && game->flag != QUIT_GAME)
+    while (ui->update) // While the UI needs updating and the game is not quitting
     {
-        // If updating the UI succeeds, present the updated elements
-        if (update_ui(ui, game))
-            present_ui(ui->elements, renderer);
+        if (update_ui(ui, game)) // If updating the UI succeeds, present the updated elements
+            present_ui(ui->elements, game->renderer);
         else
         {
-            SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Update UI", NULL);
+            SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Update UI", game->window);
             game->flag = QUIT_GAME;
             return;
         }
@@ -48,18 +46,14 @@ void get_ui(UIContext* ui, GameContext* game, SDL_Renderer* renderer)
 // Function to initialize the UI elements
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
 {
-    *ui = (UIContext){0};
-
-    // Create the board element
-    if (!create_element(&ui->elements, renderer, BOARD_RECT, init_board, 0))
+    if (!create_element(&ui->elements, renderer, BOARD_RECT, init_board, 0)) // Create the board element
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
         free_ui(ui->elements);
         return false;
     }
 
-    // Define initial positions for all pieces on the board
-    const int temp_board_map[8][8] =
+    const int temp_board_map[8][8] = // Define initial positions for all pieces on the board
     {
         {1, 2, 3, 4, 5, 6, 7, 8},
         {9, 10, 11, 12, 13, 14, 15, 16},
@@ -71,8 +65,7 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
         {25, 26, 27, 28, 29, 30, 31, 32}
     };
 
-    // Create piece elements based on the initial board map
-    for (int y = 0; y < 8; y++)
+    for (int y = 0; y < 8; y++) // Create piece elements based on the initial board map
         for (int x = 0; x < 8; x++)
             if (temp_board_map[y][x] != 0)
                 // Create element for each piece
@@ -91,8 +84,7 @@ void free_ui(Element* elements)
 {
     Element* current = elements;
 
-    // Iterate through all elements and free them
-    while (current != NULL)
+    while (current != NULL) // Iterate through all elements and free them
     {
         Element* next = current->next;
 
@@ -101,14 +93,11 @@ void free_ui(Element* elements)
             SDL_DestroyTexture(current->texture);
             current->texture = NULL;
         }
-
         free(current);
         current = NULL;
-
         current = next;
     }
     elements = NULL;
-
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
 }
 
@@ -116,19 +105,13 @@ void free_ui(Element* elements)
 _Bool update_ui(UIContext* ui, GameContext* game)
 {
     const Element* current = ui->elements;
-
     ui->update = false;
 
-    // Process updates for each UI element
-    while (current != NULL)
+    while (current != NULL) // Process updates for each UI element
     {
-        const Element* next_element = current->next;
-
-        if (current->update != NULL)
+        if (current->update != NULL) // Verify if the function pointer is not NULL
         {
-            const int update_result = current->update(current, game);
-
-            switch (update_result)
+            switch (current->update(current, game))
             {
             case error: // Error in update
                 return false;
@@ -141,12 +124,11 @@ _Bool update_ui(UIContext* ui, GameContext* game)
                 break;
 
             case 2: // Delete the element
-                const int element_to_delete = current->info;
-                delete_element(&(ui->elements), &ui->update, &game->board, element_to_delete);
+                delete_element(&(ui->elements), &ui->update, &game->board, current->info);
                 break;
 
             case 3: // Game over (checkmate)
-                SDL_ShowSimpleMessageBox(64, "CHECKMATE", "GAME OVER", NULL);
+                SDL_ShowSimpleMessageBox(64, "CHECKMATE", "GAME OVER", game->window);
                 game->flag = QUIT_GAME;
                 break;
 
@@ -154,7 +136,7 @@ _Bool update_ui(UIContext* ui, GameContext* game)
                 SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Weird update return");
             }
         }
-        current = next_element;
+        current = current->next;
     }
     return true;
 }
@@ -171,24 +153,18 @@ void present_ui(const Element* elements, SDL_Renderer* renderer)
 
         current = current->next;
     }
-
     SDL_RenderPresent(renderer);
 }
 
 // Function to create a new UI element
-_Bool create_element(
-    Element** elements,
-    SDL_Renderer* renderer,
-    const SDL_Rect rect,
-    const ELM_init init,
-    const Uint8 info
-)
+_Bool create_element(Element** elements, SDL_Renderer* renderer, const SDL_Rect rect, const ELM_init init, const Uint8 info)
 {
     Element* new_element = (Element*)malloc(sizeof(Element));
 
     if (!new_element)
         return false;
 
+    // Initialization of the new element data
     *new_element = (Element){0};
     new_element->rect = rect;
     new_element->init = init;
@@ -216,12 +192,7 @@ _Bool create_element(
 }
 
 // Function to delete a specific UI element
-void delete_element(
-    Element** elements,
-    _Bool* update,
-    int(*board_map)[8][8],
-    const Uint8 info
-)
+void delete_element(Element** elements, _Bool* update, int(*board_map)[8][8], const Uint8 info)
 {
     if (elements == NULL || *elements == NULL)
     {
@@ -247,13 +218,11 @@ void delete_element(
                 current->texture = NULL;
             }
 
-            const int board_x = (current->rect.x - (OFFSET_X  / CELL_WIDTH));
-            const int board_y = (current->rect.y - (OFFSET_Y / CELL_HEIGHT));
+            const int board_x = ((current->rect.x - OFFSET_X)  / CELL_WIDTH);
+            const int board_y = ((current->rect.y - OFFSET_Y) / CELL_HEIGHT);
 
             // Clear the board map position
-            if (board_x >= 0 && board_x < 8 && board_y >= 0 && board_y < 8)
-                (*board_map)[board_y][board_x] = 0;
-
+            (*board_map)[board_y][board_x] = 0;
             *update = true;
 
             free(current);

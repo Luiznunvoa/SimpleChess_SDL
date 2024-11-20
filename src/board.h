@@ -25,13 +25,7 @@
 
 _Bool init_board(Element* board, SDL_Renderer* renderer);
 int update_board(const Element* board, GameContext* game);
-void draw_selected_cell(
-    const Element* board,
-    int cursor_x, int cursor_y,
-    int board_map[8][8],
-    Uint16* pixelData,
-    int pitch
-);
+void update_selected(const Element* board, int x, int y, int map[8][8], Uint16* pixelData, int pitch);
 _Bool lock_texture_and_alloc_format(
     SDL_Texture* texture,
     void** pixels,

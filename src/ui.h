@@ -50,23 +50,12 @@ typedef struct Element // Structure to represent a UI element
     Element* next;           // Pointer to the next element in the linked list
 } Element;
 
-void get_ui(UIContext* ui, GameContext* game, SDL_Renderer* renderer);
+void get_ui(UIContext* ui, GameContext* game);
 _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8]);
 void free_ui(Element* elements);
 _Bool update_ui(UIContext* ui, GameContext* game);
 void present_ui(const Element* elements, SDL_Renderer* renderer);
-_Bool create_element(
-    Element** elements,
-    SDL_Renderer* renderer,
-    const SDL_Rect rect,
-    const ELM_init init,
-    const Uint8 info
-);
-void delete_element(
-    Element** elements,
-    _Bool* update,
-    int(*board_map)[8][8],
-    const Uint8 info
-);
+_Bool create_element( Element** elements, SDL_Renderer* renderer, SDL_Rect rect, ELM_init init, Uint8 info);
+void delete_element(Element** elements,_Bool* update, int(*board_map)[8][8], Uint8 info);
 
 #endif // UI_H

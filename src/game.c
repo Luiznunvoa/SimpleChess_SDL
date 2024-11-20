@@ -20,27 +20,24 @@
 #include "game.h"
 #include "ui.h"
 #include "input.h"
-#include "res.h"
 
 void game()
 {
     GameContext game = (GameContext){0};
 
-    WindowContext res;
-
-    if (!init(&res))    // Initialize the SDL resources
+    if (!init(&game.renderer, &game.window)) // Initialize the SDL resources
     {
-        SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize Window", res.window);
-        quit(&res);
+        SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize Window", game.window);
+        quit(&game.renderer, &game.window);
         return;
     }
 
-    UIContext ui;
+    UIContext ui = (UIContext){0};
 
-    if (!init_ui(&ui, res.renderer, &game.board))   // Initialize the UI elements
+    if (!init_ui(&ui, game.renderer, &game.board)) // Initialize the UI elements
     {
-        SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize UI", res.window);
-        quit(&res);
+        SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize UI", game.window);
+        quit(&game.renderer, &game.window);
         return;
     }
 
@@ -57,7 +54,7 @@ void game()
             game.flag = key_input_proc(game.event.key.keysym.sym, &game.cursor_x, &game.cursor_y);
             break;
 
-        case SDL_MOUSEBUTTONUP:  // User pressed and released the mouse button
+        case SDL_MOUSEBUTTONUP: // User pressed and released the mouse button
             ui.update = true;
             game.flag = mouse_input_proc(&game.cursor_x, &game.cursor_y);
             break;
@@ -66,9 +63,70 @@ void game()
             ui.update = false; // Do not update UI
             game.flag = DEFAULT; // Reset game flag to default
         }
-        get_ui(&ui, &game, res.renderer);
+        get_ui(&ui, &game);
     }
     // Cleanup
     free_ui(ui.elements);
-    quit(&res);
+    quit(&game.renderer, &game.window);
+}
+
+// Initializes the SDL resources
+_Bool init(SDL_Renderer** renderer, SDL_Window** window)
+{
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"SDL Initialization error: %s\n", SDL_GetError());
+        return false;
+    }
+
+    *window = SDL_CreateWindow(
+        "SimpleChess",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        WINDOW_WIDTH, WINDOW_HEIGHT,
+        SDL_WINDOW_SHOWN
+    );
+    if (*window == NULL)
+    {
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Window initialization error: %s\n", SDL_GetError());
+        return false;
+    }
+
+    SDL_Surface* iconSurface = SDL_LoadBMP("../../assets/black_pawn.bmp"); // Loading the window icon
+    if (iconSurface != NULL)
+    {
+        SDL_SetWindowIcon(*window, iconSurface);
+        SDL_FreeSurface(iconSurface);
+        iconSurface = NULL;
+    }
+    else
+    {
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Error loading icon: %s\n", SDL_GetError());
+        return false;
+    }
+
+    *renderer = SDL_CreateRenderer(
+        *window,
+        -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    );
+    if (*renderer == NULL)
+    {
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Failure in the renderer initialization: %s\n", SDL_GetError());
+        return false;
+    }
+    SDL_SetRenderDrawColor(*renderer, 143, 138, 134, 1);
+    SDL_RenderClear(*renderer);
+    SDL_RenderPresent(*renderer);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Initialized");
+
+    return true;
+}
+
+// Frees the SDL resources
+void quit(SDL_Renderer** renderer, SDL_Window** window)
+{
+    SDL_DestroyRenderer(*renderer);
+    SDL_DestroyWindow(*window);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Deallocated");
+    SDL_Quit();
 }

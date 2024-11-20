@@ -89,13 +89,8 @@ int update_board(Element const* board, GameContext* game)
     Uint16* pixelData = (Uint16*)pixels;
 
     // Update the selected cell's position
-    draw_selected_cell(
-        board,
-        game->cursor_x, game->cursor_y,
-        game->board,
-        pixelData,
-        pitch
-    );
+    update_selected(board, game->cursor_x, game->cursor_y, game->board, pixelData, pitch);
+
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
 
@@ -103,16 +98,10 @@ int update_board(Element const* board, GameContext* game)
 }
 
 // Draw the currently selected cell and update its appearance
-void draw_selected_cell(
-    const Element* board,
-    const int cursor_x, const int cursor_y,
-    int board_map[8][8],
-    Uint16* pixelData,
-    const int pitch
-)
+void update_selected(const Element* board, const int x, const int y, int map[8][8], Uint16* pixelData, const int pitch)
 {
     // Check if the cursor position has changed
-    if (prev_cursor_x != cursor_x || prev_cursor_y != cursor_y)
+    if (prev_cursor_x != x || prev_cursor_y != y)
         // Restore the original color of the previous cursor cell
         draw_rectangle(
             pixelData,
@@ -124,16 +113,16 @@ void draw_selected_cell(
 
     Uint16 color;
 
-    if (board_map[cursor_y][cursor_x] == 0) // No piece on the cell
+    if (map[y][x] == 0) // No piece on the cell
         color = CURSOR_COLOR;
     else // A piece is present on the cell
         color = PIECE_COLOR;
 
-    draw_rectangle(pixelData, pitch, cursor_x, cursor_y, board->rect.w, board->rect.h, color);
+    draw_rectangle(pixelData, pitch, x, y, board->rect.w, board->rect.h, color);
 
     // Update the last cursor position
-    prev_cursor_x = cursor_x;
-    prev_cursor_y = cursor_y;
+    prev_cursor_x = x;
+    prev_cursor_y = y;
 }
 
 // Lock a texture and allocate pixel format for rendering updates
