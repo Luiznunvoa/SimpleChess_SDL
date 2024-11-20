@@ -63,10 +63,8 @@ Uint32 mouse_input_proc(int* cursor_x, int* cursor_y)
 
     SDL_GetMouseState(&x, &y);
 
-    const int offset = (600 - 520) / 2;
-
-    x = (x - offset) / 65;
-    y = (y - offset) / 65;
+    x = (x - OFFSET_X) / CELL_WIDTH;
+    y = (y - OFFSET_Y) / CELL_HEIGHT;
 
     if (x >= 0 && y >= 0 && x < 8 && y < 8)
     {

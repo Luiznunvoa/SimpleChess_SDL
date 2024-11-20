@@ -94,8 +94,8 @@ _Bool init_pieces(Element* piece, SDL_Renderer* renderer)
 
 int update_pieces(Element const* piece, GameContext* game)
 {
-    const int x = (piece->rect.x - 45) / 65;
-    const int y = (piece->rect.y - 45) / 65;
+    const int x = (piece->rect.x - OFFSET_X) / CELL_WIDTH;
+    const int y = (piece->rect.y - OFFSET_Y) / CELL_HEIGHT;
 
     if (!(game->cursor_x == x && game->cursor_y == y))
         return false;

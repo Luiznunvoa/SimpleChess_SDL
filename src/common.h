@@ -26,4 +26,16 @@
 #define false   0
 #define error   -1
 
+#define WINDOW_WIDTH 600
+#define WINDOW_HEIGHT 600
+
+#define BOARD_WIDTH 520
+#define BOARD_HEIGHT 520
+
+#define OFFSET_X ((WINDOW_WIDTH - BOARD_WIDTH) / 2)
+#define OFFSET_Y ((WINDOW_HEIGHT - BOARD_HEIGHT) / 2)
+
+#define CELL_WIDTH (BOARD_WIDTH / 8)
+#define CELL_HEIGHT (BOARD_HEIGHT / 8)
+
 #endif //COMMON_H

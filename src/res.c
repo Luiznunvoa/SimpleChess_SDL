@@ -19,15 +19,6 @@
 
 #include "res.h"
 
-#define GAME_TITLE "SimpleChess"
-#define WINDOW_WIDTH 600
-#define WINDOW_HEIGHT 600
-#define WINDOW_X SDL_WINDOWPOS_CENTERED
-#define WINDOW_Y SDL_WINDOWPOS_CENTERED
-#define WINDOW_FLAGS (SDL_WINDOW_SHOWN)
-#define RENDERER_FLAGS (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)
-#define BACKGROUND_COLOR 143, 138, 134, 1
-
 // Initializes the SDL resources
 _Bool init(WindowContext* res)
 {
@@ -38,10 +29,10 @@ _Bool init(WindowContext* res)
     }
 
     res->window  = SDL_CreateWindow(
-        GAME_TITLE,
-        WINDOW_X, WINDOW_Y,
+        "SimpleChess",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         WINDOW_WIDTH, WINDOW_HEIGHT,
-        WINDOW_FLAGS
+        SDL_WINDOW_SHOWN
         );
 
     if (res->window == NULL)
@@ -67,7 +58,7 @@ _Bool init(WindowContext* res)
     res->renderer = SDL_CreateRenderer(
         res->window,
         -1,
-        RENDERER_FLAGS
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
         );
 
     if (res->renderer == NULL)
@@ -76,7 +67,7 @@ _Bool init(WindowContext* res)
         return false;
     }
 
-    SDL_SetRenderDrawColor(res->renderer, BACKGROUND_COLOR);
+    SDL_SetRenderDrawColor(res->renderer, 143, 138, 134, 1);
 
     SDL_RenderClear(res->renderer);
 
