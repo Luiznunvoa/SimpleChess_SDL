@@ -50,8 +50,7 @@ void game()
             break;
 
         case SDL_KEYUP: // User pressed and released a key
-            ui.update = true;
-            game.flag = key_input_proc(game.event.key.keysym.sym, &game.cursor_x, &game.cursor_y);
+            game.flag = key_input_proc(game.event.key.keysym.sym, &game.cursor_x, &game.cursor_y, &game.piece_locked, &ui.update);
             break;
 
         case SDL_MOUSEBUTTONUP: // User pressed and released the mouse button
@@ -60,8 +59,7 @@ void game()
             break;
 
         default: // Unhandled events
-            ui.update = false; // Do not update UI
-            game.flag = DEFAULT; // Reset game flag to default
+            break;
         }
         get_ui(&ui, &game);
     }
@@ -82,7 +80,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
     *window = SDL_CreateWindow(
         "SimpleChess",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        WINDOW_WIDTH, WINDOW_HEIGHT,
+        WINDOW_W, WINDOW_H,
         SDL_WINDOW_SHOWN
     );
     if (*window == NULL)

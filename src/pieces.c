@@ -94,8 +94,8 @@ _Bool init_pieces(Element* piece, SDL_Renderer* renderer)
 
 int update_pieces(Element const* piece, GameContext* game)
 {
-    const int x = (piece->rect.x - OFFSET_X) / CELL_WIDTH;
-    const int y = (piece->rect.y - OFFSET_Y) / CELL_HEIGHT;
+    const int x = (piece->rect.x - OFFSET_X) / CELL_W;
+    const int y = (piece->rect.y - OFFSET_Y) / CELL_H;
 
     if (!(game->cursor_x == x && game->cursor_y == y))
         return false;
@@ -103,13 +103,13 @@ int update_pieces(Element const* piece, GameContext* game)
     switch (game->flag)
     {
         case SELECT_CELL:
-            game->flag = DEFAULT;
+            game->flag = NOTHING;
             game->cursor_x = x;
             game->cursor_y = y;
             return true;
 
         case LOCK_PIECE:
-            game->flag = DEFAULT;
+            game->flag = NOTHING;
             game->piece_locked = true;
             game->locked_x = x;
             game->locked_y = y;

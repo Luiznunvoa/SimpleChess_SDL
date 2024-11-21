@@ -19,23 +19,20 @@
 
 #include "board.h"
 
-#define DARK_COLOR 0x734B      // Dark brown color
-#define BRIGHT_COLOR 0x9C90    // Bright brown color
-#define CURSOR_COLOR 0x2ce5    // Green
-#define PIECE_COLOR 0x32f1     // Blue
+#define DARK_COLOR 0x734B       // Dark brown color
+#define BRIGHT_COLOR 0x9C90     // Bright brown color
+#define CURSOR_COLOR 0x2ce5     // Green
+#define PIECE_COLOR 0x32f1      // Blue
+#define LOCKED_COLOR 0x6191     // Purple
 
-// Macro to determine the original cell color based on row and column indices
+// Original cell color based on row and column indices
 #define ORIGINAL_COLOR(row, col) ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_COLOR : BRIGHT_COLOR
 
-int prev_cursor_x, prev_cursor_y = 0;
+int prev_x, prev_y = 0; // Previous cursor position
 
 // Initialize the board texture and render its initial state
 _Bool init_board(Element* board, SDL_Renderer* renderer)
 {
-    int pitch;
-    void* pixels;
-    SDL_PixelFormat* format;
-
     // Create a texture for the board
     board->texture = SDL_CreateTexture(
         renderer,
@@ -43,96 +40,84 @@ _Bool init_board(Element* board, SDL_Renderer* renderer)
         SDL_TEXTUREACCESS_STREAMING,
         board->rect.w, board->rect.h
     );
-
     if (!board->texture)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error creating texture: %s\n", SDL_GetError());
         return false;
     }
 
-    if (!lock_texture_and_alloc_format(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565))
+    int pitch;                // Number of bytes in each row of the texture
+    void* pixel_buffer;       // Generic pointer to the texture's pixel buffer
+    SDL_PixelFormat* format;  // Structure describing the pixel format of the texture
+
+    if (!setup_texture(board->texture, &pixel_buffer, &pitch, &format, SDL_PIXELFORMAT_RGB565)) // Lock texture
     {
         SDL_DestroyTexture(board->texture);
         return false;
     }
 
-    // Cast the pixel buffer to a 16-bit pointer for color manipulation
-    Uint16* pixelData = (Uint16*)pixels;
+    Uint16* pixels = (Uint16*)pixel_buffer; // Cast the pixel buffer to a 16-bit pointer for color manipulation
 
-    // Draw the initial chessboard with alternating colors
-    for (int y = 0; y < 8; y++)
+    for (int y = 0; y < 8; y++) // Draw the initial chessboard with alternating colors
         for (int x = 0; x < 8; x++)
-            draw_rectangle(pixelData, pitch, x, y, board->rect.w, board->rect.h, ORIGINAL_COLOR(y, x));
+            draw_rectangle(pixels, pitch, (SDL_Rect){x, y, CELL_W, CELL_H}, ORIGINAL_COLOR(y, x));
+
+    board->update = update_board; // Assign the update function to the board's update function pointer
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
-
-    board->update = update_board; // Assign the update function to the board
     return true;
 }
 
 // Update the board state based on game context (e.g., cursor position or piece movement)
 int update_board(Element const* board, GameContext* game)
 {
-    int pitch;
-    void* pixels;
-    SDL_PixelFormat* format;
+    int pitch;                // Number of bytes in each row of the texture
+    void* pixel_buffer;       // Generic pointer to the texture's pixel buffer
+    SDL_PixelFormat* format;  // Structure describing the pixel format of the texture
 
-    // Lock the texture for updates
-    if (!lock_texture_and_alloc_format(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565))
+    if (!setup_texture(board->texture, &pixel_buffer, &pitch, &format, SDL_PIXELFORMAT_RGB565)) // Lock texture
     {
         SDL_DestroyTexture(board->texture);
         return error;
     }
 
-    // Cast the pixel buffer to a 16-bit pointer for color manipulation
-    Uint16* pixelData = (Uint16*)pixels;
+    Uint16* pixels = (Uint16*)pixel_buffer; // Cast the pixel buffer to a 16-bit pointer for color manipulation
 
-    // Update the selected cell's position
-    update_selected(board, game->cursor_x, game->cursor_y, game->board, pixelData, pitch);
+    update_selected(game->cursor_x, game->cursor_y, game->board, pixels, pitch); // Update the selected cell's position
+
+    if(game->cursor_x != game->locked_x || game->cursor_y != game->locked_y) // Verify if the cursor is on the lock
+        update_locked(game->locked_x, game->locked_y, game->piece_locked, pixels, pitch); // Update the locked cell
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
-
     return false;
 }
 
 // Draw the currently selected cell and update its appearance
-void update_selected(const Element* board, const int x, const int y, int map[8][8], Uint16* pixelData, const int pitch)
+void update_selected(const int x, const int y, int map[8][8], Uint16* pixels, const int pitch)
 {
-    // Check if the cursor position has changed
-    if (prev_cursor_x != x || prev_cursor_y != y)
-        // Restore the original color of the previous cursor cell
-        draw_rectangle(
-            pixelData,
-            pitch,
-            prev_cursor_x, prev_cursor_y,
-            board->rect.w, board->rect.h,
-            ORIGINAL_COLOR(prev_cursor_y, prev_cursor_x)
-        );
+    if (prev_x != x || prev_y != y) // Check if the cursor position has changed to restore the original color
+        draw_rectangle(pixels, pitch, (SDL_Rect){prev_x, prev_y, CELL_W, CELL_H}, ORIGINAL_COLOR(prev_y, prev_x));
 
-    Uint16 color;
-
-    if (map[y][x] == 0) // No piece on the cell
-        color = CURSOR_COLOR;
-    else // A piece is present on the cell
-        color = PIECE_COLOR;
-
-    draw_rectangle(pixelData, pitch, x, y, board->rect.w, board->rect.h, color);
+    draw_rectangle(pixels, pitch, (SDL_Rect){x, y, CELL_W, CELL_H}, map[y][x] ? PIECE_COLOR : CURSOR_COLOR);
 
     // Update the last cursor position
-    prev_cursor_x = x;
-    prev_cursor_y = y;
+    prev_x = x;
+    prev_y = y;
+}
+
+// Draw the currently locked cell and update its apperenece
+void update_locked(const int x, const int y, const _Bool piece_locked, Uint16* pixels, const int pitch)
+{
+    if(piece_locked)
+        draw_rectangle(pixels, pitch, (SDL_Rect){x, y, CELL_W, CELL_H}, LOCKED_COLOR);
+    else
+        draw_rectangle(pixels, pitch, (SDL_Rect){x, y, CELL_W, CELL_H}, ORIGINAL_COLOR(x, y));
 }
 
 // Lock a texture and allocate pixel format for rendering updates
-_Bool lock_texture_and_alloc_format(
-    SDL_Texture* texture,
-    void** pixels,
-    int* pitch,
-    SDL_PixelFormat** format,
-    SDL_PixelFormatEnum enum_format
-)
+_Bool setup_texture(SDL_Texture* texture, void** pixels, int* pitch, SDL_PixelFormat** format, const Uint32 type)
 {
     if (SDL_LockTexture(texture, NULL, pixels, pitch) > 0)
     {
@@ -140,7 +125,7 @@ _Bool lock_texture_and_alloc_format(
         return false;
     }
 
-    *format = SDL_AllocFormat(enum_format);
+    *format = SDL_AllocFormat(type);
     if (!*format)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error allocating pixel format: %s\n", SDL_GetError());
@@ -151,23 +136,16 @@ _Bool lock_texture_and_alloc_format(
 }
 
 // Draw a square cell on the chessboard with the specified color
-void draw_rectangle(
-    Uint16* pixelData,
-    const int pitch,
-    const int x, const int y,
-    const int w, const int h,
-    const Uint16 color
-)
+void draw_rectangle(Uint16* pixels, const int pitch, const SDL_Rect rect, const Uint16 color)
 {
     // Calculate the starting position of the square in the texture
-    const int start_x = (x * (w / 8));
-    const int start_y = (y * (h / 8));
+    const int start_x = rect.x * rect.w ;
+    const int start_y = rect.y * rect.h;
 
-    // Fill the square with the specified color
-    for (int i = start_y; i < start_y + (h / 8); i++)
+    for (int i = start_y; i < start_y + rect.h; i++) // Fill the square with the specified color
     {
-        Uint16* row = pixelData + i * (pitch / 2) + start_x;
-        for (int j = 0; j < (w / 8); j++)
+        Uint16* row = pixels + i * (pitch / 2) + start_x;
+        for (int j = 0; j < rect.w; j++)
             row[j] = color;
     }
 }

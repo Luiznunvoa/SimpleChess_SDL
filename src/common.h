@@ -26,16 +26,18 @@
 #define false   0
 #define error   -1
 
-#define WINDOW_WIDTH 600
-#define WINDOW_HEIGHT 600
+#define WINDOW_W 600
+#define WINDOW_H 600
 
-#define BOARD_WIDTH 520
-#define BOARD_HEIGHT 520
+#define FIELD_W 520
+#define FIELD_H 520
 
-#define OFFSET_X ((WINDOW_WIDTH - BOARD_WIDTH) / 2)
-#define OFFSET_Y ((WINDOW_HEIGHT - BOARD_HEIGHT) / 2)
+#define OFFSET_X ((WINDOW_W - FIELD_W) / 2)
+#define OFFSET_Y ((WINDOW_H - FIELD_H) / 2)
 
-#define CELL_WIDTH (BOARD_WIDTH / 8)
-#define CELL_HEIGHT (BOARD_HEIGHT / 8)
+#define CELL_W (FIELD_W / 8)
+#define CELL_H (FIELD_H / 8)
+
+#define RECT(x, y, w, h) (SDL_Rect){x, y, w, h}
 
 #endif //COMMON_H

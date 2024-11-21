@@ -22,10 +22,10 @@
 #include "pieces.h"
 
 // Macro for the board's SDL Rectangle
-#define BOARD_RECT (SDL_Rect){OFFSET_X, OFFSET_Y, BOARD_WIDTH, BOARD_HEIGHT}
+#define BOARD_RECT (SDL_Rect){OFFSET_X, OFFSET_Y, FIELD_W, FIELD_H}
 
 // Macro to calculate the piece position in the board and create it's SDL_Rect struct
-#define PIECE_RECT(x, y) (SDL_Rect){OFFSET_X + (CELL_WIDTH * x), OFFSET_Y + (CELL_HEIGHT * y)}
+#define PIECE_RECT(x, y) (SDL_Rect){OFFSET_X + (CELL_W * x), OFFSET_Y + (CELL_H * y)}
 
 // Function to update and present of the UI
 void get_ui(UIContext* ui, GameContext* game)
@@ -221,8 +221,8 @@ void delete_element(Element** elements, _Bool* update, int(*board_map)[8][8], co
                 current->texture = NULL;
             }
 
-            const int board_x = ((current->rect.x - OFFSET_X)  / CELL_WIDTH);
-            const int board_y = ((current->rect.y - OFFSET_Y) / CELL_HEIGHT);
+            const int board_x = ((current->rect.x - OFFSET_X)  / CELL_W);
+            const int board_y = ((current->rect.y - OFFSET_Y) / CELL_H);
 
             // Clear the board map position
             (*board_map)[board_y][board_x] = 0;

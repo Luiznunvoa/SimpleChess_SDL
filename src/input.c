@@ -19,7 +19,7 @@
 
 #include "input.h"
 
-Uint32 key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y)
+Uint32 key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool* piece_locked, _Bool* update)
 {
     switch (keycode)
     {
@@ -29,31 +29,42 @@ Uint32 key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y)
     case SDLK_UP:
         if(*cursor_y > 0)
             *cursor_y -= 1;
+        *update = true;
         return 2;
 
     case SDLK_DOWN:
         if(*cursor_y < 7)
             *cursor_y += 1;
+        *update = true;
         return 2;
 
     case SDLK_LEFT:
         if(*cursor_x > 0)
             *cursor_x -= 1;
+        *update = true;
         return 2;
 
     case SDLK_RIGHT:
         if(*cursor_x < 7)
             *cursor_x += 1;
+        *update = true;
         return 2;
 
-    case SDLK_e:
-        return 4;
-
     case SDLK_f:
-        return 3;
+        *update = true;
+        return 4; // DELETE_PIECE
+
+    case SDLK_e: // LOCK_PIECE
+        if(!*piece_locked)
+        {
+            *update = true;
+            return 3;
+        }
+        *update = true;
+        *piece_locked = false;
 
     default:
-        return 0;
+        return 0; // NOTHING
     }
 }
 
@@ -63,8 +74,8 @@ Uint32 mouse_input_proc(int* cursor_x, int* cursor_y)
 
     SDL_GetMouseState(&x, &y);
 
-    x = (x - OFFSET_X) / CELL_WIDTH;
-    y = (y - OFFSET_Y) / CELL_HEIGHT;
+    x = (x - OFFSET_X) / CELL_W;
+    y = (y - OFFSET_Y) / CELL_H;
 
     if (x >= 0 && y >= 0 && x < 8 && y < 8)
     {
