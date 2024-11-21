@@ -46,17 +46,15 @@ _Bool init_board(Element* board, SDL_Renderer* renderer)
         return false;
     }
 
-    int pitch;                // Number of bytes in each row of the texture
-    void* pixel_buffer;       // Generic pointer to the texture's pixel buffer
-    SDL_PixelFormat* format;  // Structure describing the pixel format of the texture
+    int pitch;                  // Number of bytes in each row of the texture
+    Uint16* pixels;             // Pointer to the texture's pixel buffer, cast to a 16-bit type for manipulating RGB565
+    SDL_PixelFormat* format;    // Structure describing the pixel format of the texture
 
-    if (!setup_texture(board->texture, &pixel_buffer, &pitch, &format, SDL_PIXELFORMAT_RGB565)) // Lock texture
+    if (!setup_texture(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565)) // Lock texture
     {
         SDL_DestroyTexture(board->texture);
         return false;
     }
-
-    Uint16* pixels = (Uint16*)pixel_buffer; // Cast the pixel buffer to a 16-bit pointer for color manipulation
 
     for (int y = 0; y < 8; y++) // Draw the initial chessboard with alternating colors
         for (int x = 0; x < 8; x++)
@@ -72,17 +70,15 @@ _Bool init_board(Element* board, SDL_Renderer* renderer)
 // Update the board state based on game context (e.g., cursor position or piece movement)
 int update_board(Element const* board, GameContext* game)
 {
-    int pitch;                // Number of bytes in each row of the texture
-    void* pixel_buffer;       // Generic pointer to the texture's pixel buffer
-    SDL_PixelFormat* format;  // Structure describing the pixel format of the texture
+    int pitch;                  // Number of bytes in each row of the texture
+    Uint16* pixels;             // Pointer to the texture's pixel buffer, cast to a 16-bit type for manipulating RGB565
+    SDL_PixelFormat* format;    // Structure describing the pixel format of the texture
 
-    if (!setup_texture(board->texture, &pixel_buffer, &pitch, &format, SDL_PIXELFORMAT_RGB565)) // Lock texture
+    if (!setup_texture(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565)) // Lock texture
     {
         SDL_DestroyTexture(board->texture);
         return error;
     }
-
-    Uint16* pixels = (Uint16*)pixel_buffer; // Cast the pixel buffer to a 16-bit pointer for color manipulation
 
     update_selected(game->cursor_x, game->cursor_y, game->board, pixels, pitch); // Update the selected cell's position
 
@@ -107,7 +103,7 @@ void update_selected(const int x, const int y, int map[8][8], Uint16* pixels, co
     prev_y = y;
 }
 
-// Draw the currently locked cell and update its apperenece
+// Draw the currently locked cell and update its appearance
 void update_locked(const int x, const int y, const _Bool piece_locked, Uint16* pixels, const int pitch)
 {
     if(piece_locked)
@@ -117,9 +113,11 @@ void update_locked(const int x, const int y, const _Bool piece_locked, Uint16* p
 }
 
 // Lock a texture and allocate pixel format for rendering updates
-_Bool setup_texture(SDL_Texture* texture, void** pixels, int* pitch, SDL_PixelFormat** format, const Uint32 type)
+_Bool setup_texture(SDL_Texture* texture, Uint16** pixels, int* pitch, SDL_PixelFormat** format, const Uint32 type)
 {
-    if (SDL_LockTexture(texture, NULL, pixels, pitch) > 0)
+    void* pixel_buffer; // Generic pointer to the texture's pixel buffer
+
+    if (SDL_LockTexture(texture, NULL, &pixel_buffer, pitch) > 0)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error locking texture: %s\n", SDL_GetError());
         return false;
@@ -132,6 +130,7 @@ _Bool setup_texture(SDL_Texture* texture, void** pixels, int* pitch, SDL_PixelFo
         SDL_UnlockTexture(texture);
         return false;
     }
+    *pixels = pixel_buffer; // Cast the pixel buffer to a 16-bit pointer for color manipulation
     return true;
 }
 
