@@ -25,6 +25,8 @@ void game()
 {
     GameContext game = (GameContext){0};
 
+    SDL_LogInfo(0, "\n \n === Initializing SimpleChess === \n \n");
+
     if (!init(&game.renderer, &game.window)) // Initialize the SDL resources
     {
         SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize Window", game.window);
@@ -37,6 +39,7 @@ void game()
     if (!init_ui(&ui, game.renderer, &game.board)) // Initialize the UI elements
     {
         SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize UI", game.window);
+        free_ui(ui.elements);
         quit(&game.renderer, &game.window);
         return;
     }
@@ -50,12 +53,21 @@ void game()
             break;
 
         case SDL_KEYUP: // User pressed and released a key
-            game.flag = key_input_proc(game.event.key.keysym.sym, &game.cursor_x, &game.cursor_y, &game.piece_locked, &ui.update);
+            game.flag = key_input(
+                game.event.key.keysym.sym,
+                &game.cursor_x, &game.cursor_y,
+                &game.piece_locked,
+                &ui.update
+            );
             break;
 
         case SDL_MOUSEBUTTONUP: // User pressed and released the mouse button
-            ui.update = true;
-            game.flag = mouse_input_proc(&game.cursor_x, &game.cursor_y);
+            game.flag = mouse_input(
+                &game.cursor_x, &game.cursor_y,
+                game.lock_x, game.lock_y,
+                &game.piece_locked,
+                &ui.update
+            );
             break;
 
         default: // Unhandled events
@@ -73,7 +85,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"SDL Initialization error: %s\n", SDL_GetError());
+        SDL_LogCritical(0,"SDL Initialization error: %s\n", SDL_GetError());
         return false;
     }
 
@@ -85,11 +97,11 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
     );
     if (*window == NULL)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Window initialization error: %s\n", SDL_GetError());
+        SDL_LogCritical(0,"Window initialization error: %s\n", SDL_GetError());
         return false;
     }
 
-    SDL_Surface* iconSurface = SDL_LoadBMP("../../assets/black_pawn.bmp"); // Loading the window icon
+    SDL_Surface* iconSurface = SDL_LoadBMP("C:/Dev/SimpleChess_SDL/assets/black_pawn.bmp"); // Loading the window icon
     if (iconSurface != NULL)
     {
         SDL_SetWindowIcon(*window, iconSurface);
@@ -98,7 +110,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
     }
     else
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Error loading icon: %s\n", SDL_GetError());
+        SDL_LogCritical(0,"Error loading icon: %s\n", SDL_GetError());
         return false;
     }
 
@@ -109,14 +121,13 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
     );
     if (*renderer == NULL)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION,"Failure in the renderer initialization: %s\n", SDL_GetError());
+        SDL_LogCritical(0,"Failure in the renderer initialization: %s\n", SDL_GetError());
         return false;
     }
     SDL_SetRenderDrawColor(*renderer, 143, 138, 134, 1);
     SDL_RenderClear(*renderer);
     SDL_RenderPresent(*renderer);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Initialized");
-
+    SDL_LogInfo(0, "Window Resources Initialized");
     return true;
 }
 
@@ -125,6 +136,6 @@ void quit(SDL_Renderer** renderer, SDL_Window** window)
 {
     SDL_DestroyRenderer(*renderer);
     SDL_DestroyWindow(*window);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Window Resources Deallocated");
+    SDL_LogInfo(0, "Window Resources Deallocated");
     SDL_Quit();
 }

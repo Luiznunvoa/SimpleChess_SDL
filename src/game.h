@@ -24,18 +24,18 @@
 
 typedef enum
 {
-    NOTHING,        // Nothing is happening
-    QUIT_GAME,      // Exit the game
-    SELECT_CELL,    // There's a cell been selected
-    LOCK_PIECE,     // There's a piece been locked
-    DELETE_PIECE,   // There's a piece been deleted
+    NOTHING,      // Nothing is happening
+    QUIT_GAME,    // Exit the game
+    SELECT_CELL,  // There's a cell been selected
+    LOCK_PIECE,   // There's a piece been locked
+    DELETE_PIECE, // There's a piece been deleted
 } GameFlags;
 
 typedef struct
 {
     int cursor_x, cursor_y; // Cursor position
 
-    int locked_x, locked_y; // Locked piece position
+    int lock_x, lock_y;     // Locked piece position
 
     _Bool piece_locked;     // If there's a piece locked
 

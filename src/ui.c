@@ -25,7 +25,7 @@
 #define BOARD_RECT (SDL_Rect){OFFSET_X, OFFSET_Y, FIELD_W, FIELD_H}
 
 // Macro to calculate the piece position in the board and create it's SDL_Rect struct
-#define PIECE_RECT(x, y) (SDL_Rect){OFFSET_X + (CELL_W * x), OFFSET_Y + (CELL_H * y)}
+#define PIECE_RECT(x, y) (SDL_Rect){OFFSET_X + (CELL_W * x), OFFSET_Y + (CELL_H * y), 0, 0}
 
 // Function to update and present of the UI
 void get_ui(UIContext* ui, GameContext* game)
@@ -49,7 +49,7 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
 {
     if (!create_element(&ui->elements, renderer, BOARD_RECT, init_board, 0)) // Create the board element
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create board\n");
+        SDL_LogCritical(0, "Failed to create board\n");
         free_ui(ui->elements);
         return false;
     }
@@ -69,14 +69,14 @@ _Bool init_ui(UIContext* ui, SDL_Renderer* renderer, int(*board_map)[8][8])
     for (int y = 0; y < 8; y++) // Create piece elements based on the initial board map
         for (int x = 0; x < 8; x++)
             if (temp_board_map[y][x] != 0)
-                // Create element for each piece
+            {   // Create element for each piece
                 if (!create_element(&ui->elements, renderer, PIECE_RECT(x, y), init_pieces, temp_board_map[y][x]))
                     return false;
                 else
                     (*board_map)[y][x] = temp_board_map[y][x]; // Update the board map
-
+            }
     ui->update = true; // Mark UI as needing an update
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Initialized");
+    SDL_LogInfo(0, "UI Elements Initialized");
     return true;
 }
 
@@ -99,7 +99,7 @@ void free_ui(Element* elements)
         current = next;
     }
     elements = NULL;
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UI Elements Deallocated");
+    SDL_LogInfo(0, "UI Elements Deallocated");
 }
 
 // Function to update the UI elements
@@ -136,7 +136,7 @@ _Bool update_ui(UIContext* ui, GameContext* game)
                 break;
 
             default: // Unexpected update result
-                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Weird update return");
+                SDL_LogWarn(0, "Weird update return");
             }
         }
         current = next_element;
@@ -199,7 +199,7 @@ void delete_element(Element** elements, _Bool* update, int(*board_map)[8][8], co
 {
     if (elements == NULL || *elements == NULL)
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "No element to delete");
+        SDL_LogWarn(0, "No element to delete");
         return;
     }
 
@@ -229,11 +229,11 @@ void delete_element(Element** elements, _Bool* update, int(*board_map)[8][8], co
             *update = true;
 
             free(current);
-            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Element %d deleted", info);
+            SDL_LogInfo(0, "Element %d deleted", info);
             return;
         }
         previous = current;
         current = current->next;
     }
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Element with info %d not found", info);
+    SDL_LogWarn(0, "Element with info %d not found", info);
 }

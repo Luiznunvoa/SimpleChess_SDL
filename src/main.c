@@ -17,10 +17,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>..
 //
 
+#define SDL_MAIN_HANDLED
 #include "game.h"
+
 
 int main(int argc, char *argv[])
 {
+    (void)argc; 
+    (void)argv;
     game();
     return 0;
 }

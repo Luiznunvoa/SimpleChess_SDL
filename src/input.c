@@ -19,32 +19,33 @@
 
 #include "input.h"
 
-Uint32 key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool* piece_locked, _Bool* update)
+// Process key inputs from the user
+Uint32 key_input(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool* piece_locked, _Bool* update)
 {
     switch (keycode)
     {
-    case SDLK_ESCAPE:
-        return 1;
+    case SDLK_ESCAPE: // Input to quit game
+        return 1; // QUIT_GAME
 
-    case SDLK_UP:
+    case SDLK_UP: // Input to move the cursor up
         if(*cursor_y > 0)
             *cursor_y -= 1;
         *update = true;
-        return 2;
+        return 2; // SELECT_CELL
 
-    case SDLK_DOWN:
+    case SDLK_DOWN: // Input to move the cursor down
         if(*cursor_y < 7)
             *cursor_y += 1;
         *update = true;
         return 2;
 
-    case SDLK_LEFT:
+    case SDLK_LEFT: // Input to move the cursor left
         if(*cursor_x > 0)
             *cursor_x -= 1;
         *update = true;
         return 2;
 
-    case SDLK_RIGHT:
+    case SDLK_RIGHT: // Input to move the cursor right
         if(*cursor_x < 7)
             *cursor_x += 1;
         *update = true;
@@ -54,21 +55,24 @@ Uint32 key_input_proc(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _
         *update = true;
         return 4; // DELETE_PIECE
 
-    case SDLK_e: // LOCK_PIECE
+    case SDLK_e:
         if(!*piece_locked)
         {
             *update = true;
-            return 3;
+            return 3; // LOCK_PIECE
         }
         *update = true;
         *piece_locked = false;
+        return 0;
 
     default:
+        *update = true;
         return 0; // NOTHING
     }
 }
 
-Uint32 mouse_input_proc(int* cursor_x, int* cursor_y)
+// Process mouse inputs from de user
+Uint32 mouse_input(int* cursor_x, int* cursor_y, int lock_x, int lock_y, _Bool* piece_locked, _Bool* update)
 {
     int x, y;
 
@@ -79,12 +83,17 @@ Uint32 mouse_input_proc(int* cursor_x, int* cursor_y)
 
     if (x >= 0 && y >= 0 && x < 8 && y < 8)
     {
-        if(*cursor_x == x && *cursor_y == y)
-            return 3;
+        *update = true;
 
+        if(*cursor_x == x && *cursor_y == y)
+        {
+            if(!*piece_locked)
+                return 3;
+            else if(lock_x == x && lock_y == y)
+                *piece_locked = false;
+        }
         *cursor_x = x;
         *cursor_y = y;
-
         return 2;
     }
     return 0;

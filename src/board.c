@@ -19,11 +19,11 @@
 
 #include "board.h"
 
-#define DARK_COLOR 0x734B       // Dark brown color
-#define BRIGHT_COLOR 0x9C90     // Bright brown color
-#define CURSOR_COLOR 0x2ce5     // Green
-#define PIECE_COLOR 0x32f1      // Blue
-#define LOCKED_COLOR 0x6191     // Purple
+#define DARK_COLOR 0x734B   // Dark brown color
+#define BRIGHT_COLOR 0x9C90 // Bright brown color
+#define CURSOR_COLOR 0x2ce5 // Green
+#define PIECE_COLOR 0x32f1  // Blue
+#define LOCKED_COLOR 0x6191 // Purple
 
 // Original cell color based on row and column indices
 #define ORIGINAL_COLOR(row, col) ((((row + col) % 2) ? '1' : '0') == '1') ? DARK_COLOR : BRIGHT_COLOR
@@ -42,13 +42,13 @@ _Bool init_board(Element* board, SDL_Renderer* renderer)
     );
     if (!board->texture)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error creating texture: %s\n", SDL_GetError());
+        SDL_LogCritical(0, "Error creating texture: %s\n", SDL_GetError());
         return false;
     }
 
-    int pitch;                  // Number of bytes in each row of the texture
-    Uint16* pixels;             // Pointer to the texture's pixel buffer, cast to a 16-bit type for manipulating RGB565
-    SDL_PixelFormat* format;    // Structure describing the pixel format of the texture
+    int pitch;               // Number of bytes in each row of the texture
+    Uint16* pixels;          // Pointer to the texture's pixel buffer, cast to a 16-bit type for manipulating RGB565
+    SDL_PixelFormat* format; // Structure describing the pixel format of the texture
 
     if (!setup_texture(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565)) // Lock texture
     {
@@ -70,9 +70,9 @@ _Bool init_board(Element* board, SDL_Renderer* renderer)
 // Update the board state based on game context (e.g., cursor position or piece movement)
 int update_board(Element const* board, GameContext* game)
 {
-    int pitch;                  // Number of bytes in each row of the texture
-    Uint16* pixels;             // Pointer to the texture's pixel buffer, cast to a 16-bit type for manipulating RGB565
-    SDL_PixelFormat* format;    // Structure describing the pixel format of the texture
+    int pitch;               // Number of bytes in each row of the texture
+    Uint16* pixels;          // Pointer to the texture's pixel buffer, cast to a 16-bit type for manipulating RGB565
+    SDL_PixelFormat* format; // Structure describing the pixel format of the texture
 
     if (!setup_texture(board->texture, &pixels, &pitch, &format, SDL_PIXELFORMAT_RGB565)) // Lock texture
     {
@@ -82,8 +82,8 @@ int update_board(Element const* board, GameContext* game)
 
     update_selected(game->cursor_x, game->cursor_y, game->board, pixels, pitch); // Update the selected cell's position
 
-    if(game->cursor_x != game->locked_x || game->cursor_y != game->locked_y) // Verify if the cursor is on the lock
-        update_locked(game->locked_x, game->locked_y, game->piece_locked, pixels, pitch); // Update the locked cell
+    if(game->cursor_x != game->lock_x || game->cursor_y != game->lock_y) // Verify if the cursor is on the lock
+        update_locked(game->lock_x, game->lock_y, game->piece_locked, pixels, pitch); // Update the locked cell
 
     SDL_FreeFormat(format);
     SDL_UnlockTexture(board->texture);
@@ -119,14 +119,14 @@ _Bool setup_texture(SDL_Texture* texture, Uint16** pixels, int* pitch, SDL_Pixel
 
     if (SDL_LockTexture(texture, NULL, &pixel_buffer, pitch) > 0)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error locking texture: %s\n", SDL_GetError());
+        SDL_LogCritical(0, "Error locking texture: %s\n", SDL_GetError());
         return false;
     }
 
     *format = SDL_AllocFormat(type);
     if (!*format)
     {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Error allocating pixel format: %s\n", SDL_GetError());
+        SDL_LogCritical(0, "Error allocating pixel format: %s\n", SDL_GetError());
         SDL_UnlockTexture(texture);
         return false;
     }
