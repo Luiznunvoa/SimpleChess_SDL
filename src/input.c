@@ -65,6 +65,15 @@ Uint32 key_input(const SDL_Keycode keycode, int* cursor_x, int* cursor_y, _Bool*
         *piece_locked = false;
         return 0;
 
+    case SDLK_RETURN:
+        if(!*piece_locked)
+        {
+            *update = true;
+            return 3; // LOCK_PIECE
+        }
+        *update = true;
+        return 5; // MOVE_PIECE
+
     default:
         *update = true;
         return 0; // NOTHING
@@ -89,8 +98,16 @@ Uint32 mouse_input(int* cursor_x, int* cursor_y, int lock_x, int lock_y, _Bool* 
         {
             if(!*piece_locked)
                 return 3;
+            
             else if(lock_x == x && lock_y == y)
                 *piece_locked = false;
+
+            else
+            {
+                *cursor_x = x;
+                *cursor_y = y;
+                return 5;
+            }
         }
         *cursor_x = x;
         *cursor_y = y;

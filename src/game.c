@@ -24,9 +24,7 @@
 void game()
 {
     GameContext game = (GameContext){0};
-
-    SDL_LogInfo(0, "\n \n === Initializing SimpleChess === \n \n");
-
+    
     if (!init(&game.renderer, &game.window)) // Initialize the SDL resources
     {
         SDL_ShowSimpleMessageBox(16, "ERROR", "Failed to Initialize Window", game.window);
@@ -44,6 +42,7 @@ void game()
         return;
     }
 
+    game.flag = 2;
     while (SDL_WaitEvent(&game.event) && game.flag != QUIT_GAME) // Main game loop
     {
         switch (game.event.type)
@@ -102,28 +101,23 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
     }
 
     SDL_Surface* iconSurface = SDL_LoadBMP("C:/Dev/SimpleChess_SDL/assets/black_pawn.bmp"); // Loading the window icon
-    if (iconSurface != NULL)
-    {
-        SDL_SetWindowIcon(*window, iconSurface);
-        SDL_FreeSurface(iconSurface);
-        iconSurface = NULL;
-    }
-    else
+    if (iconSurface == NULL)
     {
         SDL_LogCritical(0,"Error loading icon: %s\n", SDL_GetError());
         return false;
     }
 
-    *renderer = SDL_CreateRenderer(
-        *window,
-        -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-    );
+    SDL_SetWindowIcon(*window, iconSurface);
+    SDL_FreeSurface(iconSurface);
+    iconSurface = NULL;
+
+    *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (*renderer == NULL)
     {
         SDL_LogCritical(0,"Failure in the renderer initialization: %s\n", SDL_GetError());
         return false;
     }
+
     SDL_SetRenderDrawColor(*renderer, 143, 138, 134, 1);
     SDL_RenderClear(*renderer);
     SDL_RenderPresent(*renderer);

@@ -30,7 +30,7 @@
 // Function to update and present of the UI
 void get_ui(UIContext* ui, GameContext* game)
 {
-    while (ui->update) // While the UI needs updating and the game is not quitting
+    while (ui->update && game->flag != NOTHING) // While the UI needs updating and the game is not quitting
     {
         // If updating the UI succeeds, present the updated elements
         if (update_ui(ui, game))
@@ -105,12 +105,12 @@ void free_ui(Element* elements)
 // Function to update the UI elements
 _Bool update_ui(UIContext* ui, GameContext* game)
 {
-    const Element* current = ui->elements;
+    Element* current = ui->elements;
     ui->update = false;
 
     while (current != NULL) // Process updates for each UI element
     {
-        const Element* next_element = current->next;
+        Element* next_element = current->next;
 
         if (current->update != NULL) // Verify if the function pointer is not NULL
         {

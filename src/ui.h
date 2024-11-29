@@ -27,7 +27,7 @@ typedef struct Element Element; // Forward declaration of the Element structure
 
 // Typedef for initialization function for an Element
 typedef _Bool (*ELM_init)(Element* element, SDL_Renderer* renderer);
-typedef int (*ELM_update)(Element const* element, GameContext* game);
+typedef int (*ELM_update)(Element* element, GameContext* game);
 
 typedef struct
 {

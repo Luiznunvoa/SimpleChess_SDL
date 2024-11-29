@@ -68,7 +68,7 @@ _Bool init_board(Element* board, SDL_Renderer* renderer)
 }
 
 // Update the board state based on game context (e.g., cursor position or piece movement)
-int update_board(Element const* board, GameContext* game)
+int update_board(Element* board, GameContext* game)
 {
     int pitch;               // Number of bytes in each row of the texture
     Uint16* pixels;          // Pointer to the texture's pixel buffer, cast to a 16-bit type for manipulating RGB565

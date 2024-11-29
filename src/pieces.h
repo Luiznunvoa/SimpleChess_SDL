@@ -24,6 +24,6 @@
 #include "ui.h"
 
 _Bool init_pieces(Element* piece, SDL_Renderer* renderer);
-int update_pieces(Element const* piece, GameContext* game);
+int update_pieces(Element* piece, GameContext* game);
 
 #endif //PIECES_H

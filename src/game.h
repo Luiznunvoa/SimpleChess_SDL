@@ -29,6 +29,7 @@ typedef enum
     SELECT_CELL,  // There's a cell been selected
     LOCK_PIECE,   // There's a piece been locked
     DELETE_PIECE, // There's a piece been deleted
+    MOVE_PIECE    // There's a piece been moved
 } GameFlags;
 
 typedef struct

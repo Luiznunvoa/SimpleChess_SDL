@@ -24,7 +24,7 @@
 #include "ui.h"
 
 _Bool init_board(Element* board, SDL_Renderer* renderer);
-int update_board(const Element* board, GameContext* game);
+int update_board(Element* board, GameContext* game);
 void update_selected(int x, int y, int map[8][8], Uint16* pixels, int pitch);
 void update_locked(int x, int y, _Bool piece_locked, Uint16* pixels, int pitch);
 _Bool setup_texture(SDL_Texture* texture, Uint16** pixels, int* pitch, SDL_PixelFormat** format, Uint32 type);

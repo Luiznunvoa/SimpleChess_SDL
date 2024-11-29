@@ -94,20 +94,33 @@ _Bool init_pieces(Element* piece, SDL_Renderer* renderer)
     return true;
 }
 
-int update_pieces(Element const* piece, GameContext* game)
+int update_pieces(Element* piece, GameContext* game)
 {
     const int x = (piece->rect.x - OFFSET_X) / CELL_W;
     const int y = (piece->rect.y - OFFSET_Y) / CELL_H;
 
-    if (!(game->cursor_x == x && game->cursor_y == y))
+    // Movimento da peça
+    if (game->flag == MOVE_PIECE && 
+        !game->board[game->cursor_y][game->cursor_x] &&
+        x == game->lock_x && y == game->lock_y)
+    {
+        game->flag = NOTHING;
+        game->board[y][x] = 0;
+        piece->rect.x = (game->cursor_x * CELL_W) + OFFSET_X;
+        piece->rect.y = (game->cursor_y * CELL_H) + OFFSET_Y;
+        game->piece_locked = false;
+        return true;
+    }
+
+    // Verificação de cursor
+    if (game->cursor_x != x || game->cursor_y != y)
         return false;
 
+    // Ações baseadas na flag
     switch (game->flag)
     {
         case SELECT_CELL:
             game->flag = NOTHING;
-            game->cursor_x = x;
-            game->cursor_y = y;
             return true;
 
         case LOCK_PIECE:
