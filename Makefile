@@ -19,48 +19,77 @@
 
 PROJECT_NAME = SimpleChess
 SRC_DIR = src
-BIN_DIR = bin
 FILES = board game input pieces ui main
+BIN_DIR = bin
 
 CC = gcc
+ARGS = 
+
 LIB = SDL2 SDL2_ttf 
 
-LIB_PATHS = C:\\SDL2-2.30.7\\x86_64-w64-mingw32 C:\SDL2_ttf-2.22.0\x86_64-w64-mingw32  # Must match the order of LIB
-ARGUMENTS = 
+ifeq ($(OS), Windows_NT)
 
-INCLUDE_DIRS = $(foreach dir,$(LIB_PATHS),-I"$(dir)\\include") 	# Check if the library's header files are actually here
-LIB_DIRS = $(foreach dir,$(LIB_PATHS),-L"$(dir)\\lib") 			
-LIB_LINKERS = $(foreach lib,$(LIB),-l$(lib)) 					
+	# Windows
+    SEP = \\
 
-DLL_FILES = $(foreach lib,$(LIB),$(firstword $(foreach dir,$(LIB_PATHS),$(wildcard $(dir)\\bin\\$(lib).dll))))
-DLL_TARGET = $(foreach lib,$(LIB),$(BIN_DIR)\\$(lib).dll) # Target paths for the DLLs in the binary directory
+    LIB_PATHS = C:\\SDL2-2.30.7\\x86_64-w64-mingw32 C:\SDL2_ttf-2.22.0\x86_64-w64-mingw32    
 
-SRC_FILES = $(addprefix $(SRC_DIR)\\, $(addsuffix .c, $(FILES))) 	
-OBJ_FILES = $(SRC_FILES:.c=.o) 										
+    OS_LIBS =
+   
+    COPY = copy /Y
+    DEL = del /Q
+else
+    OS := $(shell uname)
+    ifeq ($(OS), Linux) 
+    	
+    	# Linux
+        SEP = /
 
-all: $(BIN_DIR)\\$(PROJECT_NAME).exe $(DLL_TARGET)
+        LIB_PATHS = # /usr/local/lib/raylib
 
-$(BIN_DIR)\\$(PROJECT_NAME).exe: $(OBJ_FILES) | $(BIN_DIR) 
-	$(CC) $(INCLUDE_DIRS) -o $@ $(OBJ_FILES) $(LIB_DIRS) $(LIB_LINKERS)
-	@echo "Compilation successful"
-	@del /Q $(subst /,\,$(OBJ_FILES)) 2>nul   
+        OS_LIBS = # m pthread dl rt    
 
-$(DLL_TARGET): | $(BIN_DIR) 
+        COPY = cp
+        DEL = rm -f
+    else
+        $(error Unknown Operational System: $(OS))
+    endif
+endif
+
+INCLUDE_DIRS = $(foreach dir,$(LIB_PATHS),-I$(dir)$(SEP)include)
+LIB_DIRS = $(foreach dir,$(LIB_PATHS),-L"$(dir)$(SEP)lib")
+LIB_LINKERS = $(foreach lib,$(LIB),-l$(lib))
+OS_LIB_LINKERS = $(foreach lib,$(OS_LIBS),-l$(lib))
+
+SRC_FILES = $(addprefix $(SRC_DIR)$(SEP), $(addsuffix .c, $(FILES)))
+OBJ_FILES = $(SRC_FILES:.c=.o)
+
+DLL_FILES = $(foreach lib,$(LIB),$(firstword $(foreach dir,$(LIB_PATHS),$(wildcard $(dir)$(SEP)bin$(SEP)$(lib).dll))))
+DLL_TARGET = $(foreach lib,$(LIB),$(BIN_DIR)$(SEP)$(lib).dll)
+
+all: $(BIN_DIR)$(SEP)$(PROJECT_NAME) $(DLL_TARGET)
+
+$(BIN_DIR)$(SEP)$(PROJECT_NAME): $(OBJ_FILES) | $(BIN_DIR)
+	$(CC) $(INCLUDE_DIRS) -o $@ $(OBJ_FILES) $(LIB_DIRS) $(LIB_LINKERS) $(OS_LIB_LINKERS)
+	@echo "Compilation successful"b
+	$(DEL) $(OBJ_FILES) 2>nul || true
+
+$(DLL_TARGET): | $(BIN_DIR)
 	@for %%F in ($(DLL_FILES)) do @( \
-		copy /Y "%%F" "$(BIN_DIR)" >nul && \
-		echo DLL %%~nF found! \
+		$(COPY) "%%F" "$(BIN_DIR)" >nul && \
+		echo %%~nF found! \
 	)
 
-$(BIN_DIR): 
+$(BIN_DIR):
 	mkdir $(BIN_DIR)
 
-%.o: %.c 
-	$(CC) $(ARGUMENTS) $(INCLUDE_DIRS) -c $< -o $@
+%.o: %.c
+	$(CC) $(ARGS) $(INCLUDE_DIRS) -c $< -o $@
 
 run:
-	$(BIN_DIR)\\$(PROJECT_NAME).exe
+	$(BIN_DIR)$(SEP)$(PROJECT_NAME)
 
 clean:
-	del /Q $(BIN_DIR)\\* 2>nul
-	del /Q $(subst /,\,$(OBJ_FILES)) 2>nul
+	$(DEL) $(BIN_DIR)$(SEP)* 2>nul || true
+	$(DEL) $(OBJ_FILES) 2>nul || true
 	@echo "All files have been deleted"
