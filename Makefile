@@ -18,8 +18,9 @@
 #
 
 PROJECT_NAME = SimpleChess
-SRC_DIR = src
 FILES = board game input pieces ui main
+
+SRC_DIR = src
 BIN_DIR = bin
 
 CC = gcc
@@ -32,7 +33,7 @@ ifeq ($(OS), Windows_NT)
 	# Windows(configure here the path of the libraries)
     SEP = \\
 
-    LIB_PATHS = # C:\\SDL2-2.30.7\\x86_64-w64-mingw32   
+    LIB_PATHS = C:\\SDL2-2.30.7\\x86_64-w64-mingw32   
 
     OS_LIBS =
    
@@ -74,11 +75,13 @@ $(BIN_DIR)$(SEP)$(PROJECT_NAME): $(OBJ_FILES) | $(BIN_DIR)
 	@echo "Compilation successful"b
 	$(DEL) $(OBJ_FILES) 2>nul || true
 
-$(DLL_TARGET): | $(BIN_DIR)
-	@for %%F in ($(DLL_FILES)) do @( \
-		$(COPY) "%%F" "$(BIN_DIR)" >nul && \
-		echo %%~nF found! \
-	)
+ifeq ($(OS), Windows_NT)
+	$(DLL_TARGET): | $(BIN_DIR)
+		@for %%F in ($(DLL_FILES)) do @( \
+			$(COPY) "%%F" "$(BIN_DIR)" >nul && \
+			echo %%~nF found! \
+		)
+endif
 
 $(BIN_DIR):
 	mkdir $(BIN_DIR)
@@ -90,6 +93,12 @@ run:
 	$(BIN_DIR)$(SEP)$(PROJECT_NAME)
 
 clean:
-	$(DEL) $(BIN_DIR)$(SEP)* 2>nul || true
-	$(DEL) $(OBJ_FILES) 2>nul || true
-	@echo "All files have been deleted"
+ifeq ($(OS), Windows_NT)
+	$(DEL) $(OBJ_DIR)\* 2>nul
+	$(DEL) $(BIN_DIR)\* 2>nul
+	-rmdir $(OBJ_DIR) 2>nul
+	-rmdir $(BIN_DIR) 2>nul
+else
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
+endif
+	@echo "All files and directories have been deleted"
