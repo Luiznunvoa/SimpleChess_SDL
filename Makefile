@@ -46,7 +46,7 @@ else
     	# Linux(configure here the path of the libraries)
         SEP = /
 
-        LIB_PATHS = # /usr/local/lib/SDL2-2.30.7
+        LIB_PATHS = /usr/local/
 
         OS_LIBS = 
 
