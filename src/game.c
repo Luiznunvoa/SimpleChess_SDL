@@ -100,7 +100,7 @@ _Bool init(SDL_Renderer** renderer, SDL_Window** window)
         return false;
     }
 
-    SDL_Surface* iconSurface = SDL_LoadBMP("C:/Dev/SimpleChess_SDL/assets/black_pawn.bmp"); // Loading the window icon
+    SDL_Surface* iconSurface = SDL_LoadBMP("assets/black_pawn.bmp"); // Loading the window icon
     if (iconSurface == NULL)
     {
         SDL_LogCritical(0,"Error loading icon: %s\n", SDL_GetError());
