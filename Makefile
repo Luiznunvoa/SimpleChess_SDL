@@ -25,14 +25,14 @@ BIN_DIR = bin
 CC = gcc
 ARGS = 
 
-LIB = SDL2 SDL2_ttf 
+LIB = SDL2 
 
 ifeq ($(OS), Windows_NT)
 
 	# Windows(configure here the path of the libraries)
     SEP = \\
 
-    LIB_PATHS = # C:\\SDL2-2.30.7\\x86_64-w64-mingw32 C:\SDL2_ttf-2.22.0\x86_64-w64-mingw32    
+    LIB_PATHS = # C:\\SDL2-2.30.7\\x86_64-w64-mingw32   
 
     OS_LIBS =
    
