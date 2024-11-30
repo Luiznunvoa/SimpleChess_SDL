@@ -29,10 +29,10 @@ LIB = SDL2 SDL2_ttf
 
 ifeq ($(OS), Windows_NT)
 
-	# Windows
+	# Windows(configure here the path of the libraries)
     SEP = \\
 
-    LIB_PATHS = C:\\SDL2-2.30.7\\x86_64-w64-mingw32 C:\SDL2_ttf-2.22.0\x86_64-w64-mingw32    
+    LIB_PATHS = # C:\\SDL2-2.30.7\\x86_64-w64-mingw32 C:\SDL2_ttf-2.22.0\x86_64-w64-mingw32    
 
     OS_LIBS =
    
@@ -42,12 +42,12 @@ else
     OS := $(shell uname)
     ifeq ($(OS), Linux) 
     	
-    	# Linux
+    	# Linux(configure here the path of the libraries)
         SEP = /
 
-        LIB_PATHS = # /usr/local/lib/raylib
+        LIB_PATHS = # /usr/local/lib/SDL2-2.30.7
 
-        OS_LIBS = # m pthread dl rt    
+        OS_LIBS = 
 
         COPY = cp
         DEL = rm -f
