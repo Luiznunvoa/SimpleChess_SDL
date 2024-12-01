@@ -24,7 +24,7 @@ SRC_DIR = src
 BIN_DIR = bin
 
 CC = gcc
-ARGS = 
+ARGS =
 
 LIB = SDL2
 
@@ -67,10 +67,6 @@ ifeq ($(OS), Windows_NT)
 
 DLL_FILES = $(foreach lib,$(LIB),$(firstword $(foreach dir,$(LIB_PATHS),$(wildcard $(dir)$(SEP)bin$(SEP)$(lib).dll))))
 DLL_TARGET = $(foreach lib,$(LIB),$(BIN_DIR)$(SEP)$(lib).dll)
-
-endif
-
-ifeq ($(OS), Windows_NT)
 
 all: $(BIN_DIR)$(SEP)$(PROJECT_NAME) $(DLL_TARGET)
 
