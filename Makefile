@@ -26,14 +26,13 @@ BIN_DIR = bin
 CC = gcc
 ARGS = 
 
-LIB = SDL2 
+LIB = SDL2
 
 ifeq ($(OS), Windows_NT)
-
 	# Windows(configure here the path of the libraries)
     SEP = \\
 
-    LIB_PATHS = C:\\SDL2-2.30.7\\x86_64-w64-mingw32   
+    LIB_PATHS = C:/SDL2-2.30.7/x86_64-w64-mingw32   
 
     OS_LIBS =
    
@@ -41,14 +40,13 @@ ifeq ($(OS), Windows_NT)
     DEL = del /Q
 else
     OS := $(shell uname)
-    ifeq ($(OS), Linux) 
-    	
+    ifeq ($(OS), Linux)
     	# Linux(configure here the path of the libraries)
         SEP = /
 
-        LIB_PATHS = /usr/local/
+        LIB_PATHS = # /usr/local/lib/raylib
 
-        OS_LIBS = 
+        OS_LIBS = # m pthread dl rt    
 
         COPY = cp
         DEL = rm -f
@@ -65,22 +63,36 @@ OS_LIB_LINKERS = $(foreach lib,$(OS_LIBS),-l$(lib))
 SRC_FILES = $(addprefix $(SRC_DIR)$(SEP), $(addsuffix .c, $(FILES)))
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
+ifeq ($(OS), Windows_NT)
+
 DLL_FILES = $(foreach lib,$(LIB),$(firstword $(foreach dir,$(LIB_PATHS),$(wildcard $(dir)$(SEP)bin$(SEP)$(lib).dll))))
 DLL_TARGET = $(foreach lib,$(LIB),$(BIN_DIR)$(SEP)$(lib).dll)
 
+endif
+
+ifeq ($(OS), Windows_NT)
+
 all: $(BIN_DIR)$(SEP)$(PROJECT_NAME) $(DLL_TARGET)
+
+else
+
+all: $(BIN_DIR)$(SEP)$(PROJECT_NAME)
+
+endif
 
 $(BIN_DIR)$(SEP)$(PROJECT_NAME): $(OBJ_FILES) | $(BIN_DIR)
 	$(CC) $(INCLUDE_DIRS) -o $@ $(OBJ_FILES) $(LIB_DIRS) $(LIB_LINKERS) $(OS_LIB_LINKERS)
-	@echo "Compilation successful"b
+	@echo "Compilation successful"
 	$(DEL) $(OBJ_FILES) 2>nul || true
 
 ifeq ($(OS), Windows_NT)
-	$(DLL_TARGET): | $(BIN_DIR)
-		@for %%F in ($(DLL_FILES)) do @( \
-			$(COPY) "%%F" "$(BIN_DIR)" >nul && \
-			echo %%~nF found! \
-		)
+
+$(DLL_TARGET): | $(BIN_DIR)
+	@for %%F in ($(DLL_FILES)) do @( \
+		$(COPY) "%%F" "$(BIN_DIR)" >nul && \
+		echo %%~nF found! \
+	)
+
 endif
 
 $(BIN_DIR):
